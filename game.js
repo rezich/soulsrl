@@ -1,17 +1,22 @@
 $(document).ready(function() {
 	$rle.setup();
-	$rle.draw_box(4, 4, 8, 8);
 	new game();
 });
 
 function game() {
 	game.current = this;
+	this.current_room = this.generateDungeon();
 	this.player = new creature();
 	this.redraw();
 	$(document).keydown(game.current.handleInput);
 }
 
 game.current = null;
+
+game.viewport_offset = {
+	x: 0,
+	y: 3
+}
 
 // obviously, all the code in these "actions" will be moved to a function in a bit; this was just to test that it works
 game.commands = {
@@ -67,11 +72,44 @@ game.prototype.handleInput = function (e) {
 }
 
 game.prototype.redraw = function () {
-	$rle.put(game.current.player.position.x, game.current.player.position.y, '@', {fg: $rle.color.white});
+	//$rle.put(game.current.player.position.x, game.current.player.position.y, '@', {fg: $rle.color.white});
+	for (var t in this.current_room.terrain) {
+		this.current_room.terrain[t].draw();
+	}
+	this.drawUI();
 }
 
 game.prototype.generateDungeon = function () {
-	
+	var r = new room();
+
+	// TODO: y'know, procedural stuff
+
+	for (var i = 0; i < 20; i++) {
+		for (var j = 0; j < 80; j++) {
+			r.terrain.push(new terrain({x: j, y: i}, terrain.kind.floor));
+		}
+	}
+
+	return r;
+}
+
+game.prototype.drawUI = function () {
+	$rle.put(0, 0, "console line one");
+	$rle.put(0, 1, "console line two");
+	$rle.put(0, 2, "console line three");
+	var name = "Adam";
+	$rle.put(0, 23, name, { fg: $rle.color.brightCyan });
+	$rle.put(name.length + 1, 23, "HP:")
+	var hp = "10/10"
+}
+
+
+////
+// room - basically, the floor of a roguelike dungeon
+////
+
+function room() {
+	this.terrain = [];
 }
 
 
@@ -81,6 +119,12 @@ game.prototype.generateDungeon = function () {
 
 function entity() {
 	this.position = { x: 0, y: 0 };
+	this.character = '?';
+	this.fg = $rle.color.white;
+}
+
+entity.prototype.draw = function () {
+	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg });
 }
 
 
@@ -97,6 +141,20 @@ creature.prototype = new entity();
 // terrain - static stuff, walls and floors and so forth
 ////
 
-function terrain() { }
+function terrain(pos, k) {
+	this.position = pos;
+	this.kind = k;
+	switch (k) {
+		case terrain.kind.floor:
+			this.character = '.';
+			this.fg = $rle.color.charcoal;
+			break;
+	}
+}
+
+terrain.kind = {
+	floor: 0,
+	wall: 1
+}
 
 terrain.prototype = new entity();
