@@ -77,9 +77,9 @@ game.prototype.handleInput = function (e) {
 }
 
 game.prototype.redraw = function () {
-	for (var t in this.current_room.terrain) {
+	/*for (var t in this.current_room.terrain) {
 		//this.current_room.terrain[t].draw();
-	}
+	}*/
 	this.player.draw();
 	this.drawUI();
 }
@@ -93,12 +93,16 @@ game.prototype.redraw_tile = function (position) {
 game.prototype.generateDungeon = function () {
 	var r = new room();
 
-	// TODO: y'know, procedural stuff
+	// TODO: Y'know, procedural stuff :P
 
 	for (var i = 0; i < 20; i++) {
 		for (var j = 0; j < 80; j++) {
-			r.terrain.push(new terrain({x: j, y: i}, terrain.kind.floor));
+			r.add_terrain({x: j, y: i}, terrain.kind.floor);
 		}
+	}
+
+	for (var i = 0; i < 10; i++) {
+		r.add_terrain({x: 14, y: 4 + i}, terrain.kind.wall);
 	}
 
 	return r;
@@ -138,6 +142,20 @@ game.prototype.drawUI = function () {
 
 function room() {
 	this.terrain = [];
+}
+
+room.prototype.add_terrain = function (position, kind) {
+	for (var t in this.terrain) {
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) this.terrain.splice(t, 1);
+	}
+	this.terrain.push(new terrain(position, kind));
+}
+
+room.prototype.solid_at = function (position) {
+	for (var t in this.terrain) {
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].solid;
+	}
+	return true;
 }
 
 
@@ -197,9 +215,11 @@ creature.prototype.move = function (direction) {
 			endpos.y++;
 			break;
 	}
-	this.position = endpos;
-	game.current.redraw_tile(lastpos);
-	this.draw();
+	if (!game.current.current_room.solid_at(endpos)) {
+		this.position = endpos;
+		game.current.redraw_tile(lastpos);
+		this.draw();
+	}
 }
 
 
