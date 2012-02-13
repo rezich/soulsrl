@@ -8,6 +8,17 @@ function $rle() {
 
 $rle.tiles = false;
 
+$rle.dir = {
+	e: 0,
+	ne: 1,
+	n: 2,
+	nw: 3,
+	w: 4,
+	sw: 5,
+	s: 6,
+	sw: 7
+}
+
 $rle.color = {
 	black: 'rgb(0, 0, 0)',
 	blue: 'rgb(0, 0, 128)',

@@ -9,6 +9,9 @@ function game() {
 	this.player = new creature();
 	this.player.position = { x: 8, y: 8};
 	this.player.character = '@';
+	for (var t in this.current_room.terrain) {
+		this.current_room.terrain[t].draw();
+	}
 	this.redraw();
 	$(document).keydown(game.current.handleInput);
 }
@@ -24,35 +27,35 @@ game.viewport_offset = {
 game.commands = {
 	north: {
 		keys: [38, 75, 104],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.y--; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.n); }
 	},
 	east: {
 		keys: [39, 76, 102],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x++; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.e); }
 	},
 	west: {
 		keys: [37, 72, 100],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x--; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.w); }
 	},
 	south: {
 		keys: [40, 74, 98],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.y++; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.s); }
 	},
 	northwest: {
 		keys: [89, 103],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x--; game.current.player.position.y--; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.nw); }
 	},
 	northeast: {
 		keys: [85, 105],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x++; game.current.player.position.y--; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.ne); }
 	},
 	southwest: {
 		keys: [66, 97],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x--; game.current.player.position.y++; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.sw); }
 	},
 	southeast: {
 		keys: [78, 99],
-		action: function () { $rle.clear(game.current.player.position.x, game.current.player.position.y); game.current.player.position.x++; game.current.player.position.y++; game.current.redraw(); }
+		action: function () { game.current.player.move($rle.dir.se); }
 	},
 	wait: {
 		keys: [90, 101],
@@ -75,10 +78,16 @@ game.prototype.handleInput = function (e) {
 
 game.prototype.redraw = function () {
 	for (var t in this.current_room.terrain) {
-		this.current_room.terrain[t].draw();
+		//this.current_room.terrain[t].draw();
 	}
 	this.player.draw();
 	this.drawUI();
+}
+
+game.prototype.redraw_tile = function (position) {
+	for (var t in this.current_room.terrain) {
+		if (this.current_room.terrain[t].position.x == position.x && this.current_room.terrain[t].position.y == position.y) this.current_room.terrain[t].draw();
+	}
 }
 
 game.prototype.generateDungeon = function () {
@@ -155,6 +164,44 @@ function creature() { }
 
 creature.prototype = new entity();
 
+creature.prototype.move = function (direction) {
+	var endpos = { x: this.position.x, y: this.position.y };
+	var lastpos = { x: this.position.x, y: this.position.y };
+	switch (direction) {
+		case $rle.dir.e:
+			endpos.x++;
+			break;
+		case $rle.dir.ne:
+			endpos.x++;
+			endpos.y--;
+			break;
+		case $rle.dir.n:
+			endpos.y--;
+			break;
+		case $rle.dir.nw:
+			endpos.x--;
+			endpos.y--;
+			break;
+		case $rle.dir.w:
+			endpos.x--;
+			break;
+		case $rle.dir.sw:
+			endpos.x--;
+			endpos.y++;
+			break;
+		case $rle.dir.s:
+			endpos.y++;
+			break;
+		case $rle.dir.se:
+			endpos.x++;
+			endpos.y++;
+			break;
+	}
+	this.position = endpos;
+	game.current.redraw_tile(lastpos);
+	this.draw();
+}
+
 
 ////
 // terrain - static stuff, walls and floors and so forth
@@ -163,17 +210,24 @@ creature.prototype = new entity();
 function terrain(pos, k) {
 	this.position = pos;
 	this.kind = k;
+	this.solid = false;
 	switch (k) {
 		case terrain.kind.floor:
 			this.character = '.';
 			this.fg = $rle.color.charcoal;
+			this.solid = false;
+			break;
+		case terrain.kind.wall:
+			this.character = '#';
+			this.fg = $rle.color.gray;
+			this.solid = true;
 			break;
 	}
 }
+
+terrain.prototype = new entity();
 
 terrain.kind = {
 	floor: 0,
 	wall: 1
 }
-
-terrain.prototype = new entity();
