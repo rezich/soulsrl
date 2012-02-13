@@ -7,6 +7,8 @@ function game() {
 	game.current = this;
 	this.current_room = this.generateDungeon();
 	this.player = new creature();
+	this.player.position = { x: 8, y: 8};
+	this.player.character = '@';
 	this.redraw();
 	$(document).keydown(game.current.handleInput);
 }
@@ -72,10 +74,10 @@ game.prototype.handleInput = function (e) {
 }
 
 game.prototype.redraw = function () {
-	//$rle.put(game.current.player.position.x, game.current.player.position.y, '@', {fg: $rle.color.white});
 	for (var t in this.current_room.terrain) {
 		this.current_room.terrain[t].draw();
 	}
+	this.player.draw();
 	this.drawUI();
 }
 
@@ -97,10 +99,27 @@ game.prototype.drawUI = function () {
 	$rle.put(0, 0, "console line one");
 	$rle.put(0, 1, "console line two");
 	$rle.put(0, 2, "console line three");
+
+	// UI line 1
 	var name = "Adam";
 	$rle.put(0, 23, name, { fg: $rle.color.brightCyan });
-	$rle.put(name.length + 1, 23, "HP:")
-	var hp = "10/10"
+	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.gray });
+	var hp = "10/10";
+	$rle.put(name.length + 4, 23, hp, { fg: $rle.color.red });
+	$rle.put(name.length + 5 + hp.length, 23, "STM:", { fg: $rle.color.gray });
+	var stm = "100%";
+	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.cyan });
+
+	// UI line 2
+	$rle.put(0, 24, "DLVL:", { fg: $rle.color.gray });
+	var dlvl = "0";
+	$rle.put(5, 24, dlvl, { fg: $rle.color.white });
+	$rle.put(6 + dlvl.length, 24, "LVL:", { fg: $rle.color.green });
+	var lvl = "1";
+	$rle.put(10 + dlvl.length, 24, lvl, { fg: $rle.color.brightGreen });
+	$rle.put(11 + dlvl.length + lvl.length, 24, "NXT:", { fg: $rle.color.green });
+	var nxt = "100";
+	$rle.put(15 + dlvl.length + lvl.length, 24, nxt, { fg: $rle.color.brightGreen });
 }
 
 
