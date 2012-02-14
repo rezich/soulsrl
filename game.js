@@ -5,14 +5,21 @@ $(document).ready(function() {
 
 function game() {
 	game.current = this;
+	this.console = new console();
+	this.console.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon();
+
+	// begin temp code
 	this.player = new creature();
 	this.player.position = { x: 8, y: 8};
 	this.player.character = '@';
 	for (var t in this.current_room.terrain) {
 		this.current_room.terrain[t].draw();
 	}
+	this.player.draw();
 	this.redraw();
+	// end temp code
+
 	$(document).keydown(game.current.handleInput);
 }
 
@@ -27,35 +34,35 @@ game.viewport_offset = {
 game.commands = {
 	north: {
 		keys: [38, 75, 104],
-		action: function () { game.current.player.move($rle.dir.n); }
+		action: function () { game.current.player.move($rle.dir.n); game.current.redraw(); }
 	},
 	east: {
 		keys: [39, 76, 102],
-		action: function () { game.current.player.move($rle.dir.e); }
+		action: function () { game.current.player.move($rle.dir.e); game.current.redraw(); }
 	},
 	west: {
 		keys: [37, 72, 100],
-		action: function () { game.current.player.move($rle.dir.w); }
+		action: function () { game.current.player.move($rle.dir.w); game.current.redraw(); }
 	},
 	south: {
 		keys: [40, 74, 98],
-		action: function () { game.current.player.move($rle.dir.s); }
+		action: function () { game.current.player.move($rle.dir.s); game.current.redraw(); }
 	},
 	northwest: {
 		keys: [89, 103],
-		action: function () { game.current.player.move($rle.dir.nw); }
+		action: function () { game.current.player.move($rle.dir.nw); game.current.redraw(); }
 	},
 	northeast: {
 		keys: [85, 105],
-		action: function () { game.current.player.move($rle.dir.ne); }
+		action: function () { game.current.player.move($rle.dir.ne); game.current.redraw(); }
 	},
 	southwest: {
 		keys: [66, 97],
-		action: function () { game.current.player.move($rle.dir.sw); }
+		action: function () { game.current.player.move($rle.dir.sw); game.current.redraw(); }
 	},
 	southeast: {
 		keys: [78, 99],
-		action: function () { game.current.player.move($rle.dir.se); }
+		action: function () { game.current.player.move($rle.dir.se); game.current.redraw(); }
 	},
 	wait: {
 		keys: [90, 101],
@@ -68,7 +75,6 @@ game.prototype.handleInput = function (e) {
 		var keys = game.commands[command].keys;
 		for (var key in keys) {
 			if (keys[key] == e.keyCode) {
-				//alert("the command you want is: " + command);
 				game.commands[command].action();
 				return false;
 			}
@@ -77,10 +83,8 @@ game.prototype.handleInput = function (e) {
 }
 
 game.prototype.redraw = function () {
-	/*for (var t in this.current_room.terrain) {
-		//this.current_room.terrain[t].draw();
-	}*/
-	this.player.draw();
+	//this.player.draw();
+	this.console.draw();
 	this.drawUI();
 }
 
@@ -109,9 +113,6 @@ game.prototype.generateDungeon = function () {
 }
 
 game.prototype.drawUI = function () {
-	$rle.put(0, 0, "console line one");
-	$rle.put(0, 1, "console line two");
-	$rle.put(0, 2, "console line three");
 
 	// UI line 1
 	var name = "Adam";
@@ -133,6 +134,51 @@ game.prototype.drawUI = function () {
 	$rle.put(11 + dlvl.length + lvl.length, 24, "NXT:", { fg: $rle.color.green });
 	var nxt = "100";
 	$rle.put(15 + dlvl.length + lvl.length, 24, nxt, { fg: $rle.color.brightGreen });
+}
+
+
+////
+// console - message history
+////
+
+function console() {
+	this.lines = [];
+	this.lastLine = -1;
+	this.cleared = false;
+}
+
+console.prototype.write = function (text, options) {
+	this.lines.push({ text: text });
+}
+
+console.prototype.draw = function () {
+	var diff = this.lines.length - 1 - this.lastLine;
+	if (diff == 0) {
+		this.clear();
+		return;
+	}
+	this.cleared = false;
+	this.clear();
+	this.cleared = false;
+	if (diff > 0) $rle.put(0, 3 - diff, this.lines[this.lastLine + 1].text);
+	if (diff > 1) $rle.put(0, 4 - diff, this.lines[this.lastLine + 2].text);
+	if (diff > 2) {
+		if (diff > 3) {
+		}
+		else {
+			$rle.put(0, 5 - (this.lines.length - 1 - this.lastLine), this.lines[this.lastLine + 3].text);
+		}
+	}
+	this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
+}
+
+console.prototype.clear = function () {
+	if (!this.cleared) {
+		this.cleared = true;
+		$rle.put(0, 0, '                                                                                ');
+		$rle.put(0, 1, '                                                                                ');
+		$rle.put(0, 2, '                                                                                ');
+	}
 }
 
 
@@ -219,6 +265,9 @@ creature.prototype.move = function (direction) {
 		this.position = endpos;
 		game.current.redraw_tile(lastpos);
 		this.draw();
+	}
+	else {
+		if (this == game.current.player) game.current.console.write("Something is blocking the way.")
 	}
 }
 
