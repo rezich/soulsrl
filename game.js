@@ -65,12 +65,8 @@ game.prototype.init = function () {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon();
 	this.player = new creature();
-	this.player.position = { x: 8, y: 8};
+	this.player.position = { x: 8, y: 8 };
 	this.player.character = '@';
-	for (var t in this.current_room.terrain) {
-		this.current_room.terrain[t].draw();
-	}
-	this.player.draw();
 }
 
 game.prototype.redraw_tile = function (position) {
@@ -143,6 +139,7 @@ state.add = function (s, options) {
 	if (options) {
 		if (options.clear) $rle.clear();
 	}
+	state.current().first_draw();
 	state.current().draw();
 }
 
@@ -158,6 +155,8 @@ state.reset = function () {
 state.prototype.keys = { }
 
 state.prototype.draw = function () { }
+
+state.prototype.first_draw = function () { }
 
 
 ////
@@ -194,11 +193,16 @@ state_mainMenu.prototype.keys = {
 }
 
 state_mainMenu.prototype.draw = function () {
-	$rle.clear();
-	$rle.put(0, 0, 'SoulsRL');
 	for (var i = 0; i < state_mainMenu.entries.length; i++) {
 		$rle.put(0, 2 + i, (this.cursor == i ? '>' : ' ') + state_mainMenu.entries[i].text);
 	}
+}
+
+state_mainMenu.prototype.first_draw = function () {
+	$rle.put(0, 0, 'SoulsRL');
+	$rle.put(0, state_mainMenu.entries.length + 3, 'arrows, numpad vi keys: choose');
+	$rle.put(0, state_mainMenu.entries.length + 4, 'enter: select');
+	$rle.put(0, state_mainMenu.entries.length + 6, 'Copyright (C) 2012 Adam Rezich');
 }
 
 state_mainMenu.prototype.move_cursor = function (amount) {
@@ -280,6 +284,13 @@ state_game.prototype.keys = {
 state_game.prototype.draw = function () {
 	game.current.messages.draw();
 	game.current.drawUI();
+}
+
+state_game.prototype.first_draw = function () {
+	for (var t in game.current.current_room.terrain) {
+		game.current.current_room.terrain[t].draw();
+	}
+	game.current.player.draw();
 }
 
 
