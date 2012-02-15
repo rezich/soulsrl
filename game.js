@@ -6,10 +6,14 @@ $(document).ready(function() {
 function game() {
 	game.current = this;
 
-	this.commands = game.cmds_game;
+	state.reset();
+	state.add(new state_mainMenu());
+	state.current().draw();
 
-	/*this.console = new console();
-	this.console.write("Welcome to SoulsRL!");
+	//this.commands = game.cmds_game;
+
+	/*this.messages = new messages();
+	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon();
 
 	// begin temp code
@@ -23,7 +27,7 @@ function game() {
 	this.redraw();*/
 	// end temp code
 
-	$(document).keydown(game.current.handleInput);
+	$(document).keydown(game.handleInput);
 }
 
 game.current = null;
@@ -73,41 +77,21 @@ game.cmds_game = {
 	}
 }
 
-// main menu commands
-game.cmds_mainMenu = {
-	north: {
-		keys: $rle.keys.arrow_n,
-		action: function () {  }
-	},
-	east: {
-		keys: $rle.keys.arrow_e,
-		action: function () {  }
-	},
-	west: {
-		keys: $rle.keys.arrow_w,
-		action: function () {  }
-	},
-	south: {
-		keys: $rle.keys.arrow_s,
-		action: function () {  }
-	},
-	confirm: {
-		keys: [13],
-		action: function () {  }
+game.handleInput = function (e) {
+	if (!game.current) {
+		alert('no game!');
+		return;
 	}
-}
-
-// draw: menu
-game.draw_menu {
-	$rle.
-}
-
-game.prototype.handleInput = function (e) {
-	for (var command in this.commands) {
-		var keys = this.commands[command].keys;
+	if (state.list.length == 0 ) {
+		$rle.put(0, 0, 'no state provided');
+		return;
+	}
+	var commands = state.current().keys
+	for (var command in commands) {
+		var keys = commands[command].keys;
 		for (var key in keys) {
 			if (keys[key] == e.keyCode) {
-				this.commands[command].action();
+				commands[command].action();
 				return false;
 			}
 		}
@@ -116,7 +100,7 @@ game.prototype.handleInput = function (e) {
 
 game.prototype.redraw = function () {
 	//this.player.draw();
-	this.console.draw();
+	this.messages.draw();
 	this.drawUI();
 }
 
@@ -168,22 +152,115 @@ game.prototype.drawUI = function () {
 	$rle.put(15 + dlvl.length + lvl.length, 24, nxt, { fg: $rle.color.brightGreen });
 }
 
+////
+// state - game state machine
+////
+
+function state() { }
+
+state.list = [];
+
+state.current = function () {
+	return state.list.peek();
+}
+
+state.add = function (s) {
+	state.list.push(s);
+}
+
+state.replace = function(s) {
+	state.list.pop();
+	state.add(s);
+}
+
+state.reset = function () {
+	state.list = [];
+}
+
+state.prototype.keys = { }
+
+state.prototype.draw = function () { }
+
 
 ////
-// console - message history
+// state_mainMenu - main menu state
 ////
 
-function console() {
+function state_mainMenu() {
+	this.cursor = 0;
+}
+
+state_mainMenu.prototype = new state();
+
+state_mainMenu.prototype.keys = {
+	north: {
+		keys: $rle.keys.arrow_n,
+		action: function () { state.current().move_cursor(-1); /* TODO: Find a better way to do this? */ }
+	},
+	east: {
+		keys: $rle.keys.arrow_e,
+		action: function () {  }
+	},
+	west: {
+		keys: $rle.keys.arrow_w,
+		action: function () {  }
+	},
+	south: {
+		keys: $rle.keys.arrow_s,
+		action: function () { state.current().move_cursor(1); /* TODO: Find a better way to do this? */ }
+	},
+	confirm: {
+		keys: [13],
+		action: function () {  }
+	}
+}
+
+state_mainMenu.prototype.draw = function () {
+	$rle.clear();
+	$rle.put(0, 0, 'SoulsRL');
+	for (var i = 0; i < state_mainMenu.entries.length; i++) {
+		$rle.put(0, 2 + i, (this.cursor == i ? '>' : ' ') + state_mainMenu.entries[i].text);
+	}
+}
+
+state_mainMenu.prototype.move_cursor = function (amount) {
+	this.cursor += amount;
+	if (this.cursor < 0) this.cursor += state_mainMenu.entries.length - 1;
+	if (this.cursor > state_mainMenu.entries.length - 1) this.cursor -= state_mainMenu.entries.length;
+	this.draw();
+}
+
+state_mainMenu.entries = [
+	{
+		text: "New game",
+		action: function () { console.log('TODO: new game'); }//state.replace(new state_game())); }
+	},
+	{
+		text: "Continue",
+		action: function () {  }
+	},
+	{
+		text: "Help",
+		action: function () {  }
+	}
+];
+
+
+////
+// messages - message history
+////
+
+function messages() {
 	this.lines = [];
 	this.lastLine = -1;
 	this.cleared = false;
 }
 
-console.prototype.write = function (text, options) {
+messages.prototype.write = function (text, options) {
 	this.lines.push({ text: text });
 }
 
-console.prototype.draw = function () {
+messages.prototype.draw = function () {
 	var diff = this.lines.length - 1 - this.lastLine;
 	if (diff == 0) {
 		this.clear();
@@ -203,7 +280,7 @@ console.prototype.draw = function () {
 	this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
 }
 
-console.prototype.clear = function (override) {
+messages.prototype.clear = function (override) {
 	if (!this.cleared || override) {
 		this.cleared = true;
 		$rle.put(0, 0, '                                                                                ');
@@ -298,7 +375,7 @@ creature.prototype.move = function (direction) {
 		this.draw();
 	}
 	else {
-		if (this == game.current.player) game.current.console.write("Something is blocking the way.")
+		if (this == game.current.player) game.current.messages.write("Something is blocking the way.")
 	}
 }
 

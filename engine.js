@@ -84,12 +84,19 @@ $rle.put = function(x, y, text, options) {
 }
 
 $rle.clear = function (x, y, options) {
+	if (!x && !y) {
+		$('#screen>div>div>div').html('&nbsp;');
+		$('#screen>div>div>div').css('color', 'white');
+		$('#screen>div>div').css('background', 'black');
+		return;
+	}
 	this.set_fg(x, y, $rle.color.white);
 	this.set_bg(x, y, $rle.color.black);
 	this.put(x, y, ' ');
 }
 
 $rle._put_char = function (x, y, chr) {
+	chr = $rle._convert_to_html(chr);
 	if (chr == '' || chr == null) {
 		if (this.tiles) return;
 		chr = ' ';
@@ -120,6 +127,10 @@ $rle._chr = function (number) {
 
 $rle._ord = function (character) {
 	return character.charCodeAt(0);
+}
+
+$rle._convert_to_html = function (character) {
+	return character.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }
 
 $rle.set_fg = function (x, y, color) {
