@@ -4,6 +4,7 @@
 	background: black;
 	color: white;
 	width: 1280px;
+	margin: 0 auto;
 }
 
 #screen > div {

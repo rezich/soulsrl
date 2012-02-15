@@ -5,7 +5,10 @@ $(document).ready(function() {
 
 function game() {
 	game.current = this;
-	this.console = new console();
+
+	this.commands = game.cmds_game;
+
+	/*this.console = new console();
 	this.console.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon();
 
@@ -17,7 +20,7 @@ function game() {
 		this.current_room.terrain[t].draw();
 	}
 	this.player.draw();
-	this.redraw();
+	this.redraw();*/
 	// end temp code
 
 	$(document).keydown(game.current.handleInput);
@@ -30,38 +33,38 @@ game.viewport_offset = {
 	y: 3
 }
 
-// obviously, all the code in these "actions" will be moved to a function in a bit; this was just to test that it works
-game.commands = {
+// main game commands
+game.cmds_game = {
 	north: {
-		keys: [38, 75, 104],
+		keys: $rle.keys.arrow_n,
 		action: function () { game.current.player.move($rle.dir.n); game.current.redraw(); }
 	},
 	east: {
-		keys: [39, 76, 102],
+		keys: $rle.keys.arrow_e,
 		action: function () { game.current.player.move($rle.dir.e); game.current.redraw(); }
 	},
 	west: {
-		keys: [37, 72, 100],
+		keys: $rle.keys.arrow_w,
 		action: function () { game.current.player.move($rle.dir.w); game.current.redraw(); }
 	},
 	south: {
-		keys: [40, 74, 98],
+		keys: $rle.keys.arrow_s,
 		action: function () { game.current.player.move($rle.dir.s); game.current.redraw(); }
 	},
 	northwest: {
-		keys: [89, 103],
+		keys: $rle.keys.arrow_nw,
 		action: function () { game.current.player.move($rle.dir.nw); game.current.redraw(); }
 	},
 	northeast: {
-		keys: [85, 105],
+		keys: $rle.keys.arrow_ne,
 		action: function () { game.current.player.move($rle.dir.ne); game.current.redraw(); }
 	},
 	southwest: {
-		keys: [66, 97],
+		keys: $rle.keys.arrow_sw,
 		action: function () { game.current.player.move($rle.dir.sw); game.current.redraw(); }
 	},
 	southeast: {
-		keys: [78, 99],
+		keys: $rle.keys.arrow_se,
 		action: function () { game.current.player.move($rle.dir.se); game.current.redraw(); }
 	},
 	wait: {
@@ -70,12 +73,41 @@ game.commands = {
 	}
 }
 
+// main menu commands
+game.cmds_mainMenu = {
+	north: {
+		keys: $rle.keys.arrow_n,
+		action: function () {  }
+	},
+	east: {
+		keys: $rle.keys.arrow_e,
+		action: function () {  }
+	},
+	west: {
+		keys: $rle.keys.arrow_w,
+		action: function () {  }
+	},
+	south: {
+		keys: $rle.keys.arrow_s,
+		action: function () {  }
+	},
+	confirm: {
+		keys: [13],
+		action: function () {  }
+	}
+}
+
+// draw: menu
+game.draw_menu {
+	$rle.
+}
+
 game.prototype.handleInput = function (e) {
-	for (var command in game.commands) {
-		var keys = game.commands[command].keys;
+	for (var command in this.commands) {
+		var keys = this.commands[command].keys;
 		for (var key in keys) {
 			if (keys[key] == e.keyCode) {
-				game.commands[command].action();
+				this.commands[command].action();
 				return false;
 			}
 		}
@@ -157,7 +189,6 @@ console.prototype.draw = function () {
 		this.clear();
 		return;
 	}
-	this.cleared = false;
 	this.clear();
 	this.cleared = false;
 	if (diff > 0) $rle.put(0, 3 - diff, this.lines[this.lastLine + 1].text);
@@ -172,8 +203,8 @@ console.prototype.draw = function () {
 	this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
 }
 
-console.prototype.clear = function () {
-	if (!this.cleared) {
+console.prototype.clear = function (override) {
+	if (!this.cleared || override) {
 		this.cleared = true;
 		$rle.put(0, 0, '                                                                                ');
 		$rle.put(0, 1, '                                                                                ');

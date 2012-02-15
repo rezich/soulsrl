@@ -8,6 +8,17 @@ function $rle() {
 
 $rle.tiles = false;
 
+$rle.keys = {
+	arrow_e: [39, 76, 102],
+	arrow_ne: [85, 105],
+	arrow_n: [38, 75, 104],
+	arrow_nw: [89, 103],
+	arrow_w: [37, 72, 100],
+	arrow_sw: [66, 97],
+	arrow_s: [40, 74, 98],
+	arrow_se: [78, 99]
+}
+
 $rle.dir = {
 	e: 0,
 	ne: 1,
