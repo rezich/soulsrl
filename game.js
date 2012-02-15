@@ -13,6 +13,7 @@ function game() {
 	state.reset();
 
 	state.add(new state_mainMenu());
+	//state.add(new state_game());
 
 	//this.commands = game.cmds_game;
 	/*this.messages.write("Welcome to SoulsRL!");
@@ -39,46 +40,6 @@ game.viewport_offset = {
 	y: 3
 }
 
-// main game commands
-game.cmds_game = {
-	north: {
-		keys: $rle.keys.arrow_n,
-		action: function () { game.current.player.move($rle.dir.n); game.current.redraw(); }
-	},
-	east: {
-		keys: $rle.keys.arrow_e,
-		action: function () { game.current.player.move($rle.dir.e); game.current.redraw(); }
-	},
-	west: {
-		keys: $rle.keys.arrow_w,
-		action: function () { game.current.player.move($rle.dir.w); game.current.redraw(); }
-	},
-	south: {
-		keys: $rle.keys.arrow_s,
-		action: function () { game.current.player.move($rle.dir.s); game.current.redraw(); }
-	},
-	northwest: {
-		keys: $rle.keys.arrow_nw,
-		action: function () { game.current.player.move($rle.dir.nw); game.current.redraw(); }
-	},
-	northeast: {
-		keys: $rle.keys.arrow_ne,
-		action: function () { game.current.player.move($rle.dir.ne); game.current.redraw(); }
-	},
-	southwest: {
-		keys: $rle.keys.arrow_sw,
-		action: function () { game.current.player.move($rle.dir.sw); game.current.redraw(); }
-	},
-	southeast: {
-		keys: $rle.keys.arrow_se,
-		action: function () { game.current.player.move($rle.dir.se); game.current.redraw(); }
-	},
-	wait: {
-		keys: [90, 101],
-		action: function () { }
-	}
-}
-
 game.handleInput = function (e) {
 	if (!game.current) {
 		alert('no game!');
@@ -102,10 +63,14 @@ game.handleInput = function (e) {
 
 game.prototype.init = function () {
 	this.messages.write("Welcome to SoulsRL!");
-	//this.current_room = this.generateDungeon();
-	//this.player = new creature();
-	//this.player.position = { x: 8, y: 8};
-	//this.player.character = '@';
+	this.current_room = this.generateDungeon();
+	this.player = new creature();
+	this.player.position = { x: 8, y: 8};
+	this.player.character = '@';
+	for (var t in this.current_room.terrain) {
+		this.current_room.terrain[t].draw();
+	}
+	this.player.draw();
 }
 
 game.prototype.redraw_tile = function (position) {
@@ -165,7 +130,12 @@ function state() { }
 state.list = [];
 
 state.current = function () {
-	return state.list.peek();
+	if (this.list.length > 0) {
+		return this.list[this.list.length - 1];
+	}
+	else {
+		return null;
+	}
 }
 
 state.add = function (s, options) {
@@ -308,7 +278,6 @@ state_game.prototype.keys = {
 }
 
 state_game.prototype.draw = function () {
-	$rle.put(0, 0, 'whee, main game state!')
 	game.current.messages.draw();
 	game.current.drawUI();
 }
@@ -374,7 +343,7 @@ room.prototype.add_terrain = function (position, kind) {
 	for (var t in this.terrain) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) this.terrain.splice(t, 1);
 	}
-	this.terrain.push(new terrain(position, kind));
+	this.terrain.push(new terrain({x: position.x, y: position.y}, kind));
 }
 
 room.prototype.solid_at = function (position) {
@@ -382,6 +351,13 @@ room.prototype.solid_at = function (position) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].solid;
 	}
 	return true;
+}
+
+room.prototype.terrain_at = function (position) {
+	for (var t in this.terrain) {
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t];
+	}
+	return null;
 }
 
 
