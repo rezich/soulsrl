@@ -6,14 +6,16 @@ $(document).ready(function() {
 function game() {
 	game.current = this;
 
+	this.messages = new messages();
+	this.player = null
+	this.current_room = null;
+
 	state.reset();
+
 	state.add(new state_mainMenu());
-	state.current().draw();
 
 	//this.commands = game.cmds_game;
-
-	/*this.messages = new messages();
-	this.messages.write("Welcome to SoulsRL!");
+	/*this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon();
 
 	// begin temp code
@@ -98,10 +100,12 @@ game.handleInput = function (e) {
 	}
 }
 
-game.prototype.redraw = function () {
-	//this.player.draw();
-	this.messages.draw();
-	this.drawUI();
+game.prototype.init = function () {
+	this.messages.write("Welcome to SoulsRL!");
+	//this.current_room = this.generateDungeon();
+	//this.player = new creature();
+	//this.player.position = { x: 8, y: 8};
+	//this.player.character = '@';
 }
 
 game.prototype.redraw_tile = function (position) {
@@ -164,13 +168,17 @@ state.current = function () {
 	return state.list.peek();
 }
 
-state.add = function (s) {
+state.add = function (s, options) {
 	state.list.push(s);
+	if (options) {
+		if (options.clear) $rle.clear();
+	}
+	state.current().draw();
 }
 
-state.replace = function(s) {
+state.replace = function(s, options) {
 	state.list.pop();
-	state.add(s);
+	state.add(s, options);
 }
 
 state.reset = function () {
@@ -211,7 +219,7 @@ state_mainMenu.prototype.keys = {
 	},
 	confirm: {
 		keys: [13],
-		action: function () {  }
+		action: function () { state.current().confirm(); }
 	}
 }
 
@@ -230,10 +238,14 @@ state_mainMenu.prototype.move_cursor = function (amount) {
 	this.draw();
 }
 
+state_mainMenu.prototype.confirm = function () {
+	state_mainMenu.entries[this.cursor].action();
+}
+
 state_mainMenu.entries = [
 	{
 		text: "New game",
-		action: function () { console.log('TODO: new game'); }//state.replace(new state_game())); }
+		action: function () { state.replace(new state_game(), { clear: true }); }
 	},
 	{
 		text: "Continue",
@@ -247,10 +259,70 @@ state_mainMenu.entries = [
 
 
 ////
+// state_game - main game state
+////
+
+function state_game() {
+	game.current.init();
+}
+
+state_game.prototype = new state();
+
+state_game.prototype.keys = {
+	north: {
+		keys: $rle.keys.arrow_n,
+		action: function () { game.current.player.move($rle.dir.n); state.current().draw(); }
+	},
+	east: {
+		keys: $rle.keys.arrow_e,
+		action: function () { game.current.player.move($rle.dir.e); state.current().draw(); }
+	},
+	west: {
+		keys: $rle.keys.arrow_w,
+		action: function () { game.current.player.move($rle.dir.w); state.current().draw(); }
+	},
+	south: {
+		keys: $rle.keys.arrow_s,
+		action: function () { game.current.player.move($rle.dir.s); state.current().draw(); }
+	},
+	northwest: {
+		keys: $rle.keys.arrow_nw,
+		action: function () { game.current.player.move($rle.dir.nw); state.current().draw(); }
+	},
+	northeast: {
+		keys: $rle.keys.arrow_ne,
+		action: function () { game.current.player.move($rle.dir.ne); state.current().draw(); }
+	},
+	southwest: {
+		keys: $rle.keys.arrow_sw,
+		action: function () { game.current.player.move($rle.dir.sw); state.current().draw(); }
+	},
+	southeast: {
+		keys: $rle.keys.arrow_se,
+		action: function () { game.current.player.move($rle.dir.se); state.current().draw(); }
+	},
+	wait: {
+		keys: [90, 101],
+		action: function () { }
+	}
+}
+
+state_game.prototype.draw = function () {
+	$rle.put(0, 0, 'whee, main game state!')
+	game.current.messages.draw();
+	game.current.drawUI();
+}
+
+
+////
 // messages - message history
 ////
 
 function messages() {
+	this.reset();
+}
+
+messages.prototype.reset = function () {
 	this.lines = [];
 	this.lastLine = -1;
 	this.cleared = false;

@@ -36,3 +36,21 @@
 	background: transparent;
 	border: none;
 }
+
+body {
+	background: #333;
+}
+
+body > * {
+	text-align: center;
+	color: #ddd;
+}
+
+h1 {
+	font-size: 32pt;
+	margin-bottom: 8px;
+}
+
+body > div {
+	margin-top: 8px;
+}
