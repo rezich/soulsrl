@@ -152,6 +152,13 @@ state.reset = function () {
 	state.list = [];
 }
 
+state.pop = function () {
+	state.list.pop();
+	$rle.clear();
+	state.current().first_draw();
+	state.current().draw();
+}
+
 state.prototype.keys = { }
 
 state.prototype.draw = function () { }
@@ -200,7 +207,7 @@ state_mainMenu.prototype.draw = function () {
 
 state_mainMenu.prototype.first_draw = function () {
 	$rle.put(0, 0, 'SoulsRL');
-	$rle.put(0, state_mainMenu.entries.length + 3, 'arrows, numpad vi keys: choose');
+	$rle.put(0, state_mainMenu.entries.length + 3, 'arrows, numpad, vi keys: choose');
 	$rle.put(0, state_mainMenu.entries.length + 4, 'enter: select');
 	$rle.put(0, state_mainMenu.entries.length + 6, 'Copyright (C) 2012 Adam Rezich');
 }
@@ -227,9 +234,31 @@ state_mainMenu.entries = [
 	},
 	{
 		text: "Help",
-		action: function () {  }
+		action: function () { state.add(new state_help(), { clear: true }); }
 	}
 ];
+
+
+////
+// state_help - documentation and such
+////
+
+function state_help() { }
+
+state_help.prototype = new state();
+
+state_help.prototype.keys = {
+	back: {
+		keys: $rle.keys.escape,
+		action: function () { state.pop(); }
+	}
+}
+
+state_help.prototype.first_draw = function () {
+	$rle.put(0, 0, 'SoulsRL documentation');
+	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to actually play or something");
+	$rle.put(0, 4, "press escape to return to the main menu");
+}
 
 
 ////

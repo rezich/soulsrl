@@ -16,7 +16,8 @@ $rle.keys = {
 	arrow_w: [37, 72, 100],
 	arrow_sw: [66, 97],
 	arrow_s: [40, 74, 98],
-	arrow_se: [78, 99]
+	arrow_se: [78, 99],
+	escape: [27]
 }
 
 $rle.dir = {
