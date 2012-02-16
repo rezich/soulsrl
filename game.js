@@ -201,20 +201,28 @@ state_mainMenu.prototype.keys = {
 
 state_mainMenu.prototype.draw = function () {
 	for (var i = 0; i < state_mainMenu.entries.length; i++) {
-		$rle.put(0, 2 + i, (this.cursor == i ? '>' : ' ') + state_mainMenu.entries[i].text);
+		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center' });
 	}
 }
 
 state_mainMenu.prototype.first_draw = function () {
-	$rle.put(0, 0, 'SoulsRL');
-	$rle.put(0, state_mainMenu.entries.length + 3, 'arrows, numpad, vi keys: choose');
-	$rle.put(0, state_mainMenu.entries.length + 4, 'enter: select');
-	$rle.put(0, state_mainMenu.entries.length + 6, 'Copyright (C) 2012 Adam Rezich');
+	//$rle.put(40, 7, 'SoulsRL', { align: 'center' });
+
+$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center' });
+$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center' });
+$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center' });
+$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center' });
+$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center' });
+$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center' });
+$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center' });
+	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { align: 'center' });
+	$rle.put(40, 22, 'enter: select', { align: 'center' });
+	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { align: 'center' });
 }
 
 state_mainMenu.prototype.move_cursor = function (amount) {
 	this.cursor += amount;
-	if (this.cursor < 0) this.cursor += state_mainMenu.entries.length - 1;
+	if (this.cursor < 0) this.cursor += state_mainMenu.entries.length;
 	if (this.cursor > state_mainMenu.entries.length - 1) this.cursor -= state_mainMenu.entries.length;
 	this.draw();
 }
@@ -233,7 +241,11 @@ state_mainMenu.entries = [
 		action: function () {  }
 	},
 	{
-		text: "Help",
+		text: "Settings",
+		action: function () {  }
+	},
+	{
+		text: "Manual",
 		action: function () { state.add(new state_help(), { clear: true }); }
 	}
 ];

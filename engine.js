@@ -73,11 +73,21 @@ $rle.setup = function () {
 
 $rle.put = function(x, y, text, options) {
 	if (!text) return;
+	if (options) {
+		if (options.align) {
+			if (options.align == 'center') {
+				x -= Math.ceil(text.length / 2);
+			}
+			if (options.align == 'right') {
+				x -= text.length;
+			}
+		}
+	}
 	while (text != '') {
 		this._put_char(x, y, text.charAt(0));
 		if (options) {
-			if (options['fg']) this.set_fg(x, y, options['fg']);
-			if (options['bg']) this.set_bg(x, y, options['bg']);
+			if (options.fg) this.set_fg(x, y, options.fg);
+			if (options.bg) this.set_bg(x, y, options.bg);
 		}
 		text = text.substring(1);
 		x++;

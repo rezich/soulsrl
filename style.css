@@ -48,7 +48,14 @@ body > * {
 
 h1 {
 	font-size: 32pt;
+	margin-bottom: 0;
+}
+
+h2 {
+	margin-top: 0;
 	margin-bottom: 8px;
+	font-size: 10pt;
+	font-style: italic;
 }
 
 body > div {
