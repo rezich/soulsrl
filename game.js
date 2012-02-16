@@ -63,7 +63,7 @@ game.handleInput = function (e) {
 
 game.prototype.init = function () {
 	this.messages.write("Welcome to SoulsRL!");
-	this.current_room = this.generateDungeon();
+	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.player = new creature();
 	this.player.position = { x: 8, y: 8 };
 	this.player.character = '@';
@@ -75,8 +75,8 @@ game.prototype.redraw_tile = function (position) {
 	}
 }
 
-game.prototype.generateDungeon = function () {
-	var r = new room();
+game.prototype.generateDungeon = function (area, floor) {
+	var r = new room(area, floor);
 
 	// TODO: Y'know, procedural stuff :P
 
@@ -106,15 +106,15 @@ game.prototype.drawUI = function () {
 	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.cyan });
 
 	// UI line 2
-	$rle.put(0, 24, "DLVL:", { fg: $rle.color.gray });
-	var dlvl = "0";
-	$rle.put(5, 24, dlvl, { fg: $rle.color.white });
-	$rle.put(6 + dlvl.length, 24, "LVL:", { fg: $rle.color.green });
+	//$rle.put(0, 24, "DLVL:", { fg: $rle.color.gray });
+	var room_name = game.current.current_room.area + '-' + game.current.current_room.floor;
+	$rle.put(0, 24, room_name, { fg: $rle.color.cyan });
+	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.gray });
 	var lvl = "1";
-	$rle.put(10 + dlvl.length, 24, lvl, { fg: $rle.color.brightGreen });
-	$rle.put(11 + dlvl.length + lvl.length, 24, "NXT:", { fg: $rle.color.green });
-	var nxt = "100";
-	$rle.put(15 + dlvl.length + lvl.length, 24, nxt, { fg: $rle.color.brightGreen });
+	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.brightGreen });
+	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.gray });
+	var souls = "100";
+	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.brightGreen });
 }
 
 ////
@@ -206,15 +206,13 @@ state_mainMenu.prototype.draw = function () {
 }
 
 state_mainMenu.prototype.first_draw = function () {
-	//$rle.put(40, 7, 'SoulsRL', { align: 'center' });
-
-$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center' });
-$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center' });
-$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center' });
-$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center' });
-$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center' });
-$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center' });
-$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center' });
+	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center' });
+	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center' });
+	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center' });
+	$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center' });
+	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center' });
+	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center' });
+	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center' });
 	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { align: 'center' });
 	$rle.put(40, 22, 'enter: select', { align: 'center' });
 	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { align: 'center' });
@@ -271,6 +269,19 @@ state_help.prototype.first_draw = function () {
 	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
 	$rle.put(0, 3, "actually play or something.");
 	$rle.put(40, 24, "escape: return", { align: 'center' });
+}
+
+
+////
+// state_inputName - self-explanatory
+////
+
+function state_inputName() {}
+
+state_inputName.prototype = new state();
+
+state_inputName.prototype.keys = {
+	
 }
 
 
@@ -388,9 +399,20 @@ messages.prototype.clear = function (override) {
 // room - basically, the floor of a roguelike dungeon
 ////
 
-function room() {
+function room(area, floor) {
 	this.terrain = [];
+	this.area = area;
+	this.floor = floor;
 }
+
+room.area = {
+	prison: 'PRISON',
+	castle: 'CASTLE',
+	belltower: 'BELLTOWR',
+	sewers: 'SEWERS',
+	blight: 'BLIGHT',
+	caves: 'CAVES'
+};
 
 room.prototype.add_terrain = function (position, kind) {
 	for (var t in this.terrain) {
