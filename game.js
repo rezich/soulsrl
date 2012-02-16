@@ -268,8 +268,9 @@ state_help.prototype.keys = {
 
 state_help.prototype.first_draw = function () {
 	$rle.put(0, 0, 'SoulsRL documentation');
-	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to actually play or something");
-	$rle.put(0, 4, "press escape to return to the main menu");
+	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
+	$rle.put(0, 3, "actually play or something.");
+	$rle.put(40, 24, "escape: return", { align: 'center' });
 }
 
 

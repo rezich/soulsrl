@@ -58,6 +58,15 @@ h2 {
 	font-style: italic;
 }
 
+a, a:active, a:visited {
+	text-decoration: underline;
+	color: #ddd;
+}
+
 body > div {
 	margin-top: 8px;
+}
+
+p {
+	margin: 0;
 }
