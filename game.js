@@ -61,6 +61,20 @@ game.handleInput = function (e) {
 	}
 }
 
+game.prototype.preload = function () {
+	state.add(new state_loading(), { clear: true });
+	$.ajax({
+		url: 'rooms/PRISON-3.txt',
+		dataType: 'text',
+		success: function (data) {
+			//alert(data);
+			room.data['PRISON-3'] = data;
+			state.pop();
+			state.replace(new state_game(), { clear: true });
+		}
+	})
+}
+
 game.prototype.init = function () {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon(room.area.prison, 3);
@@ -80,7 +94,21 @@ game.prototype.generateDungeon = function (area, floor) {
 
 	// TODO: Y'know, procedural stuff :P
 
+	if (!room.data[r.name()]) {
+		alert("area data not found!");
+		return r;
+	}
+
+	var data = room.data[area + '-' + floor].split("\n");
+
 	for (var i = 0; i < 20; i++) {
+		for (var j = 0; j < 80; j++) {
+			var kind = terrain.fromChar(data[i].charAt(j));
+			if (kind) r.add_terrain({ x: j, y: i }, kind);
+		}
+	}
+
+	/*for (var i = 0; i < 20; i++) {
 		for (var j = 0; j < 80; j++) {
 			r.add_terrain({x: j, y: i}, terrain.kind.floor);
 		}
@@ -88,7 +116,7 @@ game.prototype.generateDungeon = function (area, floor) {
 
 	for (var i = 0; i < 10; i++) {
 		r.add_terrain({x: 14, y: 4 + i}, terrain.kind.wall);
-	}
+	}*/
 
 	return r;
 }
@@ -107,7 +135,7 @@ game.prototype.drawUI = function () {
 
 	// UI line 2
 	//$rle.put(0, 24, "DLVL:", { fg: $rle.color.gray });
-	var room_name = game.current.current_room.area + '-' + game.current.current_room.floor;
+	var room_name = game.current.current_room.name();
 	$rle.put(0, 24, room_name, { fg: $rle.color.cyan });
 	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.gray });
 	var lvl = "1";
@@ -232,7 +260,7 @@ state_mainMenu.prototype.confirm = function () {
 state_mainMenu.entries = [
 	{
 		text: "New game",
-		action: function () { state.replace(new state_game(), { clear: true }); }
+		action: function () { game.current.preload(); }
 	},
 	{
 		text: "Continue",
@@ -247,6 +275,19 @@ state_mainMenu.entries = [
 		action: function () { state.add(new state_help(), { clear: true }); }
 	}
 ];
+
+
+////
+// state_loading - just a fat loading screen
+////
+
+function state_loading() {}
+
+state_loading.prototype = new state();
+
+state_loading.prototype.first_draw = function () {
+	$rle.put(40, 13, 'L O A D I N G . . .', { align: 'center' });
+}
 
 
 ////
@@ -405,6 +446,8 @@ function room(area, floor) {
 	this.floor = floor;
 }
 
+room.data = {}
+
 room.area = {
 	prison: 'PRISON',
 	castle: 'CASTLE',
@@ -435,6 +478,10 @@ room.prototype.terrain_at = function (position) {
 	return null;
 }
 
+room.prototype.name = function (position) {
+	return this.area + (this.floor ? '-' + this.floor : '');
+}
+
 
 ////
 // entity - general-purpose "game object," covers anything that need to be displayed on-screen, pretty much
@@ -447,7 +494,7 @@ function entity() {
 }
 
 entity.prototype.draw = function () {
-	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg });
+	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg });
 }
 
 
@@ -511,15 +558,34 @@ function terrain(pos, k) {
 	this.position = pos;
 	this.kind = k;
 	this.solid = false;
+	this.blocksLight = false;
 	switch (k) {
 		case terrain.kind.floor:
 			this.character = '.';
-			this.fg = $rle.color.charcoal;
-			this.solid = false;
+			this.fg = $rle.color.gray;
 			break;
 		case terrain.kind.wall:
 			this.character = '#';
-			this.fg = $rle.color.gray;
+			this.fg = $rle.color.black;
+			this.bg = $rle.color.charcoal;
+			this.solid = true;
+			this.blocksLight = true;
+			break;
+		case terrain.kind.chasm:
+			this.character = ':';
+			this.fg = $rle.color.charcoal;
+			this.solid = true;
+			break;
+		case terrain.kind.door:
+			this.character = '+';
+			this.fg = $rle.color.charcoal;
+			this.bg = $rle.color.gray;
+			this.blocksLight = true;
+			break;
+		case terrain.kind.water:
+			this.character = '~';
+			this.fg = $rle.color.cyan;
+			this.bg = $rle.color.blue;
 			this.solid = true;
 			break;
 	}
@@ -527,7 +593,21 @@ function terrain(pos, k) {
 
 terrain.prototype = new entity();
 
+terrain.fromChar = function (chr) {
+	switch (chr) {
+		case '.': return terrain.kind.floor;
+		case '#': return terrain.kind.wall;
+		case ':': return terrain.kind.chasm;
+		case '+': return terrain.kind.door;
+		case '~': return terrain.kind.water;
+	}
+	return null;
+}
+
 terrain.kind = {
-	floor: 0,
-	wall: 1
+	floor: 1,
+	wall: 2,
+	chasm: 3,
+	door: 4,
+	water: 5
 }
