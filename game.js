@@ -242,9 +242,9 @@ state_mainMenu.prototype.first_draw = function () {
 	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center' });
 	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center' });
 	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center' });
-	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { align: 'center' });
-	$rle.put(40, 22, 'enter: select', { align: 'center' });
-	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { align: 'center' });
+	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { fg: $rle.color.charcoal, align: 'center' });
+	$rle.put(40, 22, 'enter: select', { fg: $rle.color.charcoal, align: 'center' });
+	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.cyan, align: 'center' });
 }
 
 state_mainMenu.prototype.move_cursor = function (amount) {

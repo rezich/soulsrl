@@ -97,7 +97,7 @@ $rle.put = function(x, y, text, options) {
 $rle.clear = function (x, y, options) {
 	if (!x && !y) {
 		$('#screen>div>div>div').html('&nbsp;');
-		$('#screen>div>div>div').css('color', 'white');
+		$('#screen>div>div').css('color', 'white');
 		$('#screen>div>div').css('background', 'black');
 		return;
 	}
