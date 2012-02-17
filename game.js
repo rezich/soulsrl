@@ -66,6 +66,7 @@ game.prototype.preload = function () {
 	$.ajax({
 		url: 'rooms/PRISON-3.txt',
 		dataType: 'text',
+		cache: false,
 		success: function (data) {
 			//alert(data);
 			room.data['PRISON-3'] = data;
@@ -562,7 +563,7 @@ function terrain(pos, k) {
 	switch (k) {
 		case terrain.kind.floor:
 			this.character = '.';
-			this.fg = $rle.color.gray;
+			this.fg = $rle.color.charcoal;
 			break;
 		case terrain.kind.wall:
 			this.character = '#';
@@ -573,7 +574,7 @@ function terrain(pos, k) {
 			break;
 		case terrain.kind.chasm:
 			this.character = ':';
-			this.fg = $rle.color.charcoal;
+			this.fg = $rle.color.black;
 			this.solid = true;
 			break;
 		case terrain.kind.door:
@@ -588,6 +589,11 @@ function terrain(pos, k) {
 			this.bg = $rle.color.blue;
 			this.solid = true;
 			break;
+		case terrain.kind.bridge:
+			this.character = '=';
+			this.fg = $rle.color.black;
+			this.bg = $rle.color.brown;
+			break;
 	}
 }
 
@@ -600,6 +606,7 @@ terrain.fromChar = function (chr) {
 		case ':': return terrain.kind.chasm;
 		case '+': return terrain.kind.door;
 		case '~': return terrain.kind.water;
+		case '=': return terrain.kind.bridge;
 	}
 	return null;
 }
@@ -609,5 +616,6 @@ terrain.kind = {
 	wall: 2,
 	chasm: 3,
 	door: 4,
-	water: 5
+	water: 5,
+	bridge: 6
 }
