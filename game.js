@@ -7,7 +7,7 @@ function game() {
 	game.current = this;
 
 	this.messages = new messages();
-	this.player = null
+	this.player = null;
 	this.current_room = null;
 
 	state.reset();
@@ -80,7 +80,7 @@ game.prototype.init = function () {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.player = new creature();
-	this.player.position = { x: 8, y: 8 };
+	this.player.position = { x: 1, y: 1 };
 	this.player.character = '@';
 }
 
@@ -140,10 +140,13 @@ game.prototype.drawUI = function () {
 	$rle.put(0, 24, room_name, { fg: $rle.color.cyan });
 	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.gray });
 	var lvl = "1";
-	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.brightGreen });
+	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.cyan });
 	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.gray });
 	var souls = "100";
-	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.brightGreen });
+	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.cyan });
+	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUMANITY:', { fg: $rle.color.gray });
+	var humanity = "0";
+	$rle.put(22 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.cyan });
 }
 
 ////
@@ -574,7 +577,7 @@ function terrain(pos, k) {
 			break;
 		case terrain.kind.chasm:
 			this.character = ':';
-			this.fg = $rle.color.black;
+			this.fg = $rle.color.cyan;
 			this.solid = true;
 			break;
 		case terrain.kind.door:
