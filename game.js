@@ -311,10 +311,12 @@ state_help.prototype.keys = {
 }
 
 state_help.prototype.draw = function () {
+	$rle.clear();
 	$rle.put(0, 0, 'SoulsRL documentation');
 	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
 	$rle.put(0, 3, "actually play or something.");
 	$rle.put(40, 24, "escape: return", { align: 'center' });
+	$rle.flush();
 }
 
 
