@@ -152,11 +152,7 @@ $rle._put_char = function (chr) {
 	$rle.ctx.textBaseline = 'middle';
 	$rle.ctx.textAlign = 'center';
 	$rle.ctx.fillStyle = fg;
-	$rle.ctx.fillText(chr.character, chr.x * $rle.tileW + ($rle.tileW / 2 - 1), chr.y * $rle.tileH + ($rle.tileH / 2 - 1));
-}
-
-$rle._element_at = function (x, y) {
-	return $($($('#screen').children('div')[y]).children('div')[x]);
+	$rle.ctx.fillText(chr.character, chr.x * $rle.tileW + ($rle.tileW / 2), chr.y * $rle.tileH + ($rle.tileH / 2));
 }
 
 $rle._chr = function (number) {
@@ -168,19 +164,11 @@ $rle._ord = function (character) {
 }
 
 $rle.set_fg = function (x, y, color) {
-	if (this.tiles) {
-	}
-	else {
-		this._element_at(x, y).css('color', color);
-	}
+	console.write('TODO: IMPLEMENT');
 }
 
 $rle.set_bg = function (x, y, color) {
-	if (this.tiles) {
-	}
-	else {
-		this._element_at(x, y).css('background', color);
-	}
+	console.write('TODO: IMPLEMENT');
 }
 
 $rle.draw_box = function (x, y, w, h) {
