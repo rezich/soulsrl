@@ -6,6 +6,16 @@
 function $rle() {
 }
 
+$rle.can = null;
+$rle.ctx = null;
+
+$rle.tileW = 16;
+$rle.tileH = 16;
+$rle.screenW = 80;
+$rle.screenH = 25;
+
+$rle.buffer = [];
+
 $rle.tiles = false;
 
 $rle.keys = {
@@ -59,16 +69,9 @@ $rle.box = {
 	es: '+'
 }
 
-$rle.setup = function () {
-	
-	for (var i = 0; i < 25; i++) {
-		$('#screen').append('<div></div>');
-	}
-	for (var i = 0; i < 25; i++) {
-		for (var j = 0; j < 80; j++) {
-			$($('#screen').children('div')[i]).append('<div></div>');
-		}
-	}
+$rle.setup = function (id) {
+	$rle.can = document.getElementById(id);
+	$rle.ctx = $rle.can.getContext('2d');
 }
 
 $rle.put = function(x, y, text, options) {
@@ -83,49 +86,73 @@ $rle.put = function(x, y, text, options) {
 			}
 		}
 	}
-	while (text != '') {
-		this._put_char(x, y, text.charAt(0));
-		if (options) {
-			if (options.fg) this.set_fg(x, y, options.fg);
-			if (options.bg) this.set_bg(x, y, options.bg);
+	for (var i = 0; i < text.length; i++) {
+		var found = false;
+		for (var j = 0; j < $rle.buffer.length; j++) {
+			if ($rle.buffer[j].x == x && $rle.buffer[j].y == y) {
+				$rle.buffer[j].character = text.charAt(i);
+				if (options) {
+					if (options.fg) $rle.buffer[j].fg = options.fg;
+					if (options.bg) $rle.buffer[j].bg = options.bg;
+				}
+				found = true;
+				break;
+			}
 		}
-		text = text.substring(1);
+		if (found) continue;
+		else {
+			var chr = {
+				x: x,
+				y: y,
+				character: text.charAt(i)
+			};
+			if (options) {
+				if (options.fg) chr.fg = options.fg;
+				if (options.bg) chr.bg = options.bg;
+			}
+			$rle.buffer.push(chr);
+		}
 		x++;
+	}
+}
+
+$rle.flush = function() {
+	for (var i = 0; i < $rle.buffer.length; i++) {
+		var chr = $rle.buffer[i];
+		$rle._put_char(chr);
 	}
 }
 
 $rle.clear = function (x, y, options) {
 	if (!x && !y) {
-		$('#screen>div>div>div').html('&nbsp;');
-		$('#screen>div>div').css('color', 'white');
-		$('#screen>div>div').css('background', 'black');
+		var bg = 'black';
+		if (options && options.bg) bg = options.bg;
+		$rle.ctx.fillStyle = bg;
+		$rle.ctx.fillRect(0, 0, $rle.tileW * $rle.screenW, $rle.tileH * $rle.screenH);
+		$rle.buffer.length = 0;
 		return;
 	}
-	this.set_fg(x, y, $rle.color.white);
-	this.set_bg(x, y, $rle.color.black);
-	this.put(x, y, ' ');
+	else {
+		console.log('warning: not implemented!');
+		//this.set_fg(x, y, $rle.color.white);
+		//this.set_bg(x, y, $rle.color.black);
+		//this.put(x, y, ' ');
+	}
 }
 
-$rle._put_char = function (x, y, chr) {
-	chr = $rle._convert_to_html(chr);
-	if (chr == '' || chr == null) {
-		if (this.tiles) return;
-		chr = ' ';
-	}
-	var line = $($('#screen').children('div')[y]);
-	var character = $(line.children('div')[x]);
-	character.html('');
-	if (this.tiles) {
-		var x = Math.floor(this._ord(chr) / 16) * 16
-		var y = (this._ord(chr) % 16) * 16;
-		character.css('backgroundPosition', -x + 'px ' + -y + 'px');
-	}
-	else {
-		if (chr == ' ') {
-			chr = '&nbsp;';
-		}
-		character.html('<div>' + chr + '</div>');
-	}
+$rle._put_char = function (chr) {
+	if (chr.character == '' || !chr.character) chr.character = '';
+	var fg = 'white';
+	var bg = 'black';
+	if (chr.fg) fg = chr.fg;
+	if (chr.bg) bg = chr.bg;
+	$rle.ctx.fillStyle = bg;
+	$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
+	$rle.ctx.font = 'bold 10pt sans-serif';
+	$rle.ctx.textBaseline = 'middle';
+	$rle.ctx.textAlign = 'center';
+	$rle.ctx.fillStyle = fg;
+	$rle.ctx.fillText(chr.character, chr.x * $rle.tileW + ($rle.tileW / 2 - 1), chr.y * $rle.tileH + ($rle.tileH / 2 - 1));
 }
 
 $rle._element_at = function (x, y) {
@@ -138,10 +165,6 @@ $rle._chr = function (number) {
 
 $rle._ord = function (character) {
 	return character.charCodeAt(0);
-}
-
-$rle._convert_to_html = function (character) {
-	return character.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }
 
 $rle.set_fg = function (x, y, color) {

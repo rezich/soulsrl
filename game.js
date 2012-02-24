@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$rle.setup();
+	$rle.setup('screen');
 	new game();
 });
 
@@ -49,7 +49,7 @@ game.handleInput = function (e) {
 		$rle.put(0, 0, 'no state provided');
 		return;
 	}
-	var commands = state.current().keys
+	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
 		for (var key in keys) {
@@ -232,12 +232,7 @@ state_mainMenu.prototype.keys = {
 }
 
 state_mainMenu.prototype.draw = function () {
-	for (var i = 0; i < state_mainMenu.entries.length; i++) {
-		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center' });
-	}
-}
-
-state_mainMenu.prototype.first_draw = function () {
+	$rle.clear();
 	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center' });
 	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center' });
 	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center' });
@@ -248,6 +243,10 @@ state_mainMenu.prototype.first_draw = function () {
 	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { fg: $rle.color.charcoal, align: 'center' });
 	$rle.put(40, 22, 'enter: select', { fg: $rle.color.charcoal, align: 'center' });
 	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.cyan, align: 'center' });
+	for (var i = 0; i < state_mainMenu.entries.length; i++) {
+		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center' });
+	}
+	$rle.flush();
 }
 
 state_mainMenu.prototype.move_cursor = function (amount) {
@@ -289,8 +288,10 @@ function state_loading() {}
 
 state_loading.prototype = new state();
 
-state_loading.prototype.first_draw = function () {
+state_loading.prototype.draw = function () {
+	$rle.clear();
 	$rle.put(40, 13, 'L O A D I N G . . .', { align: 'center' });
+	$rle.flush();
 }
 
 
@@ -309,7 +310,7 @@ state_help.prototype.keys = {
 	}
 }
 
-state_help.prototype.first_draw = function () {
+state_help.prototype.draw = function () {
 	$rle.put(0, 0, 'SoulsRL documentation');
 	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
 	$rle.put(0, 3, "actually play or something.");
@@ -380,15 +381,18 @@ state_game.prototype.keys = {
 }
 
 state_game.prototype.draw = function () {
-	game.current.messages.draw();
-	game.current.drawUI();
-}
-
-state_game.prototype.first_draw = function () {
+	$rle.clear();
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].draw();
 	}
 	game.current.player.draw();
+	game.current.messages.draw();
+	game.current.drawUI();
+	$rle.flush();
+}
+
+state_game.prototype.first_draw = function () {
+
 }
 
 

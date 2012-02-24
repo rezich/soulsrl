@@ -4,37 +4,13 @@
 	background: black;
 	color: white;
 	width: 1280px;
+	height: 400px;
+	
+}
+
+#container {
+	width: 1280px;
 	margin: 0 auto;
-}
-
-#screen > div {
-	min-height: 16px;
-	max-height: 16px;
-	clear: both;
-}
-
-#screen > div > div, #screen > div > img12 {
-	min-height: 16px;
-	max-height: 16px;
-	min-width: 16px;
-	max-width: 16px;
-	background-position: 0px 0px;
-	float: left;
-	text-align: center;
-	cursor: default;
-	overflow: hidden;
-}
-
-#screen > div > div > div {
-	font-size: 14px;
-	top: 0;
-	position: relative;
-	font-weight: bolder;
-}
-
-#screen > div > input {
-	background: transparent;
-	border: none;
 }
 
 body {

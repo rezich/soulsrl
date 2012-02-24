@@ -5,14 +5,16 @@
 	<title>SoulsRL</title>
 	<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="util.js"></script>
-	<script type="text/javascript" src="engine.js"></script>
-	<script type="text/javascript" src="game.js"></script>
+	<script type="application/javascript" src="engine.js"></script>
+	<script type="application/javascript" src="game.js"></script>
 	<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 	<h1>SoulsRL</h1>
 	<h2>kind of like Dark Souls, but a roguelike</h2>
-	<div id="screen"></div>
+	<div id="container">
+		<canvas id="screen" width="1280" height="400"></canvas>
+	</div>	
 	<div>
 		<p>So far, just arrow keys, numpad, or vi keys to move.</p>
 		<p>Source available on github <a href="https://github.com/adamrezich/soulsrl">here</a>.</p>
