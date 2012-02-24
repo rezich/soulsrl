@@ -422,8 +422,6 @@ messages.prototype.draw = function () {
 		this.clear();
 		return;
 	}
-	this.clear();
-	this.cleared = false;
 	if (diff > 0) $rle.put(0, 3 - diff, this.lines[this.lastLine + 1].text);
 	if (diff > 1) $rle.put(0, 4 - diff, this.lines[this.lastLine + 2].text);
 	if (diff > 2) {
@@ -437,12 +435,9 @@ messages.prototype.draw = function () {
 }
 
 messages.prototype.clear = function (override) {
-	if (!this.cleared || override) {
-		this.cleared = true;
-		$rle.put(0, 0, '                                                                                ');
-		$rle.put(0, 1, '                                                                                ');
-		$rle.put(0, 2, '                                                                                ');
-	}
+	$rle.put(0, 0, '                                                                                ');
+	$rle.put(0, 1, '                                                                                ');
+	$rle.put(0, 2, '                                                                                ');
 }
 
 
