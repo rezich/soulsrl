@@ -209,6 +209,7 @@ $rle.put = function(x, y, text, options) {
 				if (options) {
 					if (options.fg) $rle.buffer[j].fg = options.fg;
 					if (options.bg) $rle.buffer[j].bg = options.bg;
+					if (options.alpha) $rle.buffer[j].alpha = options.alpha;
 				}
 				found = true;
 				break;
@@ -227,6 +228,7 @@ $rle.put = function(x, y, text, options) {
 			if (options) {
 				if (options.fg) chr.fg = options.fg;
 				if (options.bg) chr.bg = options.bg;
+				if (options.alpha) chr.alpha = options.alpha;
 			}
 			$rle.buffer.push(chr);
 		}
@@ -259,8 +261,11 @@ $rle._put_char = function (chr) {
 	if (chr.character == '' || !chr.character) chr.character = '';
 	var fg = 'white';
 	var bg = 'black';
+	var alpha = 0;
 	if (chr.fg) fg = $rle._parse_color(chr.fg);
 	if (chr.bg) bg = $rle._parse_color(chr.bg);
+	if (chr.alpha) alpha = chr.alpha;
+
 	$rle.ctx.fillStyle = bg;
 	$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
 	$rle.ctx.font = $rle.font;
@@ -268,6 +273,11 @@ $rle._put_char = function (chr) {
 	$rle.ctx.textAlign = 'center';
 	$rle.ctx.fillStyle = fg;
 	$rle.ctx.fillText(chr.character, chr.x * $rle.tileW + ($rle.tileW / 2), chr.y * $rle.tileH + ($rle.tileH / 2));
+
+	if (alpha) {
+		$rle.ctx.fillStyle = $rle._parse_color({ r: 0, g: 0, b: 0, a: 1 - alpha })
+		$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
+	}
 }
 
 $rle._chr = function (number) {
@@ -279,6 +289,9 @@ $rle._ord = function (character) {
 }
 
 $rle._parse_color = function (color) {
+	if (color.r != null && color.g != null && color.b != null && color.a != null) {
+		return 'rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', ' + color.a + ')';
+	}
 	if (color.r != null && color.g != null && color.b != null) {
 		return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
 	}

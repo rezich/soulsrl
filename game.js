@@ -54,7 +54,6 @@ game.handleInput = function (event) {
 		return;
 	}
 	if (!game._keysEnabled) {
-		console.log('slow down dere partner');
 		return false;
 	}
 	var commands = state.current().keys;
@@ -386,7 +385,7 @@ state_help.prototype.draw = function () {
 ////
 
 function state_inputName() {
-	this.name = '';
+	this.name = 'Stebbins';
 }
 
 state_inputName.prototype = new state();
@@ -508,8 +507,11 @@ state_inputName.prototype.keys = {
 
 state_inputName.prototype.draw = function () {
 	$rle.clear();
-	$rle.put(40, 13, 'What is your name?', { align: 'center', fg: $rle.color.system.cyan });
-	$rle.put(40, 15, this.name, { align: 'center' });
+	$rle.put(40, 11, 'What is your name?', { align: 'center', fg: $rle.color.system.cyan });
+	$rle.put(40, 13, this.name, { align: 'center' });
+	$rle.put(40 + Math.floor(this.name.length / 2), 13, ' ', { bg: $rle.color.system.white });
+	$rle.put(40, 23, 'enter: confirm', { align: 'center', fg: $rle.color.system.charcoal });
+	$rle.put(40, 24, 'escape: return', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.flush();
 }
 
@@ -584,6 +586,9 @@ state_game.prototype.keys = {
 
 state_game.prototype.draw = function () {
 	$rle.clear();
+	for (var t in game.current.current_room.terrain) {
+		game.current.current_room.terrain[t].lit = false;
+	}
 	fieldOfView(game.current.player.position.x, game.current.player.position.y, 20, game.visit, game.blocked);
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].draw();
@@ -678,7 +683,7 @@ room.prototype.solid_at = function (position) {
 
 room.prototype.blocks_light_at = function (position) {
 	for (var t in this.terrain) {
-		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].blocksLight;
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].blocks_light;
 	}
 	return true;
 }
@@ -692,7 +697,10 @@ room.prototype.terrain_at = function (position) {
 
 room.prototype.visit = function (x, y) {
 	for (var t in this.terrain) {
-		if (this.terrain[t].position.x == x && this.terrain[t].position.y == y) this.terrain[t].visited = true;
+		if (this.terrain[t].position.x == x && this.terrain[t].position.y == y) {
+			this.terrain[t].visited = true;
+			this.terrain[t].lit = true;
+		}
 	}
 	return null;
 }
@@ -714,6 +722,11 @@ function entity() {
 	this.position = { x: 0, y: 0 };
 	this.character = '?';
 	this.fg = $rle.color.system.white;
+	// this.bg - why haven't I implemented this yet?
+	this.lit = false;
+	this.visited = false; // maybe don't use this?
+	this.solid = false;
+	this.blocks_light = false;
 }
 
 entity.prototype.should_draw = function () {
@@ -721,7 +734,7 @@ entity.prototype.should_draw = function () {
 }
 
 entity.prototype.draw = function () {
-	if (this.should_draw())	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg });
+	if (this.should_draw())	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg, alpha: (this.lit ? 0 : 0.5) });
 }
 
 
@@ -732,6 +745,10 @@ entity.prototype.draw = function () {
 function creature() {
 	this.maxHP = 10;
 	this.HP = this.maxHP;
+
+	this.respawns = true;
+
+	this.lit = true;
 }
 
 creature.prototype = new entity();
@@ -779,17 +796,80 @@ creature.prototype.move = function (direction) {
 	}
 }
 
+creature.data = {
+
+	////
+	// HOLLOW - decrepit, weak zombies
+	////
+
+	hollow: {						// basically naked
+		character: 'h'
+	},
+	hollow_archer: {				// same as hollow, but with a short bow
+		character: 'h'
+	},
+	hollow_sword: {					// lightly armored hollow with a sword
+		character: 'h'
+	},
+	hollow_firebomb: {				// super-annoying enemy that throws firebombs at regular intervals
+		character: 'h'
+	},
+
+
+	////
+	// UNDEAD - more skeletal-looking than hollow, and actually dangerous
+	////
+
+	undead_sword: {					// basically stronger hollow_sword
+		character: 'u'
+	},
+	undead_spear: {					// has a spear and small shield, dangerous early enemy
+		character: 'u'
+	},
+	undead_crossbow: {				// stronger hollow_archer, basically
+		character: 'u'
+	},
+	undead_assassin: {				// throwing knives, counters, and backstabs make this a worthy enemy
+		character: 'a'
+	},
+
+
+	////
+	// KNIGHT - stronger, mostly solo enemies
+	////
+
+	knight_sword: {					// burly melee dude
+		character: 'k'
+	},
+	knight_mace: {					// another burly melee dude
+		character: 'k'
+	},
+	knight_black: {					// this guy will rip your shit up
+		character: 'K'
+	},
+
+
+	////
+	// RAT - disgusting, poisonous vermin of varying size and strength
+	////
+
+	rat_small: {					// size of a small dog
+		character: 'r'
+	},
+	rat_large: {					// size of a small bear
+		character: 'R'
+	},
+
+}
+
 
 ////
 // terrain - static stuff, walls and floors and so forth
 ////
 
 function terrain(pos, k) {
-	this.visited = false;
 	this.position = pos;
 	this.kind = k;
-	this.solid = false;
-	this.blocksLight = false;
 	switch (k) {
 		case terrain.kind.floor:
 			this.character = '.';
@@ -800,7 +880,7 @@ function terrain(pos, k) {
 			this.fg = $rle.color.system.black;
 			this.bg = $rle.color.system.charcoal;
 			this.solid = true;
-			this.blocksLight = true;
+			this.blocks_light = true;
 			break;
 		case terrain.kind.chasm:
 			this.character = ':';
@@ -811,7 +891,7 @@ function terrain(pos, k) {
 			this.character = '+';
 			this.fg = $rle.color.system.charcoal;
 			this.bg = $rle.color.system.gray;
-			this.blocksLight = true;
+			this.blocks_light = true;
 			break;
 		case terrain.kind.water:
 			this.character = '~';
