@@ -40,7 +40,7 @@ game.viewport_offset = {
 	y: 3
 }
 
-game.handleInput = function (e) {
+game.handleInput = function (event) {
 	if (!game.current) {
 		alert('no game!');
 		return;
@@ -52,8 +52,16 @@ game.handleInput = function (e) {
 	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
-		for (var key in keys) {
-			if (keys[key] == e.keyCode) {
+		if (Object.prototype.toString.call(keys) === '[object Array]') {
+			for (var key in keys) {
+				if (keys[key] == event.keyCode) {
+					commands[command].action();
+					return false;
+				}
+			}
+		}
+		else {
+			if (keys == event.keyCode) {
 				commands[command].action();
 				return false;
 			}
@@ -61,7 +69,7 @@ game.handleInput = function (e) {
 	}
 }
 
-game.prototype.preload = function () {
+game.prototype.preload = function (game_data) {
 	// THIS IS SUPER UGLY AND MESSY AND I AM DESERVING OF DEATH FOR WRITING IT
 	// BUT IT'S JUST TO TEST OUT LOADING OKAY FINE GOD I'LL FIX IT IN THE FUTURE
 	state.add(new state_loading(), { clear: true });
@@ -84,7 +92,7 @@ game.prototype.preload = function () {
 						success: function (data) {
 							room.data['PRISON-3'] = data;
 							state.pop();
-							state.replace(new state_game(), { clear: true });
+							state.replace(new state_game(game_data.player_name), { clear: true });
 						}
 					});
 				}
@@ -93,10 +101,11 @@ game.prototype.preload = function () {
 	});
 }
 
-game.prototype.init = function () {
+game.prototype.init = function (player_name) {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.player = new creature();
+	this.player.name = player_name;
 	this.player.position = { x: 1, y: 1 };
 	this.player.character = '@';
 }
@@ -142,7 +151,7 @@ game.prototype.generateDungeon = function (area, floor) {
 game.prototype.drawUI = function () {
 
 	// UI line 1
-	var name = "Adam";
+	var name = this.player.name;
 	$rle.put(0, 23, name, { fg: $rle.color.system.brightCyan });
 	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.system.gray });
 	var hp = "10/10";
@@ -287,7 +296,7 @@ state_mainMenu.prototype.confirm = function () {
 state_mainMenu.entries = [
 	{
 		text: "New game",
-		action: function () { game.current.preload(); }
+		action: function () { state.replace(new state_inputName()); }
 	},
 	{
 		text: "Continue",
@@ -308,7 +317,9 @@ state_mainMenu.entries = [
 // state_loading - just a fat loading screen
 ////
 
-function state_loading() {}
+function state_loading(options) {
+	this.data = options;
+}
 
 state_loading.prototype = new state();
 
@@ -348,12 +359,147 @@ state_help.prototype.draw = function () {
 // state_inputName - self-explanatory
 ////
 
-function state_inputName() {}
+function state_inputName() {
+	this.name = '';
+}
 
 state_inputName.prototype = new state();
 
 state_inputName.prototype.keys = {
-	
+	a: {
+		keys: $rle.keys.a,
+		action: function () { state.current().type_char('a'); }
+	},
+	b: {
+		keys: $rle.keys.b,
+		action: function () { state.current().type_char('b'); }
+	},
+	c: {
+		keys: $rle.keys.c,
+		action: function () { state.current().type_char('c'); }
+	},
+	d: {
+		keys: $rle.keys.d,
+		action: function () { state.current().type_char('d'); }
+	},
+	e: {
+		keys: $rle.keys.e,
+		action: function () { state.current().type_char('e'); }
+	},
+	f: {
+		keys: $rle.keys.f,
+		action: function () { state.current().type_char('f'); }
+	},
+	g: {
+		keys: $rle.keys.g,
+		action: function () { state.current().type_char('g'); }
+	},
+	h: {
+		keys: $rle.keys.h,
+		action: function () { state.current().type_char('h'); }
+	},
+	i: {
+		keys: $rle.keys.i,
+		action: function () { state.current().type_char('i'); }
+	},
+	j: {
+		keys: $rle.keys.j,
+		action: function () { state.current().type_char('j'); }
+	},
+	k: {
+		keys: $rle.keys.k,
+		action: function () { state.current().type_char('k'); }
+	},
+	l: {
+		keys: $rle.keys.l,
+		action: function () { state.current().type_char('l'); }
+	},
+	m: {
+		keys: $rle.keys.m,
+		action: function () { state.current().type_char('m'); }
+	},
+	n: {
+		keys: $rle.keys.n,
+		action: function () { state.current().type_char('n'); }
+	},
+	o: {
+		keys: $rle.keys.o,
+		action: function () { state.current().type_char('o'); }
+	},
+	p: {
+		keys: $rle.keys.p,
+		action: function () { state.current().type_char('p'); }
+	},
+	q: {
+		keys: $rle.keys.q,
+		action: function () { state.current().type_char('q'); }
+	},
+	r: {
+		keys: $rle.keys.r,
+		action: function () { state.current().type_char('r'); }
+	},
+	s: {
+		keys: $rle.keys.s,
+		action: function () { state.current().type_char('s'); }
+	},
+	t: {
+		keys: $rle.keys.t,
+		action: function () { state.current().type_char('t'); }
+	},
+	u: {
+		keys: $rle.keys.u,
+		action: function () { state.current().type_char('u'); }
+	},
+	v: {
+		keys: $rle.keys.v,
+		action: function () { state.current().type_char('v'); }
+	},
+	w: {
+		keys: $rle.keys.w,
+		action: function () { state.current().type_char('w'); }
+	},
+	x: {
+		keys: $rle.keys.x,
+		action: function () { state.current().type_char('x'); }
+	},
+	y: {
+		keys: $rle.keys.y,
+		action: function () { state.current().type_char('y'); }
+	},
+	z: {
+		keys: $rle.keys.z,
+		action: function () { state.current().type_char('z'); }
+	},
+	confirm: {
+		keys: $rle.keys.enter,
+		action: function () { state.current().confirm(); }
+	},
+	backspace: {
+		keys: $rle.keys.backspace,
+		action: function () { state.current().delete_char(); }
+	}
+}
+
+state_inputName.prototype.draw = function () {
+	$rle.clear();
+	$rle.put(40, 13, 'What is your name?', { align: 'center', fg: $rle.color.system.cyan });
+	$rle.put(40, 15, this.name, { align: 'center' });
+	$rle.flush();
+}
+
+state_inputName.prototype.type_char = function (chr) {
+	this.name = this.name + ($rle.shift ? chr.toUpperCase() : chr);
+	this.draw();
+}
+
+state_inputName.prototype.delete_char = function () {
+	if (this.name == '') return;
+	this.name = this.name.substring(0, this.name.length - 1);
+	this.draw();
+}
+
+state_inputName.prototype.confirm = function () {
+	game.current.preload({ player_name: this.name });
 }
 
 
@@ -361,8 +507,8 @@ state_inputName.prototype.keys = {
 // state_game - main game state
 ////
 
-function state_game() {
-	game.current.init();
+function state_game(player_name) {
+	game.current.init(player_name);
 }
 
 state_game.prototype = new state();
@@ -418,7 +564,6 @@ state_game.prototype.draw = function () {
 }
 
 state_game.prototype.first_draw = function () {
-
 }
 
 

@@ -18,6 +18,8 @@ $rle.font = 'bold 10pt sans-serif';
 
 $rle.buffer = [];
 
+$rle.shift = false;
+
 $rle.tiles = false;
 
 $rle.keys = {
@@ -65,7 +67,9 @@ $rle.keys = {
 	arrow_sw: [66, 97],
 	arrow_s: [40, 74, 98],
 	arrow_se: [78, 99],
-	escape: [27]
+	escape: 27,
+	backspace: 8,
+	enter: 13
 }
 
 $rle.dir = {
@@ -296,3 +300,10 @@ $rle.draw_box = function (x, y, w, h) {
 	}
 }
 
+$(document).keydown(function (event) {
+	if (event.keyCode == 16) $rle.shift = true;
+});
+
+$(document).keyup(function (event) {
+	if (event.keyCode == 16) $rle.shift = false;
+})
