@@ -599,18 +599,13 @@ state_game.prototype.keys = {
 
 state_game.prototype.draw = function () {
 	$rle.clear();
-	for (var t in game.current.current_room.terrain) {
-		game.current.current_room.terrain[t].lit = false;
-	}
-	for (var c in game.current.current_room.creatures) {
-		game.current.current_room.creatures[c].lit = false;
+	var ents = game.current.current_room.entities;
+	for (var i in ents) {
+		ents[i].lit = false;
 	}
 	fieldOfView(game.current.player.position.x, game.current.player.position.y, game.current.current_room.visibility, game.visit, game.blocked);
-	for (var t in game.current.current_room.terrain) {
-		game.current.current_room.terrain[t].draw();
-	}
-	for (var c in game.current.current_room.creatures) {
-		game.current.current_room.creatures[c].draw();
+	for (var i in ents) {
+		ents[i].draw();
 	}
 	game.current.player.draw();
 	game.current.messages.draw();
@@ -677,6 +672,12 @@ function room(area, floor) {
 	this.visibility = 10;
 }
 
+room.prototype = {
+	get entities() {
+		return this.terrain.concat(this.creatures);
+	}
+}
+
 room.data = {}
 
 room.area = {
@@ -709,16 +710,11 @@ room.prototype.solid_at = function (position) {
 room.prototype.blocks_light_at = function (position) {
 	var blocks = false;
 	var anything = false;
-	for (var t in this.terrain) {
-		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) {
+	var ents = this.entities;
+	for (var i in ents) {
+		if (ents[i].position.x == position.x && ents[i].position.y == position.y) {
 			anything = true;
-			blocks = blocks || this.terrain[t].blocks_light;
-		}
-	}
-	for (var c in this.creatures) {
-		if (this.creatures[c].position.x == position.x && this.creatures[c].position.y == position.y) {
-			anything = true;
-			blocks = blocks || this.creatures[c].blocks_light;
+			blocks = blocks || ents[i].blocks_light;
 		}
 	}
 	if (anything) return blocks;
@@ -733,16 +729,11 @@ room.prototype.terrain_at = function (position) {
 }
 
 room.prototype.visit = function (x, y) {
-	for (var t in this.terrain) {
-		if (this.terrain[t].position.x == x && this.terrain[t].position.y == y) {
-			this.terrain[t].visited = true;
-			this.terrain[t].lit = true;
-		}
-	}
-	for (var c in this.creatures) {
-		if (this.creatures[c].position.x == x && this.terrain[c].position.y == y) {
-			this.creatures[c].visited = true;
-			this.creatures[c].lit = true;
+	var ents = this.entities;
+	for (var i in ents) {
+		if (ents[i].position.x == x && ents[i].position.y == y) {
+			ents[i].visited = true;
+			ents[i].lit = true;
 		}
 	}
 	return null;
@@ -993,7 +984,7 @@ function terrain(pos, k) {
 			this.character = '+';
 			this.fg = $rle.color.system.charcoal;
 			this.bg = $rle.color.system.gray;
-			this.blocks_light = true;
+			//this.blocks_light = true;
 			break;
 		case terrain.kind.water:
 			this.character = '~';
