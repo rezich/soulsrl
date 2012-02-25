@@ -129,15 +129,8 @@ game.prototype.init = function (player_name) {
 }
 
 game.prototype.init_player = function(name) {
-	this.player = new creature({ x: 1, y: 1 });
+	this.player = new creature({ x: 1, y: 1 }, creature.data.player);
 	this.player.name = name;
-	// TODO: MOVE TO CREATURE DATA
-	this.player.level = 1;
-	this.player.XP = 0;
-	this.player.humanity = 0;
-	this.player.maxHP = 10;
-	this.player.HP = this.player.maxHP;
-	this.player.character = '@';
 }
 
 game.prototype.redraw_tile = function (position) {
@@ -164,7 +157,7 @@ game.prototype.generateDungeon = function (area, floor) {
 			if (kind) r.add_terrain({ x: j, y: i }, kind);
 			// TODO: REMOVE AFTER TESTING IS COMPLETE
 			if (data[i].charAt(j) == '*') {
-				r.add_terrain({ x: j, y: i }, terrain.kind.floor);
+				r.add_terrain({ x: j, y: i }, terrain.data.floor);
 				r.add_creature({ x: j, y: i }, creature.data.hollow_unarmed);
 			}
 		}
@@ -785,8 +778,6 @@ function creature(pos, data) {
 
 	this.respawns = true;
 
-	this.lit = true;
-
 	// TODO: Improve this copy code if creature data is ever going to
 	// contain arrays or objects that'll be modified in the copy
 
@@ -952,6 +943,20 @@ creature.data = {
 	butcher: {						// slow, tough solo creature with a butcher's knife and meat hook
 		character: 'B',
 		respawns: false
+	},
+
+
+	////
+	// PLAYER - durr, it's the player
+	////
+
+	player: {
+		character: '@',
+		maxHP: 10,
+		level: 1,
+		XP: 0,
+		humanity: 0,
+		lit: true
 	}
 }
 
@@ -960,43 +965,16 @@ creature.data = {
 // terrain - static stuff, walls and floors and so forth
 ////
 
-function terrain(pos, k) {
+function terrain(pos, data) {
 	this.position = pos;
-	this.kind = k;
-	switch (k) {
-		case terrain.kind.floor:
-			this.character = '.';
-			this.fg = $rle.color.system.charcoal;
-			break;
-		case terrain.kind.wall:
-			this.character = '#';
-			this.fg = $rle.color.system.black;
-			this.bg = $rle.color.system.charcoal;
-			this.solid = true;
-			this.blocks_light = true;
-			break;
-		case terrain.kind.chasm:
-			this.character = ':';
-			this.fg = $rle.color.system.cyan;
-			this.solid = true;
-			break;
-		case terrain.kind.door:
-			this.character = '+';
-			this.fg = $rle.color.system.charcoal;
-			this.bg = $rle.color.system.gray;
-			//this.blocks_light = true;
-			break;
-		case terrain.kind.water:
-			this.character = '~';
-			this.fg = $rle.color.system.cyan;
-			this.bg = $rle.color.system.blue;
-			this.solid = true;
-			break;
-		case terrain.kind.bridge:
-			this.character = '=';
-			this.fg = $rle.color.system.black;
-			this.bg = $rle.color.system.brown;
-			break;
+
+	// TODO: Improve this copy code if terrain data is ever going to
+	// contain arrays or objects that'll be modified in the copy
+
+	if (data) {
+		for (var key in data) {
+        	this[key] = data[key];
+    	}
 	}
 }
 
@@ -1008,21 +986,55 @@ terrain.prototype.should_draw = function () {
 
 terrain.fromChar = function (chr) {
 	switch (chr) {
-		case '.': return terrain.kind.floor;
-		case '#': return terrain.kind.wall;
-		case ':': return terrain.kind.chasm;
-		case '+': return terrain.kind.door;
-		case '~': return terrain.kind.water;
-		case '=': return terrain.kind.bridge;
+		case '.': return terrain.data.floor;
+		case '#': return terrain.data.wall;
+		case ':': return terrain.data.chasm;
+		case '+': return terrain.data.door;
+		case '~': return terrain.data.water;
+		case '=': return terrain.data.bridge;
 	}
 	return null;
 }
 
-terrain.kind = {
-	floor: 1,
-	wall: 2,
-	chasm: 3,
-	door: 4,
-	water: 5,
-	bridge: 6
+terrain.use_door = function (door, open) {
+	if (open) {
+
+	}
+}
+
+terrain.data = {
+	floor: {
+		character: '.',
+		fg: $rle.color.system.charcoal
+	},
+	wall: {
+		character: '#',
+		fg: $rle.color.system.black,
+		bg: $rle.color.system.charcoal,
+		solid: true,
+		blocks_light: true
+	},
+	chasm: {
+		character: ':',
+		fg: $rle.color.system.cyan,
+		solid: true
+	},
+	door: {
+		character: '+',
+		fg: $rle.color.system.charcoal,
+		bg: $rle.color.system.gray,
+		blocks_light: true,
+		open: false
+	},
+	water: {
+		character: '~',
+		fg: $rle.color.system.cyan,
+		bg: $rle.color.system.blue,
+		solid: true
+	},
+	bridge: {
+		character: '=',
+		fg: $rle.color.system.black,
+		bg: $rle.color.system.brown
+	}
 }
