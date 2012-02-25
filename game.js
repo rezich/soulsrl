@@ -69,6 +69,16 @@ game.handleInput = function (event) {
 	}
 }
 
+// TODO: GET RID OF THIS
+game.blocked = function (x, y) {
+	return game.current.current_room.blocked(x, y);
+}
+
+// TODO: GET RID OF THIS
+game.visit = function (x, y) {
+	return game.current.current_room.visit(x, y);
+}
+
 game.prototype.preload = function (game_data) {
 	// THIS IS SUPER UGLY AND MESSY AND I AM DESERVING OF DEATH FOR WRITING IT
 	// BUT IT'S JUST TO TEST OUT LOADING OKAY FINE GOD I'LL FIX IT IN THE FUTURE
@@ -556,6 +566,7 @@ state_game.prototype.keys = {
 
 state_game.prototype.draw = function () {
 	$rle.clear();
+	fieldOfView(game.current.player.position.x, game.current.player.position.y, 20, game.visit, game.blocked);
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].draw();
 	}
@@ -647,11 +658,29 @@ room.prototype.solid_at = function (position) {
 	return true;
 }
 
+room.prototype.blocks_light_at = function (position) {
+	for (var t in this.terrain) {
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].blocksLight;
+	}
+	return true;
+}
+
 room.prototype.terrain_at = function (position) {
 	for (var t in this.terrain) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t];
 	}
 	return null;
+}
+
+room.prototype.visit = function (x, y) {
+	for (var t in this.terrain) {
+		if (this.terrain[t].position.x == x && this.terrain[t].position.y == y) this.terrain[t].visited = true;
+	}
+	return null;
+}
+
+room.prototype.blocked = function (x, y) {
+	return this.blocks_light_at({ x: x, y: y });
 }
 
 room.prototype.name = function (position) {
@@ -669,8 +698,12 @@ function entity() {
 	this.fg = $rle.color.system.white;
 }
 
+entity.prototype.should_draw = function () {
+	return true;
+}
+
 entity.prototype.draw = function () {
-	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg });
+	if (this.should_draw())	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg });
 }
 
 
@@ -774,6 +807,10 @@ function terrain(pos, k) {
 }
 
 terrain.prototype = new entity();
+
+terrain.prototype.should_draw = function () {
+	return this.visited;
+}
 
 terrain.fromChar = function (chr) {
 	switch (chr) {
