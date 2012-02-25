@@ -233,13 +233,20 @@ state_mainMenu.prototype.keys = {
 
 state_mainMenu.prototype.draw = function () {
 	$rle.clear();
-	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center', fg: $rle.color.red });
-	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center', fg: $rle.color.red });
+	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center', fg: $rle.color.white });
+	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center', fg: $rle.color.white });
+	$rle.put(52, 3, "ooooooooo.   ooooo       ", { fg: $rle.color.red });
+	$rle.put(52, 4, "`888   `Y88. `888'       ", { fg: $rle.color.red });
+	$rle.put(52, 5, " 888   .d88'  888        ", { fg: $rle.color.red });
+	$rle.put(52, 6, " 888ooo88P'   888        ", { fg: $rle.color.red });
+	$rle.put(52, 7, " 888`88b.     888        ", { fg: $rle.color.red });
+	$rle.put(52, 8, " 888  `88b.   888       o", { fg: $rle.color.red });
+	$rle.put(52, 9, "o888o  o888o o888ooooood8", { fg: $rle.color.red });
 	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { fg: $rle.color.charcoal, align: 'center' });
 	$rle.put(40, 22, 'enter: select', { fg: $rle.color.charcoal, align: 'center' });
 	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.cyan, align: 'center' });

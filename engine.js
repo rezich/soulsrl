@@ -99,7 +99,10 @@ $rle.put = function(x, y, text, options) {
 				break;
 			}
 		}
-		if (found) continue;
+		if (found) {
+			x++;
+			continue;
+		}
 		else {
 			var chr = {
 				x: x,
