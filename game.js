@@ -143,27 +143,27 @@ game.prototype.drawUI = function () {
 
 	// UI line 1
 	var name = "Adam";
-	$rle.put(0, 23, name, { fg: $rle.color.brightCyan });
-	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.gray });
+	$rle.put(0, 23, name, { fg: $rle.color.system.brightCyan });
+	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.system.gray });
 	var hp = "10/10";
-	$rle.put(name.length + 4, 23, hp, { fg: $rle.color.red });
-	$rle.put(name.length + 5 + hp.length, 23, "STM:", { fg: $rle.color.gray });
+	$rle.put(name.length + 4, 23, hp, { fg: $rle.color.system.red });
+	$rle.put(name.length + 5 + hp.length, 23, "STM:", { fg: $rle.color.system.gray });
 	var stm = "100%";
-	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.cyan });
+	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.system.cyan });
 
 	// UI line 2
-	//$rle.put(0, 24, "DLVL:", { fg: $rle.color.gray });
+	//$rle.put(0, 24, "DLVL:", { fg: $rle.color.system.gray });
 	var room_name = game.current.current_room.name();
-	$rle.put(0, 24, room_name, { fg: $rle.color.cyan });
-	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.gray });
+	$rle.put(0, 24, room_name, { fg: $rle.color.system.cyan });
+	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.system.gray });
 	var lvl = "1";
-	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.cyan });
-	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.gray });
+	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.system.cyan });
+	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.system.gray });
 	var souls = "100";
-	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.cyan });
-	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUMANITY:', { fg: $rle.color.gray });
+	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.system.cyan });
+	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUMANITY:', { fg: $rle.color.system.gray });
 	var humanity = "0";
-	$rle.put(22 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.cyan });
+	$rle.put(22 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.system.cyan });
 }
 
 ////
@@ -250,23 +250,23 @@ state_mainMenu.prototype.keys = {
 
 state_mainMenu.prototype.draw = function () {
 	$rle.clear();
-	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center', fg: $rle.color.white });
-	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center', fg: $rle.color.white });
-	$rle.put(52, 3, "ooooooooo.   ooooo       ", { fg: $rle.color.red });
-	$rle.put(52, 4, "`888   `Y88. `888'       ", { fg: $rle.color.red });
-	$rle.put(52, 5, " 888   .d88'  888        ", { fg: $rle.color.red });
-	$rle.put(52, 6, " 888ooo88P'   888        ", { fg: $rle.color.red });
-	$rle.put(52, 7, " 888`88b.     888        ", { fg: $rle.color.red });
-	$rle.put(52, 8, " 888  `88b.   888       o", { fg: $rle.color.red });
-	$rle.put(52, 9, "o888o  o888o o888ooooood8", { fg: $rle.color.red });
-	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { fg: $rle.color.charcoal, align: 'center' });
-	$rle.put(40, 22, 'enter: select', { fg: $rle.color.charcoal, align: 'center' });
-	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.cyan, align: 'center' });
+	$rle.put(40, 3, " .oooooo..o                       oooo           ooooooooo.   ooooo       ", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 4, "d8P'    `Y8                       `888           `888   `Y88. `888'       ", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 5, "Y88bo.       .ooooo.  oooo  oooo   888   .oooo.o  888   .d88'  888        ", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 6, " `\"Y8888o.  d88' `88b `888  `888   888  d88(  \"8  888ooo88P'   888        ", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 7, "     `\"Y88b 888   888  888   888   888  `\"Y88b.   888`88b.     888        ", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 8, "oo     .d8P 888   888  888   888   888  o.  )88b  888  `88b.   888       o", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(40, 9, "8\"\"88888P'  `Y8bod8P'  `V88V\"V8P' o888o 8\"\"888P' o888o  o888o o888ooooood8", { align: 'center', fg: $rle.color.system.white });
+	$rle.put(52, 3, "ooooooooo.   ooooo       ", { fg: $rle.color.system.red });
+	$rle.put(52, 4, "`888   `Y88. `888'       ", { fg: $rle.color.system.red });
+	$rle.put(52, 5, " 888   .d88'  888        ", { fg: $rle.color.system.red });
+	$rle.put(52, 6, " 888ooo88P'   888        ", { fg: $rle.color.system.red });
+	$rle.put(52, 7, " 888`88b.     888        ", { fg: $rle.color.system.red });
+	$rle.put(52, 8, " 888  `88b.   888       o", { fg: $rle.color.system.red });
+	$rle.put(52, 9, "o888o  o888o o888ooooood8", { fg: $rle.color.system.red });
+	$rle.put(40, 21, 'arrows, numpad, vi keys: choose', { fg: $rle.color.system.charcoal, align: 'center' });
+	$rle.put(40, 22, 'enter: select', { fg: $rle.color.system.charcoal, align: 'center' });
+	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.system.cyan, align: 'center' });
 	for (var i = 0; i < state_mainMenu.entries.length; i++) {
 		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center' });
 	}
@@ -519,7 +519,7 @@ room.prototype.name = function (position) {
 function entity() {
 	this.position = { x: 0, y: 0 };
 	this.character = '?';
-	this.fg = $rle.color.white;
+	this.fg = $rle.color.system.white;
 }
 
 entity.prototype.draw = function () {
@@ -591,36 +591,36 @@ function terrain(pos, k) {
 	switch (k) {
 		case terrain.kind.floor:
 			this.character = '.';
-			this.fg = $rle.color.charcoal;
+			this.fg = $rle.color.system.charcoal;
 			break;
 		case terrain.kind.wall:
 			this.character = '#';
-			this.fg = $rle.color.black;
-			this.bg = $rle.color.charcoal;
+			this.fg = $rle.color.system.black;
+			this.bg = $rle.color.system.charcoal;
 			this.solid = true;
 			this.blocksLight = true;
 			break;
 		case terrain.kind.chasm:
 			this.character = ':';
-			this.fg = $rle.color.cyan;
+			this.fg = $rle.color.system.cyan;
 			this.solid = true;
 			break;
 		case terrain.kind.door:
 			this.character = '+';
-			this.fg = $rle.color.charcoal;
-			this.bg = $rle.color.gray;
+			this.fg = $rle.color.system.charcoal;
+			this.bg = $rle.color.system.gray;
 			this.blocksLight = true;
 			break;
 		case terrain.kind.water:
 			this.character = '~';
-			this.fg = $rle.color.cyan;
-			this.bg = $rle.color.blue;
+			this.fg = $rle.color.system.cyan;
+			this.bg = $rle.color.system.blue;
 			this.solid = true;
 			break;
 		case terrain.kind.bridge:
 			this.character = '=';
-			this.fg = $rle.color.black;
-			this.bg = $rle.color.brown;
+			this.fg = $rle.color.system.black;
+			this.bg = $rle.color.system.brown;
 			break;
 	}
 }

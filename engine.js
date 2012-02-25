@@ -21,6 +21,42 @@ $rle.buffer = [];
 $rle.tiles = false;
 
 $rle.keys = {
+	0: 48,
+	1: 49,
+	2: 50,
+	3: 51,
+	4: 52,
+	5: 53,
+	6: 54,
+	7: 55,
+	8: 56,
+	9: 57,
+	a: 65,
+	b: 66,
+	c: 67,
+	d: 68,
+	e: 69,
+	f: 70,
+	g: 71,
+	h: 72,
+	i: 73,
+	j: 74,
+	k: 75,
+	l: 76,
+	m: 77,
+	n: 78,
+	o: 79,
+	p: 80,
+	q: 81,
+	r: 82,
+	s: 83,
+	t: 84,
+	u: 85,
+	v: 86,
+	w: 87,
+	x: 88,
+	y: 89,
+	z: 90,
 	arrow_e: [39, 76, 102],
 	arrow_ne: [85, 105],
 	arrow_n: [38, 75, 104],
@@ -44,22 +80,88 @@ $rle.dir = {
 }
 
 $rle.color = {
-	black: 'rgb(0, 0, 0)',
-	blue: 'rgb(0, 0, 128)',
-	green: 'rgb(0, 128, 0)',
-	cyan: 'rgb(0, 128, 128)',
-	red: 'rgb(128, 0, 0)',
-	magenta: 'rgb(128, 0, 128)',
-	brown: 'rgb(128, 64, 0)',
-	gray: 'rgb(192, 192, 192)',
-	charcoal: 'rgb(128, 128, 128)',
-	brightBlue: 'rgb(0, 0, 255)',
-	brightGreen: 'rgb(0, 255, 0)',
-	brightCyan: 'rgb(0, 255, 255)',
-	orange: 'rgb(255, 128, 0)',
-	pink: 'rgb(255, 0, 255)',
-	yellow: 'rgb(255, 255, 0)',
-	white: 'rgb(255, 255, 255)'
+	system: {
+		black: {
+			r: 0,
+			g: 0,
+			b: 0
+		},
+		blue: {
+			r: 0,
+			g: 0,
+			b: 128
+		},
+		green: {
+			r: 0,
+			g: 128,
+			b: 0
+		},
+		cyan: {
+			r: 0,
+			g: 128,
+			b: 128
+		},
+		red: {
+			r: 128,
+			g: 0,
+			b: 0
+		},
+		magenta: {
+			r: 128,
+			g: 0,
+			b: 128
+		},
+		brown: {
+			r: 128,
+			g: 64,
+			b: 0
+		},
+		gray: {
+			r: 192,
+			g: 192,
+			b: 192
+		},
+		charcoal: {
+			r: 128,
+			g: 128,
+			b: 128
+		},
+		brightBlue: {
+			r: 0,
+			g: 0,
+			b: 255
+		},
+		brightGreen: {
+			r: 0,
+			g: 255,
+			b: 0
+		},
+		brightCyan: {
+			r: 0,
+			g: 255,
+			b: 255
+		},
+		orange: {
+			r: 255,
+			g: 128,
+			b: 0
+		},
+		pink: {
+			r: 255,
+			g: 0,
+			b: 255
+		},
+		yellow: {
+			r: 255,
+			g: 255,
+			b: 0
+		},
+		white: {
+			r: 255,
+			g: 255,
+			b: 255
+		}
+	}
 }
 
 $rle.box = {
@@ -131,10 +233,10 @@ $rle.flush = function() {
 $rle.clear = function (x, y, options) {
 	if (!x && !y) {
 		var bg = 'black';
-		if (options && options.bg) bg = options.bg;
+		if (options && options.bg) bg = $rle._parse_color(options.bg);
 		$rle.ctx.fillStyle = bg;
 		$rle.ctx.fillRect(0, 0, $rle.tileW * $rle.screenW, $rle.tileH * $rle.screenH);
-		$rle.buffer.length = 0;
+		$rle.buffer.length = 0; // apparently this is the preferred way to clear arrays?
 		return;
 	}
 	else {
@@ -146,8 +248,8 @@ $rle._put_char = function (chr) {
 	if (chr.character == '' || !chr.character) chr.character = '';
 	var fg = 'white';
 	var bg = 'black';
-	if (chr.fg) fg = chr.fg;
-	if (chr.bg) bg = chr.bg;
+	if (chr.fg) fg = $rle._parse_color(chr.fg);
+	if (chr.bg) bg = $rle._parse_color(chr.bg);
 	$rle.ctx.fillStyle = bg;
 	$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
 	$rle.ctx.font = $rle.font;
@@ -163,6 +265,12 @@ $rle._chr = function (number) {
 
 $rle._ord = function (character) {
 	return character.charCodeAt(0);
+}
+
+$rle._parse_color = function (color) {
+	if (color.r != null && color.g != null && color.b != null) {
+		return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
+	}
 }
 
 $rle.set_fg = function (x, y, color) {
