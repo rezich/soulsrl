@@ -827,13 +827,22 @@ creature.prototype.move = function (direction) {
 			endpos.y++;
 			break;
 	}
-	if (!game.current.current_room.solid_at(endpos)) {
-		this.position = endpos;
-		game.current.redraw_tile(lastpos);
-		this.draw();
+	var ter = game.current.current_room.terrain_at(endpos);
+	if (ter) {
+		if (ter.solid) {
+			ter.interact_with(this);
+			this.draw();
+			return;
+		}
+		if (ter.interact_with(this)) {
+			this.position = endpos;
+			game.current.redraw_tile(lastpos);
+			this.draw();
+		}
 	}
 	else {
-		if (this == game.current.player) game.current.messages.write("Something is blocking the way.")
+		terrain.path_blocked();
+		return;
 	}
 }
 
@@ -976,12 +985,25 @@ function terrain(pos, data) {
         	this[key] = data[key];
     	}
 	}
+	// fuck yes this is so awesome that it works it makes me want to
+	// explode with happiness and joy
+	if (this.interact) this.interact.bind(this);
 }
 
 terrain.prototype = new entity();
 
 terrain.prototype.should_draw = function () {
 	return this.visited;
+}
+
+terrain.prototype.interact_with = function (activator) {
+	// return false to override movement
+	if (this.interact) {
+		return this.interact(activator);
+	}
+	else {
+		return true;
+	}
 }
 
 terrain.fromChar = function (chr) {
@@ -996,10 +1018,37 @@ terrain.fromChar = function (chr) {
 	return null;
 }
 
-terrain.use_door = function (door, open) {
-	if (open) {
-
+terrain.generic_solid_collision = function (ent, activator) {
+	if (activator == game.current.player) {
+		game.current.messages.write('Something is blocking the way.');
 	}
+	else {
+		game.current.messages.write('Something somewhere hilariously ran headfirst into a wall.');
+	}
+	return false;
+}
+
+terrain.generic_nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) {
+	if (activator == game.current.player && player_msg) game.current.messages.write(player_msg);
+	if (activator != game.current.player && nonplayer_msg) game.current.messages.write(nonplayer_msg);
+	return true;
+}
+
+terrain.use_door = function (ent, activator, open) {
+	if (open && !ent.open) {
+		ent.open = true;
+		ent.solid = false;
+		ent.character = '\\';
+		ent.blocks_light = false;
+		if (activator == game.current.player) {
+			game.current.messages.write('You open the door.');
+		}
+		else {
+			game.current.messages.write('Something somehow opened a door.');
+		}
+		return true;
+	}
+	else return true;
 }
 
 terrain.data = {
@@ -1012,7 +1061,8 @@ terrain.data = {
 		fg: $rle.color.system.black,
 		bg: $rle.color.system.charcoal,
 		solid: true,
-		blocks_light: true
+		blocks_light: true,
+		interact: function (activator) { return terrain.generic_solid_collision(this, activator); }
 	},
 	chasm: {
 		character: ':',
@@ -1024,7 +1074,9 @@ terrain.data = {
 		fg: $rle.color.system.charcoal,
 		bg: $rle.color.system.gray,
 		blocks_light: true,
-		open: false
+		solid: true,
+		open: false,
+		interact: function (activator) { return terrain.use_door(this, activator, true); }
 	},
 	water: {
 		character: '~',
@@ -1035,6 +1087,7 @@ terrain.data = {
 	bridge: {
 		character: '=',
 		fg: $rle.color.system.black,
-		bg: $rle.color.system.brown
+		bg: $rle.color.system.brown,
+		interact: function (activator) { return terrain.generic_nonsolid_message(this, activator, 'You tread carefully over the rickety bridge.'); }
 	}
 }
