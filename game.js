@@ -731,6 +731,7 @@ creature.prototype.move = function (direction) {
 ////
 
 function terrain(pos, k) {
+	this.visited = false;
 	this.position = pos;
 	this.kind = k;
 	this.solid = false;

@@ -20,7 +20,13 @@ $rle.buffer = [];
 
 $rle.shift = false;
 
-$rle.tiles = false;
+$rle.tiles = true;
+
+/*$rle._tiles = new Image();
+$rle._tiles.src = 'terminal16.png';
+$rle._tiles.onload = function() {
+	// TODO: ???
+}*/
 
 $rle.keys = {
 	0: 48,
