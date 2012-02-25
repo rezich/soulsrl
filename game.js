@@ -35,6 +35,10 @@ function game() {
 
 game.current = null;
 
+game._keyTimeout = null;
+game._keysEnabled = true;
+game._keyRateLimit = 7;
+
 game.viewport_offset = {
 	x: 0,
 	y: 3
@@ -49,6 +53,10 @@ game.handleInput = function (event) {
 		$rle.put(0, 0, 'no state provided');
 		return;
 	}
+	if (!game._keysEnabled) {
+		console.log('slow down dere partner');
+		return false;
+	}
 	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
@@ -56,12 +64,16 @@ game.handleInput = function (event) {
 			for (var key in keys) {
 				if (keys[key] == event.keyCode) {
 					commands[command].action();
+					game._keysEnabled = false;
+					game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
 					return false;
 				}
 			}
 		}
 		else {
 			if (keys == event.keyCode) {
+				game._keysEnabled = false;
+				game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
 				commands[command].action();
 				return false;
 			}
@@ -164,7 +176,7 @@ game.prototype.drawUI = function () {
 	var name = this.player.name;
 	$rle.put(0, 23, name, { fg: $rle.color.system.brightCyan });
 	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.system.gray });
-	var hp = "10/10";
+	var hp = this.player.HP + '/' + this.player.maxHP;
 	$rle.put(name.length + 4, 23, hp, { fg: $rle.color.system.red });
 	$rle.put(name.length + 5 + hp.length, 23, "STM:", { fg: $rle.color.system.gray });
 	var stm = "100%";
@@ -293,10 +305,12 @@ state_mainMenu.prototype.draw = function () {
 }
 
 state_mainMenu.prototype.move_cursor = function (amount) {
-	this.cursor += amount;
-	if (this.cursor < 0) this.cursor += state_mainMenu.entries.length;
-	if (this.cursor > state_mainMenu.entries.length - 1) this.cursor -= state_mainMenu.entries.length;
-	this.draw();
+	do {
+		this.cursor += amount;
+		if (this.cursor < 0) this.cursor += state_mainMenu.entries.length;
+		if (this.cursor > state_mainMenu.entries.length - 1) this.cursor -= state_mainMenu.entries.length;
+		this.draw();
+	} while (state_mainMenu.entries[this.cursor].disabled);
 }
 
 state_mainMenu.prototype.confirm = function () {
@@ -511,7 +525,11 @@ state_inputName.prototype.delete_char = function () {
 }
 
 state_inputName.prototype.confirm = function () {
-	game.current.preload({ player_name: this.name });
+	if (this.name) game.current.preload({ player_name: this.name });
+	else {
+		$rle.put(40, 15, 'Please try again.', { align: 'center', fg: $rle.color.system.red });
+		$rle.flush();
+	}
 }
 
 
@@ -711,7 +729,10 @@ entity.prototype.draw = function () {
 // creature - anything that has hit points, can be killed, etc.
 ////
 
-function creature() { }
+function creature() {
+	this.maxHP = 10;
+	this.HP = this.maxHP;
+}
 
 creature.prototype = new entity();
 
