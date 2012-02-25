@@ -62,18 +62,35 @@ game.handleInput = function (e) {
 }
 
 game.prototype.preload = function () {
+	// THIS IS SUPER UGLY AND MESSY AND I AM DESERVING OF DEATH FOR WRITING IT
+	// BUT IT'S JUST TO TEST OUT LOADING OKAY FINE GOD I'LL FIX IT IN THE FUTURE
 	state.add(new state_loading(), { clear: true });
 	$.ajax({
-		url: 'rooms/PRISON-3.txt',
+		url: 'rooms/PRISON-1.txt',
 		dataType: 'text',
 		cache: false,
 		success: function (data) {
-			//alert(data);
 			room.data['PRISON-3'] = data;
-			state.pop();
-			state.replace(new state_game(), { clear: true });
+			$.ajax({
+				url: 'rooms/PRISON-2.txt',
+				dataType: 'text',
+				cache: false,
+				success: function (data) {
+					room.data['PRISON-3'] = data;
+					$.ajax({
+						url: 'rooms/PRISON-3.txt',
+						dataType: 'text',
+						cache: false,
+						success: function (data) {
+							room.data['PRISON-3'] = data;
+							state.pop();
+							state.replace(new state_game(), { clear: true });
+						}
+					});
+				}
+			});
 		}
-	})
+	});
 }
 
 game.prototype.init = function () {

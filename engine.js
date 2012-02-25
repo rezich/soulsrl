@@ -14,6 +14,8 @@ $rle.tileH = 16;
 $rle.screenW = 80;
 $rle.screenH = 25;
 
+$rle.font = 'bold 10pt sans-serif';
+
 $rle.buffer = [];
 
 $rle.tiles = false;
@@ -136,10 +138,7 @@ $rle.clear = function (x, y, options) {
 		return;
 	}
 	else {
-		console.log('warning: not implemented!');
-		//this.set_fg(x, y, $rle.color.white);
-		//this.set_bg(x, y, $rle.color.black);
-		//this.put(x, y, ' ');
+		console.log('TODO: IMPLEMENT');
 	}
 }
 
@@ -151,7 +150,7 @@ $rle._put_char = function (chr) {
 	if (chr.bg) bg = chr.bg;
 	$rle.ctx.fillStyle = bg;
 	$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
-	$rle.ctx.font = 'bold 10pt sans-serif';
+	$rle.ctx.font = $rle.font;
 	$rle.ctx.textBaseline = 'middle';
 	$rle.ctx.textAlign = 'center';
 	$rle.ctx.fillStyle = fg;
