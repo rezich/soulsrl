@@ -125,9 +125,18 @@ game.prototype.preload = function (game_data) {
 game.prototype.init = function (player_name) {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon(room.area.prison, 3);
-	this.player = new creature();
-	this.player.name = player_name;
-	this.player.position = { x: 1, y: 1 };
+	this.init_player(player_name);
+}
+
+game.prototype.init_player = function(name) {
+	this.player = new creature({ x: 1, y: 1 });
+	this.player.name = name;
+	// TODO: MOVE TO CREATURE DATA
+	this.player.level = 1;
+	this.player.XP = 0;
+	this.player.humanity = 0;
+	this.player.maxHP = 10;
+	this.player.HP = this.player.maxHP;
 	this.player.character = '@';
 }
 
@@ -153,6 +162,11 @@ game.prototype.generateDungeon = function (area, floor) {
 		for (var j = 0; j < 80; j++) {
 			var kind = terrain.fromChar(data[i].charAt(j));
 			if (kind) r.add_terrain({ x: j, y: i }, kind);
+			// TODO: REMOVE AFTER TESTING IS COMPLETE
+			if (data[i].charAt(j) == '*') {
+				r.add_terrain({ x: j, y: i }, terrain.kind.floor);
+				r.add_creature({ x: j, y: i }, creature.data.hollow_unarmed);
+			}
 		}
 	}
 
@@ -182,18 +196,17 @@ game.prototype.drawUI = function () {
 	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.system.cyan });
 
 	// UI line 2
-	//$rle.put(0, 24, "DLVL:", { fg: $rle.color.system.gray });
 	var room_name = game.current.current_room.name();
 	$rle.put(0, 24, room_name, { fg: $rle.color.system.cyan });
 	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.system.gray });
-	var lvl = "1";
+	var lvl = this.player.level.toString();
 	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.system.cyan });
 	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.system.gray });
-	var souls = "100";
+	var souls = this.player.souls.toString();
 	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.system.cyan });
-	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUMANITY:', { fg: $rle.color.system.gray });
-	var humanity = "0";
-	$rle.put(22 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.system.cyan });
+	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUM:', { fg: $rle.color.system.gray });
+	var humanity = this.player.humanity.toString();
+	$rle.put(17 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.system.cyan });
 }
 
 ////
@@ -589,9 +602,15 @@ state_game.prototype.draw = function () {
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].lit = false;
 	}
+	for (var c in game.current.current_room.creatures) {
+		game.current.current_room.creatures[c].lit = false;
+	}
 	fieldOfView(game.current.player.position.x, game.current.player.position.y, game.current.current_room.visibility, game.visit, game.blocked);
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].draw();
+	}
+	for (var c in game.current.current_room.creatures) {
+		game.current.current_room.creatures[c].draw();
 	}
 	game.current.player.draw();
 	game.current.messages.draw();
@@ -652,6 +671,7 @@ messages.prototype.clear = function (override) {
 
 function room(area, floor) {
 	this.terrain = [];
+	this.creatures = [];
 	this.area = area;
 	this.floor = floor;
 	this.visibility = 10;
@@ -672,7 +692,11 @@ room.prototype.add_terrain = function (position, kind) {
 	for (var t in this.terrain) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) this.terrain.splice(t, 1);
 	}
-	this.terrain.push(new terrain({x: position.x, y: position.y}, kind));
+	this.terrain.push(new terrain({ x: position.x, y: position.y }, kind));
+}
+
+room.prototype.add_creature = function (position, data) {
+	this.creatures.push(new creature({ x: position.x, y: position.y }, data));
 }
 
 room.prototype.solid_at = function (position) {
@@ -683,9 +707,21 @@ room.prototype.solid_at = function (position) {
 }
 
 room.prototype.blocks_light_at = function (position) {
+	var blocks = false;
+	var anything = false;
 	for (var t in this.terrain) {
-		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t].blocks_light;
+		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) {
+			anything = true;
+			blocks = blocks || this.terrain[t].blocks_light;
+		}
 	}
+	for (var c in this.creatures) {
+		if (this.creatures[c].position.x == position.x && this.creatures[c].position.y == position.y) {
+			anything = true;
+			blocks = blocks || this.creatures[c].blocks_light;
+		}
+	}
+	if (anything) return blocks;
 	return true;
 }
 
@@ -701,6 +737,12 @@ room.prototype.visit = function (x, y) {
 		if (this.terrain[t].position.x == x && this.terrain[t].position.y == y) {
 			this.terrain[t].visited = true;
 			this.terrain[t].lit = true;
+		}
+	}
+	for (var c in this.creatures) {
+		if (this.creatures[c].position.x == x && this.terrain[c].position.y == y) {
+			this.creatures[c].visited = true;
+			this.creatures[c].lit = true;
 		}
 	}
 	return null;
@@ -743,16 +785,32 @@ entity.prototype.draw = function () {
 // creature - anything that has hit points, can be killed, etc.
 ////
 
-function creature() {
+function creature(pos, data) {
+	this.position = pos;
+
 	this.maxHP = 1;
 	this.HP = this.maxHP;
+	this.souls = 0;
 
 	this.respawns = true;
 
 	this.lit = true;
+
+	// TODO: Improve this copy code if creature data is ever going to
+	// contain arrays or objects that'll be modified in the copy
+
+	if (data) {
+		for (var key in data) {
+        	this[key] = data[key];
+    	}
+	}
 }
 
 creature.prototype = new entity();
+
+creature.prototype.should_draw = function () {
+	return this.lit;
+}
 
 creature.prototype.move = function (direction) {
 	var endpos = { x: this.position.x, y: this.position.y };
@@ -807,7 +865,7 @@ creature.data = {
 	// HOLLOW - decrepit, weak zombies
 	////
 
-	hollow: {						// basically naked
+	hollow_unarmed: {				// basically naked
 		character: 'h'
 	},
 	hollow_archer: {				// same as hollow, but with a short bow
