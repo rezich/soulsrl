@@ -277,7 +277,7 @@ state_mainMenu.prototype.draw = function () {
 	$rle.put(40, 22, 'enter: select', { fg: $rle.color.system.charcoal, align: 'center' });
 	$rle.put(40, 24, 'Copyright (C) 2012 Adam Rezich', { fg: $rle.color.system.cyan, align: 'center' });
 	for (var i = 0; i < state_mainMenu.entries.length; i++) {
-		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center' });
+		$rle.put(40, 14 + i, (this.cursor == i ? '> ' : '  ') + state_mainMenu.entries[i].text + (this.cursor == i ? ' <' : '  '), { align: 'center', fg: (this.cursor == i ? $rle.color.system.white : (state_mainMenu.entries[i].disabled ? $rle.color.system.charcoal : $rle.color.system.gray)) });
 	}
 	$rle.flush();
 }
@@ -300,10 +300,12 @@ state_mainMenu.entries = [
 	},
 	{
 		text: "Continue",
+		disabled: true,
 		action: function () {  }
 	},
 	{
 		text: "Settings",
+		disabled: true,
 		action: function () {  }
 	},
 	{
@@ -350,7 +352,7 @@ state_help.prototype.draw = function () {
 	$rle.put(0, 0, 'SoulsRL documentation');
 	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
 	$rle.put(0, 3, "actually play or something.");
-	$rle.put(40, 24, "escape: return", { align: 'center' });
+	$rle.put(40, 24, "escape: return", { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.flush();
 }
 
