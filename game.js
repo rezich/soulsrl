@@ -589,7 +589,7 @@ state_game.prototype.draw = function () {
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].lit = false;
 	}
-	fieldOfView(game.current.player.position.x, game.current.player.position.y, 20, game.visit, game.blocked);
+	fieldOfView(game.current.player.position.x, game.current.player.position.y, game.current.current_room.visibility, game.visit, game.blocked);
 	for (var t in game.current.current_room.terrain) {
 		game.current.current_room.terrain[t].draw();
 	}
@@ -654,6 +654,7 @@ function room(area, floor) {
 	this.terrain = [];
 	this.area = area;
 	this.floor = floor;
+	this.visibility = 10;
 }
 
 room.data = {}
@@ -743,7 +744,7 @@ entity.prototype.draw = function () {
 ////
 
 function creature() {
-	this.maxHP = 10;
+	this.maxHP = 1;
 	this.HP = this.maxHP;
 
 	this.respawns = true;
@@ -797,6 +798,10 @@ creature.prototype.move = function (direction) {
 }
 
 creature.data = {
+	// A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+	//   #                 #             #                
+	// a b c d e f g h i j k l m n o p q r s t u v w x y z
+	// # #           #   # #             #     #          
 
 	////
 	// HOLLOW - decrepit, weak zombies
@@ -832,6 +837,22 @@ creature.data = {
 	undead_assassin: {				// throwing knives, counters, and backstabs make this a worthy enemy
 		character: 'a'
 	},
+	undead_dog: {					// fast pack animal, so, super dangerous in groups
+		character: 'd'
+	},
+
+
+	////
+	// SKELETON - about on par with undead, strength-wise, but a bit more agile
+	////
+
+	skeleton_axe: {					// average enemy
+		character: 's'
+	},
+	skeleton_giant: {				// giant four-armed skeleton swordsman
+		character: 'S',
+		respawns: false
+	},
 
 
 	////
@@ -845,7 +866,17 @@ creature.data = {
 		character: 'k'
 	},
 	knight_black: {					// this guy will rip your shit up
-		character: 'K'
+		character: 'K',
+		respawns: false
+	},
+
+
+	////
+	// JELLY - amorphous blobs of surprise death
+	////
+
+	jelly_black: {
+		character: 'j'				// lurks in damp and watery areas and attacks with pseudopodia
 	},
 
 
@@ -860,6 +891,19 @@ creature.data = {
 		character: 'R'
 	},
 
+
+	////
+	// MISC - unique creatures without "class groupings"
+	////
+
+	basilisk: {						// worst creature in game, will curse you, comes in small groups
+		character: 'b'
+	},
+
+	butcher: {						// slow, tough solo creature with a butcher's knife and meat hook
+		character: 'B',
+		respawns: false
+	}
 }
 
 
