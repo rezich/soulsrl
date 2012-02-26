@@ -773,7 +773,6 @@ function creature(pos, data) {
 	this.position = pos;
 
 	this.maxHP = 1;
-	this.HP = this.maxHP;
 	this.souls = 0;
 
 	this.respawns = true;
@@ -786,6 +785,8 @@ function creature(pos, data) {
         	this[key] = data[key];
     	}
 	}
+	
+	this.HP = this.maxHP;
 }
 
 creature.prototype = new entity();
