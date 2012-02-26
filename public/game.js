@@ -1029,9 +1029,14 @@ terrain.generic_solid_collision = function (ent, activator) {
 	return false;
 }
 
-terrain.generic_nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) {
+terrain.generic_solid_message = function (ent, activator, player_msg, nonplayer_msg) {
 	if (activator == game.current.player && player_msg) game.current.messages.write(player_msg);
 	if (activator != game.current.player && nonplayer_msg) game.current.messages.write(nonplayer_msg);
+	return false;
+}
+
+terrain.generic_nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) {
+	terrain.generic_solid_message(ent, activator, player_msg, nonplayer_msg);
 	return true;
 }
 
@@ -1068,7 +1073,8 @@ terrain.data = {
 	chasm: {
 		character: ':',
 		fg: $rle.color.system.cyan,
-		solid: true
+		solid: true,
+		interact: function (activator) { return terrain.generic_solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.'); }
 	},
 	door: {
 		character: '+',
@@ -1083,7 +1089,8 @@ terrain.data = {
 		character: '~',
 		fg: $rle.color.system.cyan,
 		bg: $rle.color.system.blue,
-		solid: true
+		solid: true,
+		interact: function (activator) { return terrain.generic_solid_message(this, activator, 'The water looks too deep to traverse safely.'); }
 	},
 	bridge: {
 		character: '=',
