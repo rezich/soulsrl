@@ -5,7 +5,7 @@ var webroot = './public';
 var file = new (static.Server)(webroot, {
 	cache: 600
 });
-var server = http.createServer(function (req, res) {
+var httpServer = http.createServer(function (req, res) {
 	req.addListener('end', function () {
 		file.serve(req, res, function (err, result) {
 			if (err) {
@@ -23,7 +23,9 @@ var server = http.createServer(function (req, res) {
 			}
 		});
 	});
-}).listen(process.env.PORT || 3000);
+});
+
+httpServer.listen(process.env.PORT || 3000);
 
 var nowjs = require("now");
-var everyone = nowjs.initialize(server);
+var everyone = nowjs.initialize(httpServer);
