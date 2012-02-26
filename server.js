@@ -2,7 +2,6 @@ var static = require('node-static');
 var http = require('http');
 var util = require('util');
 var webroot = './public';
-var port = 8080;
 var file = new (static.Server)(webroot, {
 	cache: 600
 });
@@ -24,7 +23,7 @@ var server = http.createServer(function (req, res) {
 			}
 		});
 	});
-}).listen(port);
+}).listen(process.env.PORT || 3000);
 
 var nowjs = require("now");
 var everyone = nowjs.initialize(server);
