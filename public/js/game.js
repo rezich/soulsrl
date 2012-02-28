@@ -1020,23 +1020,17 @@ terrain.fromChar = function (chr) {
 }
 
 terrain.generic_solid_collision = function (ent, activator) {
-	if (activator == game.current.player) {
-		game.current.messages.write('Something is blocking the way.');
-	}
-	else {
-		game.current.messages.write('Something somewhere hilariously ran headfirst into a wall.');
-	}
-	return false;
+	return terrain.solid_message(ent, activator, 'Something is blocking the way.');
 }
 
-terrain.generic_solid_message = function (ent, activator, player_msg, nonplayer_msg) {
+terrain.solid_message = function (ent, activator, player_msg, nonplayer_msg) {
 	if (activator == game.current.player && player_msg) game.current.messages.write(player_msg);
 	if (activator != game.current.player && nonplayer_msg) game.current.messages.write(nonplayer_msg);
 	return false;
 }
 
-terrain.generic_nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) {
-	terrain.generic_solid_message(ent, activator, player_msg, nonplayer_msg);
+terrain.nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) {
+	terrain.solid_message(ent, activator, player_msg, nonplayer_msg);
 	return true;
 }
 
@@ -1074,7 +1068,7 @@ terrain.data = {
 		character: ':',
 		fg: $rle.color.system.cyan,
 		solid: true,
-		interact: function (activator) { return terrain.generic_solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.'); }
+		interact: function (activator) { return terrain.solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.'); }
 	},
 	door: {
 		character: '+',
@@ -1090,12 +1084,12 @@ terrain.data = {
 		fg: $rle.color.system.cyan,
 		bg: $rle.color.system.blue,
 		solid: true,
-		interact: function (activator) { return terrain.generic_solid_message(this, activator, 'The water looks too deep to traverse safely.'); }
+		interact: function (activator) { return terrain.solid_message(this, activator, 'The water looks too deep to traverse safely.'); }
 	},
 	bridge: {
 		character: '=',
 		fg: $rle.color.system.black,
 		bg: $rle.color.system.brown,
-		interact: function (activator) { return terrain.generic_nonsolid_message(this, activator, 'You tread carefully over the rickety bridge.'); }
+		interact: function (activator) { return terrain.nonsolid_message(this, activator, 'You tread carefully over the rickety bridge.'); }
 	}
 }
