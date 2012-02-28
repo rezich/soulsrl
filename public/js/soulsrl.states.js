@@ -176,6 +176,7 @@ state_loading.prototype.draw = function () {
 
 function state_help(data) {
 	this.text = data.split('\n');
+	this.scroll_position = 0;
 }
 
 state_help.prototype = new state();
@@ -184,14 +185,35 @@ state_help.prototype.keys = {
 	back: {
 		keys: $rle.keys.escape,
 		action: function () { state.pop(); }
+	},
+	page_up: {
+		keys: $rle.keys.page_up,
+		action: function () { state.current().scroll_position = Math.max(state.current().scroll_position - 23, 0); state.current().draw(); }
+	},
+	page_down: {
+		keys: $rle.keys.page_down,
+		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + 23, state.current().text.length - 23); state.current().draw(); }
+	},
+	up: {
+		keys: $rle.keys.arrow_n,
+		action: function () { state.current().scroll_position = Math.max(state.current().scroll_position - 1, 0); state.current().draw(); }
+	},
+	down: {
+		keys: $rle.keys.arrow_s,
+		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + 1, state.current().text.length - 23); state.current().draw(); }
 	}
 }
 
 state_help.prototype.draw = function () {
 	$rle.clear();
 	if (this.text) {
-		for (var i = 0; i < this.text.length; i++) $rle.put(0, i, this.text[i]);
+		for (var i = 0; i < 23; i++) {
+			if (this.scroll_position + i > this.text.length) break;
+			$rle.put(0, i, this.text[this.scroll_position + i]);
+		}
 	}
+
+	$rle.put(40, 23, "arrows, numpad, vi keys, page up/down: scroll", { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 24, "escape: return", { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.flush();
 }

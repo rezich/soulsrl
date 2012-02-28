@@ -76,7 +76,9 @@ $rle.keys = {
 	escape: 27,
 	backspace: 8,
 	enter: 13,
-	space: 32
+	space: 32,
+	page_up: 33,
+	page_down: 34
 }
 
 $rle.dir = {
