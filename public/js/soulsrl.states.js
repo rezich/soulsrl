@@ -135,7 +135,18 @@ state_mainMenu.entries = [
 	},
 	{
 		text: "Manual",
-		action: function () { state.add(new state_help(), { clear: true }); }
+		action: function () {
+			state.add(new state_loading(), { clear: true });
+			$.ajax({
+				url: 'manual.txt',
+				dataType: 'text',
+				cache: false,
+				success: function (data) {
+					state.pop();
+					state.add(new state_help(data), { clear: true });
+				}
+			});
+		}
 	}
 ];
 
@@ -145,7 +156,9 @@ state_mainMenu.entries = [
 ////
 
 function state_loading(options) {
-	this.data = options;
+	if (options) {
+		if (options.action) options.action();
+	}
 }
 
 state_loading.prototype = new state();
@@ -161,7 +174,9 @@ state_loading.prototype.draw = function () {
 // state_help - documentation and such
 ////
 
-function state_help() { }
+function state_help(data) {
+	this.text = data.split('\n');
+}
 
 state_help.prototype = new state();
 
@@ -174,9 +189,9 @@ state_help.prototype.keys = {
 
 state_help.prototype.draw = function () {
 	$rle.clear();
-	$rle.put(0, 0, 'SoulsRL documentation');
-	$rle.put(0, 2, "lol jk there's no documentation here yet, maybe once there's something to")
-	$rle.put(0, 3, "actually play or something.");
+	if (this.text) {
+		for (var i = 0; i < this.text.length; i++) $rle.put(0, i, this.text[i]);
+	}
 	$rle.put(40, 24, "escape: return", { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.flush();
 }

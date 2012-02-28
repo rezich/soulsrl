@@ -1,0 +1,93 @@
+                                     SoulsRL
+                                  User's Manual
+
+0. CONTENTS
+--------------------------------------------------------------------------------
+1. OVERVIEW
+2. BASIC MOVEMENT
+3. COMMAND LIST
+4. INTERFACE
+
+
+1. OVERVIEW
+--------------------------------------------------------------------------------
+Blah blah blah, souls, blah.
+
+
+2. BASIC MOVEMENT
+--------------------------------------------------------------------------------
+Blah blah blah, use arrow keys, numpad, or vi keys to move, blah.
+
+
+3. COMMAND LIST
+--------------------------------------------------------------------------------
+This is the list of all commands:
+
+TAB  
+  1  
+  2  
+  3  
+  4  
+  5  
+  6  
+  7  
+  8  
+  9  
+  0  
+  -  
+  =  
+  a  
+  b  VI KEY
+  c  close door
+  d  
+  e  
+  f  
+  g  
+  h  VI KEY
+  i  VI KEY
+  j  VI KEY
+  k  VI KEY
+  l  VI KEY
+  m  show map
+  n  VI KEY
+  o  
+  p  
+  q  
+  r  
+  s  
+  t  
+  u  VI KEY
+  v  
+  w  
+  x  
+  y  
+  z  
+  A  
+  B  
+  C  
+  D  
+  E  
+  F  
+  G  
+  H  
+  I  
+  J  
+  K  
+  L  
+  M  show message log
+  N  
+  O  
+  P  
+  Q  quit game
+  R  
+  S  save game
+  T  
+  U  
+  V  
+  W  
+  X  
+  Y  
+  Z  
+  <  go up stairs
+  >  go down stairs
+  ?  show manual
