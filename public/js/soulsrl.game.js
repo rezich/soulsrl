@@ -287,5 +287,6 @@ now.drawPlayers = function (players) {
 	}
 	if (state.current().in_game) {
 		state.current().draw_partial();
+		$rle.flush();
 	}
 }
