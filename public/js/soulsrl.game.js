@@ -281,9 +281,11 @@ _PLAYERS = [];
 now.drawPlayers = function (players) {
 	_PLAYERS.length = 0;
 	for (var i in players) {
-		_PLAYERS.push(new creature({ x: players[i].x, y: players[i].y }, creature.data.ghost));
+		if (i != now.core.clientId) {
+			_PLAYERS.push(new creature({ x: players[i].x, y: players[i].y }, creature.data.ghost));
+		}
 	}
-	/*if (state.current().in_game) {
+	if (state.current().in_game) {
 		state.current().draw();
-	}*/
+	}
 }

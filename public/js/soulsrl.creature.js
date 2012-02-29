@@ -234,7 +234,7 @@ creature.data = {
 
 	ghost: {
 		character: '@',
-		color: { r: 128, g: 128, b: 128 },
+		fg: { r: 96, g: 96, b: 96 },
 		lit: true,
 		solid: false
 	}

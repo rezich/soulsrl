@@ -49,13 +49,11 @@ everyone.now.updatePlayer = function (x, y) {
 	players[this.user.clientId].y = y;
 	var toUpdate = {};
 	for (var i in players) {
-		if (i != this.user.clientId) {
-			// TODO: limit this to only some players or something
-			toUpdate[i] = { x: players[i].x, y: players[i].y };
-		}
+		// TODO: limit this to only some players or something
+		toUpdate[i] = { x: players[i].x, y: players[i].y };
 	}
 
-	for (var i in players) {
+	for (var i in toUpdate) {
 		nowjs.getClient(i, function (err) {
 			this.now.drawPlayers(toUpdate);
 		});

@@ -430,7 +430,6 @@ state_game.prototype.draw = function () {
 	for (var i in ents) {
 		ents[i].lit = false;
 	}
-	ents = ents.concat(_PLAYERS);
 	fieldOfView(game.current.player.position.x, game.current.player.position.y, game.current.current_room.visibility, game.visit, game.blocked);
 	for (var i in ents) {
 		ents[i].draw();
