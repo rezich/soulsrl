@@ -63,6 +63,7 @@ terrain.nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) 
 }
 
 terrain.use_door = function (ent, activator, open, callback) {
+	if (callback) callback(ent, activator, open);
 	if (open && !ent.open) {
 		ent.open = true;
 		ent.solid = false;
@@ -75,7 +76,6 @@ terrain.use_door = function (ent, activator, open, callback) {
 			// TODO: Check player line-of-sight
 			game.current.messages.write('Something somehow opened a door.');
 		}
-		if (callback) callback(ent, activator, open);
 		return true;
 	}
 	else return true;

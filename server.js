@@ -29,3 +29,35 @@ httpServer.listen(process.env.PORT || 3000);
 
 var nowjs = require("now");
 var everyone = nowjs.initialize(httpServer);
+
+var players = [];
+nowjs.on('connect', function () {
+	players[this.user.clientId] = { x: 1, y: 1 };
+})
+
+nowjs.on('disconnect', function () {
+	for (var i in players) {
+		if (i == this.user.clientId) {
+			delete players[i];
+			break;
+		}
+	}
+});
+
+everyone.now.updatePlayer = function (x, y) {
+	players[this.user.clientId].x = x;
+	players[this.user.clientId].y = y;
+	var toUpdate = {};
+	for (var i in players) {
+		if (i != this.user.clientId) {
+			// TODO: limit this to only some players or something
+			toUpdate[i] = { x: players[i].x, y: players[i].y };
+		}
+	}
+
+	for (var i in players) {
+		nowjs.getClient(i, function (err) {
+			this.now.drawPlayers(toUpdate);
+		});
+	}
+}

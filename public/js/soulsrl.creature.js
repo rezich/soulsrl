@@ -225,5 +225,17 @@ creature.data = {
 		XP: 0,
 		humanity: 0,
 		lit: true
+	},
+
+
+	////
+	// GHOST - player ghosts
+	////
+
+	ghost: {
+		character: '@',
+		color: { r: 128, g: 128, b: 128 },
+		lit: true,
+		solid: false
 	}
 }
