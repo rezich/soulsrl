@@ -42,6 +42,7 @@ terrain.fromChar = function (chr) {
 		case '+': return terrain.data.door;
 		case '~': return terrain.data.water;
 		case '=': return terrain.data.bridge;
+		case '$': return terrain.data.secret_door;
 	}
 	return null;
 }
@@ -61,7 +62,7 @@ terrain.nonsolid_message = function (ent, activator, player_msg, nonplayer_msg) 
 	return true;
 }
 
-terrain.use_door = function (ent, activator, open) {
+terrain.use_door = function (ent, activator, open, callback) {
 	if (open && !ent.open) {
 		ent.open = true;
 		ent.solid = false;
@@ -71,8 +72,10 @@ terrain.use_door = function (ent, activator, open) {
 			game.current.messages.write('You open the door.');
 		}
 		else {
+			// TODO: Check player line-of-sight
 			game.current.messages.write('Something somehow opened a door.');
 		}
+		if (callback) callback(ent, activator, open);
 		return true;
 	}
 	else return true;
@@ -81,26 +84,27 @@ terrain.use_door = function (ent, activator, open) {
 terrain.data = {
 	floor: {
 		character: '.',
-		fg: $rle.color.system.charcoal
+		fg: { r: 80, g: 80, b: 80 },
+		bg: { r: 8, g: 8, b: 8 }
 	},
 	wall: {
 		character: '#',
-		fg: $rle.color.system.black,
-		bg: $rle.color.system.charcoal,
+		fg: { r: 16, g: 16, b: 16 },
+		bg: { r: 80, g: 80, b: 80 },
 		solid: true,
 		blocks_light: true,
 		interact: function (activator) { return terrain.generic_solid_collision(this, activator); }
 	},
 	chasm: {
 		character: ':',
-		fg: $rle.color.system.cyan,
+		fg: { r: 32, g: 32, b: 32 },
 		solid: true,
 		interact: function (activator) { return terrain.solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.'); }
 	},
 	door: {
 		character: '+',
-		fg: $rle.color.system.charcoal,
-		bg: $rle.color.system.gray,
+		fg: { r: 64, g: 64, b: 64 },
+		bg: { r: 128, g: 128, b: 128 },
 		blocks_light: true,
 		solid: true,
 		open: false,
@@ -116,7 +120,23 @@ terrain.data = {
 	bridge: {
 		character: '=',
 		fg: $rle.color.system.black,
-		bg: $rle.color.system.brown,
+		bg: { r: 64, g: 32, b: 0 },
 		interact: function (activator) { return terrain.nonsolid_message(this, activator, 'You tread carefully over the rickety bridge.'); }
+	},
+	secret_door: {
+		character: '#',
+		fg: { r: 16, g: 16, b: 16 },
+		bg: { r: 80, g: 80, b: 80 },
+		solid: true,
+		blocks_light: true,
+		interact: function (activator) {
+			return terrain.use_door(this, activator, true, function(ent, activator, open) {
+				if (activator == game.current.player) {
+					game.current.messages.write('There is a secret door here!');
+				}
+				ent.fg = terrain.data.door.fg;
+				ent.bg = terrain.data.door.bg;
+			});
+		}
 	}
 }
