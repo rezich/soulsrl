@@ -424,8 +424,19 @@ state_game.prototype.keys = {
 	}
 }
 
-state_game.prototype.draw = function (clear_messages) {
+state_game.prototype.draw = function () {
 	$rle.clear();
+	this.draw_partial();
+	game.current.messages.draw();
+	game.current.drawUI();
+	$rle.flush();
+}
+
+state_game.prototype.draw_partial = function () {
+	// HACKY, kind of
+	for (var i = 0; i < 20; i++) {
+		$rle.put(0, 3 + i, '                                                                                ');
+	}
 	var ents = game.current.current_room.entities;
 	for (var i in ents) {
 		ents[i].lit = false;
@@ -435,11 +446,6 @@ state_game.prototype.draw = function (clear_messages) {
 		ents[i].draw();
 	}
 	game.current.player.draw();
-	// TODO: FIX
-	if (clear_messages) game.current.messages.draw(true);
-	else game.current.messages.draw(false);
-	game.current.drawUI();
-	$rle.flush();
 }
 
 state_game.prototype.first_draw = function () {

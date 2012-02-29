@@ -229,10 +229,8 @@ messages.prototype.write = function (text, options) {
 }
 
 messages.prototype.draw = function (clear_messages) {
-	// TODO: FIX!
-	if (clear_messages) this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
 	var diff = this.lines.length - 1 - this.lastLine;
-	if (diff == 0 && clear_messages) {
+	if (diff == 0) {
 		this.clear();
 		return;
 	}
@@ -245,6 +243,7 @@ messages.prototype.draw = function (clear_messages) {
 			$rle.put(0, 5 - (this.lines.length - 1 - this.lastLine), this.lines[this.lastLine + 3].text);
 		}
 	}
+	this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
 }
 
 messages.prototype.clear = function (override) {
@@ -287,6 +286,6 @@ now.drawPlayers = function (players) {
 		}
 	}
 	if (state.current().in_game) {
-		state.current().draw(false);
+		state.current().draw_partial();
 	}
 }
