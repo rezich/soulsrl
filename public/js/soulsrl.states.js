@@ -388,35 +388,35 @@ state_game.prototype = new state();
 state_game.prototype.keys = {
 	north: {
 		keys: $rle.keys.arrow_n,
-		action: function () { game.current.player.move($rle.dir.n); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.n); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	east: {
 		keys: $rle.keys.arrow_e,
-		action: function () { game.current.player.move($rle.dir.e); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.e); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	west: {
 		keys: $rle.keys.arrow_w,
-		action: function () { game.current.player.move($rle.dir.w); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.w); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	south: {
 		keys: $rle.keys.arrow_s,
-		action: function () { game.current.player.move($rle.dir.s); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.s); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	northwest: {
 		keys: $rle.keys.arrow_nw,
-		action: function () { game.current.player.move($rle.dir.nw); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.nw); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	northeast: {
 		keys: $rle.keys.arrow_ne,
-		action: function () { game.current.player.move($rle.dir.ne); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.ne); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	southwest: {
 		keys: $rle.keys.arrow_sw,
-		action: function () { game.current.player.move($rle.dir.sw); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.sw); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	southeast: {
 		keys: $rle.keys.arrow_se,
-		action: function () { game.current.player.move($rle.dir.se); state.current().draw(); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { game.current.player.move($rle.dir.se); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
 	},
 	wait: {
 		keys: [90, 101],
@@ -424,7 +424,7 @@ state_game.prototype.keys = {
 	}
 }
 
-state_game.prototype.draw = function () {
+state_game.prototype.draw = function (clear_messages) {
 	$rle.clear();
 	var ents = game.current.current_room.entities;
 	for (var i in ents) {
@@ -435,7 +435,9 @@ state_game.prototype.draw = function () {
 		ents[i].draw();
 	}
 	game.current.player.draw();
-	game.current.messages.draw();
+	// TODO: FIX
+	if (clear_messages) game.current.messages.draw(true);
+	else game.current.messages.draw(false);
 	game.current.drawUI();
 	$rle.flush();
 }

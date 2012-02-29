@@ -12,7 +12,7 @@ function room(area, floor) {
 
 room.prototype = {
 	get entities() {
-		return this.terrain.concat(this.creatures).concat(_PLAYERS);
+		return this.terrain.concat(_PLAYERS).concat(this.creatures);
 	}
 }
 
