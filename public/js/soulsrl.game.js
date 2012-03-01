@@ -1,4 +1,4 @@
-_MULTIPLAYER = false;
+_MULTIPLAYER = true;
 
 $(document).ready(function () {
 	$rle.setup('screen');
