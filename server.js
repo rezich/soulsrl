@@ -56,7 +56,6 @@ everyone.now.updatePlayer = function (x, y, room) {
 			toUpdate[i] = { x: players[i].x, y: players[i].y };
 		}
 	}
-	console.log(Object.keys(toUpdate).length);
 	if (Object.keys(toUpdate).length < 2) return;
 	for (var i in toUpdate) {
 		nowjs.getClient(i, function (err) {

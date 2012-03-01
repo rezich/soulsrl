@@ -1,4 +1,4 @@
-_MULTIPLAYER = true;
+_MULTIPLAYER = false;
 
 $(document).ready(function () {
 	$rle.setup('screen');
@@ -67,12 +67,28 @@ game.handleInput = function (event) {
 	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
-		if (Object.prototype.toString.call(keys) === '[object Array]') {
+		if (Object.prototype.toString.call(keys) === '[object Object]') {
+			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || keys.key == event.keyCode) {
+				game._keysEnabled = false;
+				game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
+				commands[command].action();
+				return false;
+			}
+		}
+		else if (Object.prototype.toString.call(keys) === '[object Array]') {
 			for (var key in keys) {
-				if (keys[key] == event.keyCode) {
-					commands[command].action();
+				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
+					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || keys[key].key == event.keyCode) {
+						game._keysEnabled = false;
+						game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
+						commands[command].action();
+						return false;
+					}
+				}
+				else if (keys[key] == event.keyCode) {
 					game._keysEnabled = false;
 					game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
+					commands[command].action();
 					return false;
 				}
 			}
@@ -280,12 +296,11 @@ entity.prototype.draw = function () {
 }
 
 now.drawPlayers = function (players) {
-	console.log('drawing all players');
 	if (!_MULTIPLAYER) return;
 	game.current.current_room.players.length = 0;
 	for (var i in players) {
 		if (i != now.core.clientId) {
-			game.current.current_room.players.push(new creature({ x: players[i].x, y: players[i].y }, creature.data.ghost));
+			game.current.current_room.players.push(new creature({ x: players[i].x, y: players[i].y }, game.current.current_room, creature.data.ghost));
 		}
 	}
 	if (state.current().in_game) {

@@ -143,7 +143,7 @@ state_mainMenu.entries = [
 				cache: false,
 				success: function (data) {
 					state.pop();
-					state.add(new state_help(data), { clear: true });
+					state.add(new state_reader(data), { clear: true });
 				}
 			});
 		}
@@ -171,28 +171,37 @@ state_loading.prototype.draw = function () {
 
 
 ////
-// state_help - documentation and such
+// state_reader - text reader, for the manual and message log
 ////
 
-function state_help(data) {
+function state_reader(data, options) {
 	this.text = data.split('\n');
 	this.scroll_position = 0;
+	this.height = 22;
+
+	if (options) {
+		if (options.scroll_position) {
+			if (options.scroll_position == 'bottom') this.scroll_position = Math.max(0, this.text.length - this.height);
+			else if (options.scroll_position == 'top') this.scroll_position = 0;
+			else this.scroll_position = options.scroll_position;
+		}
+	}
 }
 
-state_help.prototype = new state();
+state_reader.prototype = new state();
 
-state_help.prototype.keys = {
+state_reader.prototype.keys = {
 	back: {
 		keys: $rle.keys.escape,
 		action: function () { state.pop(); }
 	},
 	page_up: {
 		keys: $rle.keys.page_up,
-		action: function () { state.current().scroll_position = Math.max(state.current().scroll_position - 23, 0); state.current().draw(); }
+		action: function () { state.current().scroll_position = Math.max(state.current().scroll_position - state.current().height, 0); state.current().draw(); }
 	},
 	page_down: {
 		keys: $rle.keys.page_down,
-		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + 23, state.current().text.length - 23); state.current().draw(); }
+		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + state.current().height, state.current().text.length - state.current().height); state.current().draw(); }
 	},
 	up: {
 		keys: $rle.keys.arrow_n,
@@ -200,20 +209,21 @@ state_help.prototype.keys = {
 	},
 	down: {
 		keys: $rle.keys.arrow_s,
-		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + 1, state.current().text.length - 23); state.current().draw(); }
+		action: function () { state.current().scroll_position = Math.min(state.current().scroll_position + 1, state.current().text.length - state.current().height); state.current().draw(); }
 	}
 }
 
-state_help.prototype.draw = function () {
+state_reader.prototype.draw = function () {
 	$rle.clear();
 	if (this.text) {
-		for (var i = 0; i < 23; i++) {
+		for (var i = 0; i < this.height; i++) {
 			if (this.scroll_position + i > this.text.length) break;
 			$rle.put(0, i, this.text[this.scroll_position + i]);
 		}
 	}
 
-	$rle.put(40, 23, "arrows, numpad, vi keys, page up/down: scroll", { align: 'center', fg: $rle.color.system.charcoal });
+	$rle.put(40, 22, "arrows, numpad, vi keys, page up/down: scroll", { align: 'center', fg: $rle.color.system.charcoal });
+	$rle.put(40, 23, 'home/end: scroll to top/bottom', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 24, "escape: return", { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.flush();
 }
@@ -421,6 +431,20 @@ state_game.prototype.keys = {
 	wait: {
 		keys: [90, 101],
 		action: function () { }
+	},
+	show_logs: {
+		keys: {
+			key: $rle.keys.m,
+			shift: true
+		},
+		action: function () {
+			var msg = '';
+			for (var i in game.current.messages.lines) {
+				msg += '\n' + game.current.messages.lines[i].text;
+			}
+			msg = msg.substring(1);
+			state.add(new state_reader(msg, { scroll_position: 'bottom' }), { clear: false });
+		}
 	}
 }
 
