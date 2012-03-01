@@ -33,7 +33,7 @@ var everyone = nowjs.initialize(httpServer);
 
 var players = [];
 nowjs.on('connect', function () {
-	players[this.user.clientId] = { x: 1, y: 1 };
+	players[this.user.clientId] = { x: 1, y: 1, room: null };
 })
 
 nowjs.on('disconnect', function () {
@@ -45,16 +45,19 @@ nowjs.on('disconnect', function () {
 	}
 });
 
-everyone.now.updatePlayer = function (x, y) {
-	console.log('updating player');
+everyone.now.updatePlayer = function (x, y, room) {
 	players[this.user.clientId].x = x;
 	players[this.user.clientId].y = y;
+	players[this.user.clientId].room = room;
 	var toUpdate = {};
 	for (var i in players) {
-		// TODO: limit this to only some players or something
-		toUpdate[i] = { x: players[i].x, y: players[i].y };
+		if (players[i].room == room) {
+			// TODO: limit this to only some players or something
+			toUpdate[i] = { x: players[i].x, y: players[i].y };
+		}
 	}
-
+	console.log(Object.keys(toUpdate).length);
+	if (Object.keys(toUpdate).length < 2) return;
 	for (var i in toUpdate) {
 		nowjs.getClient(i, function (err) {
 			this.now.drawPlayers(toUpdate);

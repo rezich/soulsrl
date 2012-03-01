@@ -5,6 +5,7 @@
 function room(area, floor) {
 	this.terrain = [];
 	this.creatures = [];
+	this.players = [];
 	this.area = area;
 	this.floor = floor;
 	this.visibility = 10;
@@ -12,7 +13,10 @@ function room(area, floor) {
 
 room.prototype = {
 	get entities() {
-		return this.terrain.concat(_PLAYERS).concat(this.creatures);
+		return this.terrain.concat(this.players).concat(this.creatures);
+	},
+	get name() {
+		return this.area + (this.floor ? '-' + this.floor : '');
 	}
 }
 
@@ -79,8 +83,4 @@ room.prototype.visit = function (x, y) {
 
 room.prototype.blocked = function (x, y) {
 	return this.blocks_light_at({ x: x, y: y });
-}
-
-room.prototype.name = function (position) {
-	return this.area + (this.floor ? '-' + this.floor : '');
 }

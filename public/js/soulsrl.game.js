@@ -138,7 +138,7 @@ game.prototype.init = function (player_name) {
 
 game.prototype.init_player = function(name) {
 	this.player = new creature({ x: 1, y: 1 }, creature.data.player);
-	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y);
+	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y, game.current.current_room.name);
 	this.player.name = name;
 }
 
@@ -153,7 +153,7 @@ game.prototype.generateDungeon = function (area, floor) {
 
 	// TODO: Y'know, procedural stuff :P
 
-	if (!room.data[r.name()]) {
+	if (!room.data[r.name]) {
 		alert("area data not found!");
 		return r;
 	}
@@ -198,7 +198,7 @@ game.prototype.drawUI = function () {
 	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.system.cyan });
 
 	// UI line 2
-	var room_name = game.current.current_room.name();
+	var room_name = game.current.current_room.name;
 	$rle.put(0, 24, room_name, { fg: $rle.color.system.cyan });
 	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.system.gray });
 	var lvl = this.player.level.toString();
@@ -278,14 +278,13 @@ entity.prototype.draw = function () {
 	if (this.should_draw())	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg, alpha: (this.lit ? 0 : 0.5) });
 }
 
-_PLAYERS = [];
-
 now.drawPlayers = function (players) {
-	if (_MULTIPLAYER) return;
-	_PLAYERS.length = 0;
+	console.log('drawing all players');
+	if (!_MULTIPLAYER) return;
+	game.current.current_room.players.length = 0;
 	for (var i in players) {
 		if (i != now.core.clientId) {
-			_PLAYERS.push(new creature({ x: players[i].x, y: players[i].y }, creature.data.ghost));
+			game.current.current_room.players.push(new creature({ x: players[i].x, y: players[i].y }, creature.data.ghost));
 		}
 	}
 	if (state.current().in_game) {

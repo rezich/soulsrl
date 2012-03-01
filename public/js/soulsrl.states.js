@@ -453,5 +453,5 @@ state_game.prototype.first_draw = function () { }
 state_game.prototype.move_player = function (direction) {
 	game.current.player.move(direction);
 	state.current().draw(true);
-	if (_MULTIPLAYER) now.updatePlayer(game.current.player.position.x, game.current.player.position.y);
+	if (_MULTIPLAYER) now.updatePlayer(game.current.player.position.x, game.current.player.position.y, game.current.current_room.name);
 }
