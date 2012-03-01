@@ -388,35 +388,35 @@ state_game.prototype = new state();
 state_game.prototype.keys = {
 	north: {
 		keys: $rle.keys.arrow_n,
-		action: function () { game.current.player.move($rle.dir.n); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.n); }
 	},
 	east: {
 		keys: $rle.keys.arrow_e,
-		action: function () { game.current.player.move($rle.dir.e); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.e); }
 	},
 	west: {
 		keys: $rle.keys.arrow_w,
-		action: function () { game.current.player.move($rle.dir.w); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.w); }
 	},
 	south: {
 		keys: $rle.keys.arrow_s,
-		action: function () { game.current.player.move($rle.dir.s); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.s); }
 	},
 	northwest: {
 		keys: $rle.keys.arrow_nw,
-		action: function () { game.current.player.move($rle.dir.nw); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.nw); }
 	},
 	northeast: {
 		keys: $rle.keys.arrow_ne,
-		action: function () { game.current.player.move($rle.dir.ne); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.ne); }
 	},
 	southwest: {
 		keys: $rle.keys.arrow_sw,
-		action: function () { game.current.player.move($rle.dir.sw); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.sw); }
 	},
 	southeast: {
 		keys: $rle.keys.arrow_se,
-		action: function () { game.current.player.move($rle.dir.se); state.current().draw(true); now.updatePlayer(game.current.player.position.x, game.current.player.position.y); }
+		action: function () { state.current().move_player($rle.dir.se); }
 	},
 	wait: {
 		keys: [90, 101],
@@ -448,5 +448,10 @@ state_game.prototype.draw_partial = function () {
 	game.current.player.draw();
 }
 
-state_game.prototype.first_draw = function () {
+state_game.prototype.first_draw = function () { }
+
+state_game.prototype.move_player = function (direction) {
+	game.current.player.move(direction);
+	state.current().draw(true);
+	if (_MULTIPLAYER) now.updatePlayer(game.current.player.position.x, game.current.player.position.y);
 }

@@ -5,6 +5,7 @@ var webroot = './public';
 var file = new (static.Server)(webroot, {
 	cache: 600
 });
+
 var httpServer = http.createServer(function (req, res) {
 	req.addListener('end', function () {
 		file.serve(req, res, function (err, result) {
@@ -45,6 +46,7 @@ nowjs.on('disconnect', function () {
 });
 
 everyone.now.updatePlayer = function (x, y) {
+	console.log('updating player');
 	players[this.user.clientId].x = x;
 	players[this.user.clientId].y = y;
 	var toUpdate = {};

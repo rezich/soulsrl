@@ -1,10 +1,13 @@
+_MULTIPLAYER = false;
+
 $(document).ready(function () {
 	$rle.setup('screen');
 	new game();
 	now.ready(function () {
-		//now.updatePlayer(game.current.player.position.x || 1, game.current.player.position.y || 1);
-		state.pop();
-		state.current().draw();
+		if (_MULTIPLAYER) {
+			state.pop();
+			state.current().draw();
+		}
 	});
 });
 
@@ -18,8 +21,7 @@ function game() {
 	state.reset();
 
 	state.add(new state_mainMenu());
-	state.add(new state_loading());
-	//state.add(new state_game());
+	if (_MULTIPLAYER) state.add(new state_loading());
 
 	//this.commands = game.cmds_game;
 	/*this.messages.write("Welcome to SoulsRL!");
@@ -43,7 +45,7 @@ game.current = null;
 
 game._keyTimeout = null;
 game._keysEnabled = true;
-game._keyRateLimit = 7;
+game._keyRateLimit = 1;
 
 game.viewport_offset = {
 	x: 0,
@@ -136,7 +138,7 @@ game.prototype.init = function (player_name) {
 
 game.prototype.init_player = function(name) {
 	this.player = new creature({ x: 1, y: 1 }, creature.data.player);
-	now.updatePlayer(this.player.position.x, this.player.position.y);
+	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y);
 	this.player.name = name;
 }
 
@@ -279,6 +281,7 @@ entity.prototype.draw = function () {
 _PLAYERS = [];
 
 now.drawPlayers = function (players) {
+	if (_MULTIPLAYER) return;
 	_PLAYERS.length = 0;
 	for (var i in players) {
 		if (i != now.core.clientId) {
