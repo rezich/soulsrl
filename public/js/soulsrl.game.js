@@ -137,7 +137,7 @@ game.prototype.init = function (player_name) {
 }
 
 game.prototype.init_player = function(name) {
-	this.player = new creature({ x: 1, y: 1 }, creature.data.player);
+	this.player = new creature({ x: 1, y: 1 }, this.current_room, creature.data.player);
 	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y, game.current.current_room.name);
 	this.player.name = name;
 }
@@ -268,6 +268,7 @@ function entity() {
 	this.visited = false; // maybe don't use this?
 	this.solid = false;
 	this.blocks_light = false;
+	this.room = null;
 }
 
 entity.prototype.should_draw = function () {

@@ -2,8 +2,9 @@
 // terrain - static stuff, walls and floors and so forth
 ////
 
-function terrain(pos, data) {
+function terrain(pos, room, data) {
 	this.position = pos;
+	this.room = room;
 
 	// TODO: Improve this copy code if terrain data is ever going to
 	// contain arrays or objects that'll be modified in the copy

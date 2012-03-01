@@ -35,11 +35,11 @@ room.prototype.add_terrain = function (position, kind) {
 	for (var t in this.terrain) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) this.terrain.splice(t, 1);
 	}
-	this.terrain.push(new terrain({ x: position.x, y: position.y }, kind));
+	this.terrain.push(new terrain({ x: position.x, y: position.y }, this, kind));
 }
 
 room.prototype.add_creature = function (position, data) {
-	this.creatures.push(new creature({ x: position.x, y: position.y }, data));
+	this.creatures.push(new creature({ x: position.x, y: position.y }, this, data));
 }
 
 room.prototype.solid_at = function (position) {
@@ -66,6 +66,13 @@ room.prototype.blocks_light_at = function (position) {
 room.prototype.terrain_at = function (position) {
 	for (var t in this.terrain) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) return this.terrain[t];
+	}
+	return null;
+}
+
+room.prototype.creature_at = function (position) {
+	for (var t in this.creatures) {
+		if (this.creatures[t].position.x == position.x && this.creatures[t].position.y == position.y) return this.creatures[t];
 	}
 	return null;
 }

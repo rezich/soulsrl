@@ -2,8 +2,9 @@
 // creature - anything that has hit points, can be killed, etc.
 ////
 
-function creature(pos, data) {
+function creature(pos, room, data) {
 	this.position = pos;
+	this.room = room;
 
 	this.maxHP = 1;
 	this.souls = 0;
@@ -19,7 +20,19 @@ function creature(pos, data) {
     	}
 	}
 	
-	this.HP = this.maxHP;
+	this._hp = this.maxHP;
+
+	Object.defineProperties(this, {
+		"HP": {
+			"get": function () {
+				return this._hp;
+			},
+			"set": function (val) {
+				this._hp = val;
+				if (this._hp < 1) this.kill();
+			}
+		}
+	})
 }
 
 creature.prototype = new entity();
@@ -63,20 +76,44 @@ creature.prototype.move = function (direction) {
 	}
 	var ter = game.current.current_room.terrain_at(endpos);
 	if (ter) {
+		// there is terrain of some kind (including floor)
 		if (ter.solid) {
+			// it's solid, though
 			ter.interact_with(this);
 			this.draw();
 			return;
 		}
-		if (ter.interact_with(this)) {
-			this.position = endpos;
-			game.current.redraw_tile(lastpos);
-			this.draw();
+		var cre = game.current.current_room.creature_at(endpos);
+		if (cre) {
+			// there's a creature there! attack it!
+			this.attack(cre);
+		}
+		else {
+			// see if there's traps or anything on the terrain
+			if (ter.interact_with(this)) {
+				this.position = endpos;
+				game.current.redraw_tile(lastpos);
+				this.draw();
+			}
 		}
 	}
 	else {
+		// there's no terrain there
 		terrain.path_blocked();
 		return;
+	}
+}
+
+creature.prototype.attack = function (other) {
+	other.HP -= 1;
+}
+
+creature.prototype.kill = function () {
+	for (var i in this.room.creatures) {
+		if (this.room.creatures[i] == this) {
+			delete this.room.creatures[i];
+			break;
+		}
 	}
 }
 
