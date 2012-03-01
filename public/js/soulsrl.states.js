@@ -439,10 +439,21 @@ state_game.prototype.keys = {
 		},
 		action: function () {
 			var msg = '';
+			var q = '';
+			var m = 1;
 			for (var i in game.current.messages.lines) {
-				msg += '\n' + game.current.messages.lines[i].text;
+				if (game.current.messages.lines[i].text == q) {
+					console.log('samesies!');
+					m++;
+				}
+				else {
+					msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
+					q = game.current.messages.lines[i].text;
+					m = 1;
+				}
 			}
-			msg = msg.substring(1);
+			msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
+			msg = msg.substring(2);
 			state.add(new state_reader(msg, { scroll_position: 'bottom' }), { clear: false });
 		}
 	}
