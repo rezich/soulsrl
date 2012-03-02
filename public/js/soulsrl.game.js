@@ -52,6 +52,20 @@ game.viewport_offset = {
 	y: 3
 }
 
+game.roll = function (a, b) {
+	if (a && b) {
+		// multiplier, die
+		var result = 0;
+		for (var i = 0; i < a; i++) {
+			result += 1 + Math.floor(Math.random() * b);
+		}
+		return result;
+	}
+	// die
+	return 1 + Math.floor(Math.random() * a);
+
+}
+
 game.handleInput = function (event) {
 	if (!game.current) {
 		alert('no game!');
@@ -228,6 +242,11 @@ game.prototype.drawUI = function () {
 	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUM:', { fg: $rle.color.system.gray });
 	var humanity = this.player.humanity.toString();
 	$rle.put(17 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.system.cyan });
+
+	$rle.put(40, 23, 'ATK:', { fg: $rle.color.system.gray });
+	var dice = game.current.player.attack_dice;
+	var attack_dice = (dice.multiplier > 1 ? dice.multiplier.toString() : '') + 'd' + dice.die + (dice.bonus < 0 ? dice.bonus.toString() : '') + (dice.bonus > 0 ? '+' + dice.bonus.toString() : '');
+	$rle.put(44, 23, attack_dice, { fg: $rle.color.system.cyan });
 }
 
 

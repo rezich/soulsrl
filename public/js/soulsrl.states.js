@@ -486,7 +486,6 @@ state_game.prototype.keys = {
 			var m = 1;
 			for (var i in game.current.messages.lines) {
 				if (game.current.messages.lines[i].text == q) {
-					console.log('samesies!');
 					m++;
 				}
 				else {

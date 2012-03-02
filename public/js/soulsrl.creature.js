@@ -34,6 +34,15 @@ function creature(pos, room, data) {
 				this.hitpoints = val;
 				if (this.hitpoints < 1) this.kill();
 			}
+		},
+		"attack_dice": {
+			"get": function () {
+				return {
+					multiplier: 1,
+					die: 4,
+					bonus: 1
+				}
+			}
 		}
 	})
 }
@@ -108,7 +117,7 @@ creature.prototype.move = function (direction) {
 }
 
 creature.prototype.attack = function (other) {
-	var amount = 1;
+	var amount = this.attack_roll();
 	var missed = false;
 	if (!missed) {
 		if (this == game.current.player) {
@@ -134,6 +143,10 @@ creature.prototype.attack = function (other) {
 			game.current.messages.write('The ' + other.name + ' misses you!');
 		}
 	}
+}
+
+creature.prototype.attack_roll = function () {
+	return game.roll(this.attack_dice.multiplier, this.attack_dice.die) + this.attack_dice.bonus;
 }
 
 creature.prototype.kill = function () {
