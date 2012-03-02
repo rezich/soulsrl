@@ -20,7 +20,6 @@ state.add = function (s, options) {
 	if (options) {
 		if (options.clear) $rle.clear();
 	}
-	state.current().first_draw();
 	state.current().draw();
 }
 
@@ -33,10 +32,12 @@ state.reset = function () {
 	state.list = [];
 }
 
-state.pop = function () {
+state.pop = function (options) {
 	state.list.pop();
 	$rle.clear();
-	state.current().first_draw();
+	if (options) {
+		if (options.noredraw) return;
+	}
 	state.current().draw();
 }
 
@@ -385,6 +386,48 @@ state_inputName.prototype.confirm = function () {
 
 
 ////
+// state_confirm - confirm something before it happens
+////
+
+function state_confirm(message, action) {
+	this.message = message;
+	this.confirm_action = action;
+	this.draw();
+}
+
+state_confirm.prototype = new state();
+
+state_confirm.prototype.keys = {
+	y: {
+		keys: {
+			key: $rle.keys.y,
+			shift: true
+		},
+		action: function () {
+			var act = state.current().confirm_action;
+			state.pop();
+			act();
+		}
+	},
+	n: {
+		keys: $rle.keys.n,
+		action: function () {
+			state.pop();
+			state.current().draw();
+		}
+	}
+}
+
+state_confirm.prototype.draw = function () {
+	$rle.put(0, 0, '                                                                                ');
+	$rle.put(0, 1, '                                                                                ');
+	$rle.put(0, 2, '                                                                                ');
+	$rle.put(0, 1, this.message + ' (Y/n)?');
+	$rle.flush();
+}
+
+
+////
 // state_game - main game state
 ////
 
@@ -456,6 +499,19 @@ state_game.prototype.keys = {
 			msg = msg.substring(2);
 			state.add(new state_reader(msg, { scroll_position: 'bottom' }), { clear: false });
 		}
+	},
+	quit: {
+		keys: {
+			key: $rle.keys.q,
+			shift: true
+		},
+		action: function () {
+			state.add(new state_confirm('Really quit', function () {
+				$rle.clear();
+				delete game.current;
+				new game();
+			}));
+		}
 	}
 }
 
@@ -482,8 +538,6 @@ state_game.prototype.draw_partial = function () {
 	}
 	game.current.player.draw();
 }
-
-state_game.prototype.first_draw = function () { }
 
 state_game.prototype.move_player = function (direction) {
 	game.current.player.move(direction);

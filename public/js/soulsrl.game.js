@@ -102,6 +102,9 @@ game.handleInput = function (event) {
 			}
 		}
 	}
+
+	// Just so you don't accidentally go back
+	if (event.keyCode == $rle.keys.backspace) return false;
 }
 
 // TODO: GET RID OF THIS
