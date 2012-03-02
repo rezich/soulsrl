@@ -18,20 +18,21 @@ function creature(pos, room, data) {
 
 	if (data) {
 		for (var key in data) {
-        	this[key] = data[key];
+			if (key == 'HP') this['maxHP'] = data[key];
+        	else this[key] = data[key];
     	}
 	}
 	
-	this._hp = this.maxHP;
+	this.hitpoints = this.maxHP;
 
 	Object.defineProperties(this, {
 		"HP": {
 			"get": function () {
-				return this._hp;
+				return this.hitpoints;
 			},
 			"set": function (val) {
-				this._hp = val;
-				if (this._hp < 1) this.kill();
+				this.hitpoints = val;
+				if (this.hitpoints < 1) this.kill();
 			}
 		}
 	})
@@ -138,7 +139,7 @@ creature.prototype.attack = function (other) {
 creature.prototype.kill = function () {
 	for (var i in this.room.creatures) {
 		if (this.room.creatures[i] == this) {
-			delete this.room.creatures[i];
+			this.room.creatures.splice(i, 1);
 			break;
 		}
 	}
@@ -164,6 +165,7 @@ creature.data = {
 	hollow_unarmed: {				// undead, decrepit, just stands around and waits to be killed
 		name: 'hollow',
 		character: 'h',
+		HP: 8,
 		behavior: creature.behavior.none,
 		souls: 20
 	},
@@ -293,7 +295,7 @@ creature.data = {
 
 	player: {
 		character: '@',
-		maxHP: 10,
+		HP: 10,
 		level: 1,
 		XP: 0,
 		humanity: 0,
