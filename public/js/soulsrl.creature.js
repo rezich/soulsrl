@@ -57,6 +57,10 @@ creature.prototype.move = function(direction) {
 	this.move_to($rle.add_dir(this.position, direction));
 }
 
+creature.prototype.update = function () {
+	this.wander();
+}
+
 creature.prototype.move_to = function (position) {
 	var lastpos = { x: this.position.x, y: this.position.y };
 	var ter = game.current.current_room.terrain_at(position);
@@ -124,7 +128,7 @@ creature.prototype.wander = function () {
 		var pos = $rle.add_dir(this.position, $rle.dir[d]);
 		if (!this.room.solid_at(pos)) possibilities.push(pos); // say that ten times fast
 	}
-	console.log(possibilities);
+	if (possibilities.length > 0) this.move_to(possibilities[Math.round(Math.random(possibilities.length))]);
 }
 
 creature.prototype.attack_roll = function () {

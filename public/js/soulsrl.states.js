@@ -45,6 +45,8 @@ state.prototype.keys = { }
 
 state.prototype.draw = function () { }
 
+state.prototype.update = function () { }
+
 state.prototype.first_draw = function () { }
 
 
@@ -441,39 +443,39 @@ state_game.prototype = new state();
 state_game.prototype.keys = {
 	north: {
 		keys: $rle.keys.arrow_n,
-		action: function () { state.current().move_player($rle.dir.n); }
+		action: function () { state.current().move_player($rle.dir.n); return true; }
 	},
 	east: {
 		keys: $rle.keys.arrow_e,
-		action: function () { state.current().move_player($rle.dir.e); }
+		action: function () { state.current().move_player($rle.dir.e); return true; }
 	},
 	west: {
 		keys: $rle.keys.arrow_w,
-		action: function () { state.current().move_player($rle.dir.w); }
+		action: function () { state.current().move_player($rle.dir.w); return true; }
 	},
 	south: {
 		keys: $rle.keys.arrow_s,
-		action: function () { state.current().move_player($rle.dir.s); }
+		action: function () { state.current().move_player($rle.dir.s); return true; }
 	},
 	northwest: {
 		keys: $rle.keys.arrow_nw,
-		action: function () { state.current().move_player($rle.dir.nw); }
+		action: function () { state.current().move_player($rle.dir.nw); return true; }
 	},
 	northeast: {
 		keys: $rle.keys.arrow_ne,
-		action: function () { state.current().move_player($rle.dir.ne); }
+		action: function () { state.current().move_player($rle.dir.ne); return true; }
 	},
 	southwest: {
 		keys: $rle.keys.arrow_sw,
-		action: function () { state.current().move_player($rle.dir.sw); }
+		action: function () { state.current().move_player($rle.dir.sw); return true; }
 	},
 	southeast: {
 		keys: $rle.keys.arrow_se,
-		action: function () { state.current().move_player($rle.dir.se); }
+		action: function () { state.current().move_player($rle.dir.se); return true; }
 	},
 	wait: {
 		keys: [90, 101],
-		action: function () { }
+		action: function () { return true; }
 	},
 	show_logs: {
 		keys: {
@@ -520,6 +522,13 @@ state_game.prototype.draw = function () {
 	game.current.messages.draw();
 	game.current.drawUI();
 	$rle.flush();
+}
+
+state_game.prototype.update = function () {
+	for (var c in game.current.current_room.creatures) {
+		if (game.current.current_room.creatures[c] == game.current.player) continue;
+		game.current.current_room.creatures[c].update();
+	}
 }
 
 state_game.prototype.draw_partial = function () {

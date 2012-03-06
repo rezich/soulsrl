@@ -45,7 +45,7 @@ game.current = null;
 
 game._keyTimeout = null;
 game._keysEnabled = true;
-game._keyRateLimit = 100;
+game._keyRateLimit = 20;
 
 game.viewport_offset = {
 	x: 0,
@@ -63,7 +63,6 @@ game.roll = function (a, b) {
 	}
 	// die
 	return 1 + Math.floor(Math.random() * a);
-
 }
 
 game.handleInput = function (event) {
@@ -78,47 +77,44 @@ game.handleInput = function (event) {
 	if (!game._keysEnabled) {
 		return false;
 	}
+	var update = false;
+	var ret = true;
 	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
 		if (Object.prototype.toString.call(keys) === '[object Object]') {
 			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || keys.key == event.keyCode) {
-				game._keysEnabled = false;
-				game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
-				commands[command].action();
-				return false;
+				update = commands[command].action();
+				ret = false;
 			}
 		}
 		else if (Object.prototype.toString.call(keys) === '[object Array]') {
 			for (var key in keys) {
 				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
 					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || keys[key].key == event.keyCode) {
-						game._keysEnabled = false;
-						game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
-						commands[command].action();
-						return false;
+						update = commands[command].action();
+						ret = false;
 					}
 				}
 				else if (keys[key] == event.keyCode) {
-					game._keysEnabled = false;
-					game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
-					commands[command].action();
-					return false;
+					update = commands[command].action();
+					ret = false;
 				}
 			}
 		}
 		else {
 			if (keys == event.keyCode) {
-				game._keysEnabled = false;
-				game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit);
-				commands[command].action();
-				return false;
+				update = commands[command].action();
+				ret = false;
 			}
 		}
 	}
 
+	if (update) game.current.update();
+
 	// Just so you don't accidentally go back
 	if (event.keyCode == $rle.keys.backspace) return false;
+	return ret;
 }
 
 // TODO: GET RID OF THIS
@@ -173,6 +169,14 @@ game.prototype.init_player = function(name) {
 	this.player = new creature({ x: 1, y: 1 }, this.current_room, creature.data.player);
 	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y, game.current.current_room.name);
 	this.player.name = name;
+}
+
+game.prototype.update = function() {
+	game._keysEnabled = false;
+	var _beginning = Date.now();
+	state.current().update();
+	var _end = Date.now();
+	game._keyTimeout = setTimeout(function () { game._keysEnabled = true; }, game._keyRateLimit - (_end - _beginning));
 }
 
 game.prototype.redraw_tile = function (position) {
@@ -316,6 +320,8 @@ entity.prototype.should_draw = function () {
 entity.prototype.draw = function () {
 	if (this.should_draw())	$rle.put(this.position.x + game.viewport_offset.x, this.position.y + game.viewport_offset.y, this.character, { fg: this.fg, bg: this.bg, alpha: (this.lit ? 0 : 0.5) });
 }
+
+entity.prototype.update = function () {}
 
 now.drawPlayers = function (players) {
 	if (!_MULTIPLAYER) return;
