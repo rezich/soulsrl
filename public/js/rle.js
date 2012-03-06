@@ -322,6 +322,19 @@ $rle.draw_box = function (x, y, w, h) {
 	}
 }
 
+$rle.add_dir = function (pos, dir) {
+	switch (dir) {
+		case $rle.dir.e:  return {x: pos.x + 1, y: pos.y + 0};
+		case $rle.dir.ne: return {x: pos.x + 1, y: pos.y - 1};
+		case $rle.dir.n:  return {x: pos.x + 0, y: pos.y - 1};
+		case $rle.dir.nw: return {x: pos.x - 1, y: pos.y - 1};
+		case $rle.dir.w:  return {x: pos.x - 1, y: pos.y + 0};
+		case $rle.dir.sw: return {x: pos.x - 1, y: pos.y + 1};
+		case $rle.dir.s:  return {x: pos.x + 0, y: pos.y + 1};
+		case $rle.dir.se: return {x: pos.x + 1, y: pos.y + 1};
+	}
+}
+
 $(document).keydown(function (event) {
 	if (event.keyCode == 16) $rle.shift = true;
 });

@@ -145,6 +145,15 @@ creature.prototype.attack = function (other) {
 	}
 }
 
+creature.prototype.wander = function () {
+	var possibilities = [];
+	for (var d in $rle.dir) {
+		var pos = $rle.add_dir(this.position, $rle.dir[d]);
+		if (!this.room.solid_at(pos)) possibilities.push(pos); // say that ten times fast
+	}
+	console.log(possibilities);
+}
+
 creature.prototype.attack_roll = function () {
 	return game.roll(this.attack_dice.multiplier, this.attack_dice.die) + this.attack_dice.bonus;
 }
