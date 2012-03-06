@@ -1,4 +1,4 @@
-_MULTIPLAYER = true;
+_MULTIPLAYER = false;
 
 $(document).ready(function () {
 	$rle.setup('screen');
@@ -45,7 +45,7 @@ game.current = null;
 
 game._keyTimeout = null;
 game._keysEnabled = true;
-game._keyRateLimit = 1;
+game._keyRateLimit = 100;
 
 game.viewport_offset = {
 	x: 0,
