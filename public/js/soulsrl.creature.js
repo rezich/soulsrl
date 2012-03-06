@@ -53,40 +53,13 @@ creature.prototype.should_draw = function () {
 	return this.lit;
 }
 
-creature.prototype.move = function (direction) {
-	var endpos = { x: this.position.x, y: this.position.y };
+creature.prototype.move = function(direction) {
+	this.move_to($rle.add_dir(this.position, direction));
+}
+
+creature.prototype.move_to = function (position) {
 	var lastpos = { x: this.position.x, y: this.position.y };
-	switch (direction) {
-		case $rle.dir.e:
-			endpos.x++;
-			break;
-		case $rle.dir.ne:
-			endpos.x++;
-			endpos.y--;
-			break;
-		case $rle.dir.n:
-			endpos.y--;
-			break;
-		case $rle.dir.nw:
-			endpos.x--;
-			endpos.y--;
-			break;
-		case $rle.dir.w:
-			endpos.x--;
-			break;
-		case $rle.dir.sw:
-			endpos.x--;
-			endpos.y++;
-			break;
-		case $rle.dir.s:
-			endpos.y++;
-			break;
-		case $rle.dir.se:
-			endpos.x++;
-			endpos.y++;
-			break;
-	}
-	var ter = game.current.current_room.terrain_at(endpos);
+	var ter = game.current.current_room.terrain_at(position);
 	if (ter) {
 		// there is terrain of some kind (including floor)
 		if (ter.solid) {
@@ -95,7 +68,7 @@ creature.prototype.move = function (direction) {
 			this.draw();
 			return;
 		}
-		var cre = game.current.current_room.creature_at(endpos);
+		var cre = game.current.current_room.creature_at(position);
 		if (cre) {
 			// there's a creature there! attack it!
 			this.attack(cre);
@@ -103,7 +76,7 @@ creature.prototype.move = function (direction) {
 		else {
 			// see if there's traps or anything on the terrain
 			if (ter.interact_with(this)) {
-				this.position = endpos;
+				this.position = position;
 				game.current.redraw_tile(lastpos);
 				this.draw();
 			}
