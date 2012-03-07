@@ -443,9 +443,10 @@ function state_more(action) {
 }
 
 state_more.prototype = new state();
+
 state_more.prototype.keys = {
 	more: {
-		keys: $rle.keys.enter,
+		keys: [$rle.keys.space, $rle.keys.enter],
 		action: function () {
 			var act = state.current().more_action;
 			state.pop();
@@ -530,8 +531,8 @@ state_game.prototype.keys = {
 state_game.prototype.draw = function () {
 	$rle.clear();
 	this.draw_partial();
-	game.current.messages.draw();
 	game.current.drawUI();
+	game.current.messages.draw();
 	$rle.flush();
 }
 

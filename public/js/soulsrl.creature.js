@@ -210,7 +210,12 @@ creature.data = {
 		character: 'h',
 		HP: 8,
 		behavior: creature.behavior.derp, // TODO: change to creature.behavior.none for actual game release; this is just for testing
-		souls: 20
+		souls: 20,
+		attack_dice: {
+			multiplier: 1,
+			die: 2,
+			bonus: 0
+		}
 	},
 	hollow_archer: {				// early ranged enemy
 		name: 'hollow archer',

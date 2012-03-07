@@ -307,14 +307,30 @@ messages.prototype.draw = function (clear_messages) {
 		this.clear();
 		return;
 	}
-	if (diff > 0) $rle.put(0, 3 - diff, this.lines[this.lastLine + 1].text);
+	/*if (diff > 0) $rle.put(0, 3 - diff, this.lines[this.lastLine + 1].text);
 	if (diff > 1) $rle.put(0, 4 - diff, this.lines[this.lastLine + 2].text);
 	if (diff > 2) {
 		if (diff > 3) {
+			$rle.put(0, 5 - (this.lines.length - 1 - this.lastLine), this.lines[this.lastLine + 3].text + ' [MORE]');
 		}
-		else {
-			$rle.put(0, 5 - (this.lines.length - 1 - this.lastLine), this.lines[this.lastLine + 3].text);
-		}
+		$rle.put(0, 5 - (this.lines.length - 1 - this.lastLine), this.lines[this.lastLine + 3].text);
+	}*/
+	if (diff == 1) {
+		$rle.put(0, 2, this.lines[this.lastLine + 1].text);
+	}
+	if (diff == 2) {
+		$rle.put(0, 1, this.lines[this.lastLine + 1].text);
+		$rle.put(0, 2, this.lines[this.lastLine + 2].text);
+	}
+	if (diff > 2) {
+		$rle.put(0, 0, this.lines[this.lastLine + 1].text);
+		$rle.put(0, 1, this.lines[this.lastLine + 2].text);
+		$rle.put(0, 2, this.lines[this.lastLine + 3].text + (diff > 3 ? ' [MORE]' : ''));
+	}
+	if (diff > 3) {
+		state.add(new state_more(function () {
+			$rle.flush();
+		}));
 	}
 	this.lastLine = this.lastLine + Math.min(this.lines.length - 1 - this.lastLine, 3);
 }
