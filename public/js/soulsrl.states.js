@@ -474,8 +474,8 @@ state_game.prototype.keys = {
 		action: function () { state.current().move_player($rle.dir.se); return true; }
 	},
 	wait: {
-		keys: [90, 101],
-		action: function () { state.current().draw(); return true; }
+		keys: [$rle.keys.z, 101],
+		action: function () { return true; }
 	},
 	show_logs: {
 		keys: {

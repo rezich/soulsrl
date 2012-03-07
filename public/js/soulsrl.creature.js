@@ -63,7 +63,7 @@ creature.prototype.update = function () {
 
 creature.prototype.move_to = function (position) {
 	var lastpos = { x: this.position.x, y: this.position.y };
-	var ter = game.current.current_room.terrain_at(position);
+	var ter = this.room.terrain_at(position);
 	if (ter) {
 		// there is terrain of some kind (including floor)
 		if (ter.solid) {
@@ -72,7 +72,7 @@ creature.prototype.move_to = function (position) {
 			this.draw();
 			return;
 		}
-		var cre = game.current.current_room.creature_at(position);
+		var cre = this.room.creature_at(position);
 		if (cre) {
 			// there's a creature there! attack it!
 			this.attack(cre);
@@ -101,7 +101,7 @@ creature.prototype.attack = function (other) {
 			game.current.messages.write('You attack the ' + other.name + ' for ' + amount + ' damage!');
 		}
 		if (other == game.current.player) {
-			game.current.messages.write('The ' + this.name + ' attacks you for ' + amount + ' damate!');
+			game.current.messages.write('The ' + this.name + ' attacks you for ' + amount + ' damage!');
 		}
 		other.HP -= amount;
 		if (other.HP < 1) {
@@ -110,7 +110,7 @@ creature.prototype.attack = function (other) {
 				this.souls += other.souls;
 			}
 			if (other == game.current.player) {
-				game.current.messages.write('The ' + other.name + ' kills you!');
+				game.current.messages.write('The ' + this.name + ' kills you!');
 				game.current.messages.write('Y O U  D I E D.');
 			}
 		}
@@ -126,21 +126,17 @@ creature.prototype.attack = function (other) {
 }
 
 creature.prototype.wander = function () {
-	console.log('----------');
 	var possibilities = [];
 	for (var d in $rle.dir) {
 		var pos = $rle.add_dir(this.position, $rle.dir[d]);
-		console.log(pos);
 		if (!this.room.solid_at(pos)) {
-			console.log(pos);
-			if (!this.room.creature_at(pos)) {
-				possibilities.push(pos); // say that ten times fast
-			}
+			possibilities.push(pos); // say that ten times fast
 		}
 	}
 	if (possibilities.length > 0) {
-		var pos = possibilities[Math.round(Math.random(possibilities.length))];
-		var cre = game.current.current_room.creature_at(pos);
+		var i = Math.floor(Math.random() * possibilities.length);
+		var pos = possibilities[i];
+		var cre = this.room.creature_at(pos);
 		if (cre) this.attack(cre);
 		else this.move_to(pos);
 	}
@@ -163,6 +159,7 @@ creature.behavior = {
 	none: function () {},
 	derp: function () {
 		this.wander();
+		//console.log('enemy turn!');
 	},
 	basic_melee: function () {},
 	basic_ranged: function () {},
