@@ -2,6 +2,7 @@ _MULTIPLAYER = false;
 
 $(document).ready(function () {
 	$rle.setup('screen');
+	$(document).keydown(game.handleInput);
 	new game();
 	now.ready(function () {
 		if (_MULTIPLAYER) {
@@ -37,8 +38,6 @@ function game() {
 	this.player.draw();
 	this.redraw();*/
 	// end temp code
-
-	$(document).keydown(game.handleInput);
 }
 
 game.current = null;
@@ -46,18 +45,6 @@ game.current = null;
 game._keyTimeout = null;
 game._keysEnabled = true;
 game._keyRateLimit = 20;
-game._haltLoop = false;
-game.halt_loop = function (halt) {
-	if (halt) {
-		game._haltLoop = halt;
-	}
-	else {
-		var ret = false;
-		if (game._haltLoop) ret = true;
-		game._haltLoop = false;
-		return ret;
-	}
-}
 
 game.viewport_offset = {
 	x: 0,
@@ -78,7 +65,6 @@ game.roll = function (a, b) {
 }
 
 game.reset = function () {
-	game.halt_loop(true);
 	$rle.clear();
 	delete game.current;
 	new game();
@@ -96,53 +82,46 @@ game.handleInput = function (event) {
 	if (!game._keysEnabled) {
 		return false;
 	}
-	var update = false;
+	var callback = null;
 	var ret = true;
 	var commands = state.current().keys;
 	for (var command in commands) {
 		var keys = commands[command].keys;
 		if (Object.prototype.toString.call(keys) === '[object Object]') {
 			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || (!keys.shift && keys.key == event.keyCode)) {
-				if (game.halt_loop()) return;
-				update = commands[command].action();
-				if (game.halt_loop()) return;
-				ret = false;
+				callback = commands[command].action;
 			}
 		}
 		else if (Object.prototype.toString.call(keys) === '[object Array]') {
 			for (var key in keys) {
 				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
 					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || (!keys[key].shift && keys[key].key == event.keyCode)) {
-						if (game.halt_loop()) return;
-						update = commands[command].action();
-						if (game.halt_loop()) return;
-						ret = false;
+						callback = commands[command].action;
 					}
 				}
 				else if (keys[key] == event.keyCode) {
-					if (game.halt_loop()) return;
-					update = commands[command].action();
-					if (game.halt_loop()) return;
-					ret = false;
+					callback = commands[command].action;
 				}
 			}
 		}
 		else {
 			if (keys == event.keyCode) {
-				if (game.halt_loop()) return;
-				update = commands[command].action();
-				if (game.halt_loop()) return;
-				ret = false;
+				callback = commands[command].action;
 			}
 		}
-		if (!ret) break;
+		if (callback) break;
 	}
 
-	if (update) game.current.update();
+	//if (update) game.current.update();
+
+	if (callback) {
+		callback();
+		return false;
+	}
 
 	// Just so you don't accidentally go back
 	if (event.keyCode == $rle.keys.backspace) return false;
-	return ret;
+	return true;
 }
 
 // TODO: GET RID OF THIS

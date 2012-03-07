@@ -471,39 +471,39 @@ state_game.prototype = new state();
 state_game.prototype.keys = {
 	north: {
 		keys: $rle.keys.arrow_n,
-		action: function () { state.current().move_player($rle.dir.n); return true; }
+		action: function () { state.current().move_player($rle.dir.n); game.current.update(); }
 	},
 	east: {
 		keys: $rle.keys.arrow_e,
-		action: function () { state.current().move_player($rle.dir.e); return true; }
+		action: function () { state.current().move_player($rle.dir.e); game.current.update(); }
 	},
 	west: {
 		keys: $rle.keys.arrow_w,
-		action: function () { state.current().move_player($rle.dir.w); return true; }
+		action: function () { state.current().move_player($rle.dir.w); game.current.update(); }
 	},
 	south: {
 		keys: $rle.keys.arrow_s,
-		action: function () { state.current().move_player($rle.dir.s); return true; }
+		action: function () { state.current().move_player($rle.dir.s); game.current.update(); }
 	},
 	northwest: {
 		keys: $rle.keys.arrow_nw,
-		action: function () { state.current().move_player($rle.dir.nw); return true; }
+		action: function () { state.current().move_player($rle.dir.nw); game.current.update(); }
 	},
 	northeast: {
 		keys: $rle.keys.arrow_ne,
-		action: function () { state.current().move_player($rle.dir.ne); return true; }
+		action: function () { state.current().move_player($rle.dir.ne); game.current.update(); }
 	},
 	southwest: {
 		keys: $rle.keys.arrow_sw,
-		action: function () { state.current().move_player($rle.dir.sw); return true; }
+		action: function () { state.current().move_player($rle.dir.sw); game.current.update(); }
 	},
 	southeast: {
 		keys: $rle.keys.arrow_se,
-		action: function () { state.current().move_player($rle.dir.se); return true; }
+		action: function () { state.current().move_player($rle.dir.se); game.current.update(); }
 	},
 	wait: {
 		keys: [$rle.keys.z, 101],
-		action: function () { return true; }
+		action: function () { game.current.update(); }
 	},
 	show_logs: {
 		keys: {
@@ -512,7 +512,6 @@ state_game.prototype.keys = {
 		},
 		action: function () {
 			state.add(new state_reader(game.current.messages.logs, { scroll_position: 'bottom' }), { clear: false });
-			return false;
 		}
 	},
 	quit: {
@@ -569,9 +568,7 @@ state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
 	this.draw();
 	state.add(new state_more(function () {
-		game.halt_loop(true);
 		state.add(new state_reader(game.current.messages.logs, { action: function () {
-			game.halt_loop(true);
 			game.reset();
 		} }));
 	}));
