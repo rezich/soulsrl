@@ -94,7 +94,7 @@ terrain.data = {
 		bg: { r: 80, g: 80, b: 80 },
 		solid: true,
 		blocks_light: true,
-		interact: function (activator) { return terrain.generic_solid_collision(this, activator); }
+		interact: function (activator) { return terrain.solid_message(this, activator, 'The wall is sturdy and firm.'); }
 	},
 	chasm: {
 		character: ':',
@@ -132,7 +132,7 @@ terrain.data = {
 		blocks_light: true,
 		interact: function (activator) {
 			return terrain.use_door(this, activator, true, function(ent, activator, open) {
-				if (activator == game.current.player) {
+				if (activator == game.current.player && !ent.open) {
 					game.current.messages.write('There is a secret door here!');
 				}
 				ent.fg = terrain.data.door.fg;

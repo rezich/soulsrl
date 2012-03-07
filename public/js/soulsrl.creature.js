@@ -13,6 +13,14 @@ function creature(pos, room, data) {
 
 	this.respawns = true;
 
+	this.alignment = creature.alignment.enemy; // because 99.9% of creatures are enemies
+
+	this.attack_dice = {
+		multiplier: 1,
+		die: 4,
+		bonus: 0
+	}
+
 	// TODO: Improve this copy code if creature data is ever going to
 	// contain arrays or objects that'll be modified in the copy
 
@@ -33,15 +41,6 @@ function creature(pos, room, data) {
 			"set": function (val) {
 				this.hitpoints = val;
 				if (this.hitpoints < 1) this.kill();
-			}
-		},
-		"attack_dice": {
-			"get": function () {
-				return {
-					multiplier: 1,
-					die: 4,
-					bonus: 1
-				}
 			}
 		}
 	})
@@ -111,7 +110,7 @@ creature.prototype.attack = function (other) {
 			}
 			if (other == game.current.player) {
 				game.current.messages.write('The ' + this.name + ' kills you!');
-				game.current.messages.write('Y O U  D I E D.');
+				state.current().kill_player();
 			}
 		}
 	}
@@ -155,6 +154,24 @@ creature.prototype.kill = function () {
 	}
 }
 
+creature.prototype.attitude_towards = function (other) {
+	switch (this.alignment) {
+		case creature.alignment.player:
+			switch (other.alignment) {
+				case creature.alignment.player: return creature.attitude.love;
+				case creature.alignment.enemy: return creature.attitude.hate;
+			}
+			break;
+		case creature.alignment.enemy:
+			switch (other.alignment) {
+				case creature.alignment.player: return creature.attitude.hate;
+				case creature.alignment.enemy: return creature.attitude.love;
+			}
+			break;
+	}
+	return creature.attitude.none; // this really shouldn't happen
+}
+
 creature.behavior = {
 	none: function () {},
 	derp: function () {
@@ -164,6 +181,18 @@ creature.behavior = {
 	basic_melee: function () {},
 	basic_ranged: function () {},
 	firebomber: function () {}
+}
+
+creature.alignment = {
+	none: 0,
+	player: 1,
+	enemy: 2
+}
+
+creature.attitude = {
+	none: 0,
+	love: 1,
+	hate: 2
 }
 
 creature.data = {
@@ -313,7 +342,8 @@ creature.data = {
 		level: 1,
 		XP: 0,
 		humanity: 0,
-		lit: true
+		lit: true,
+		alignment: creature.alignment.player
 	},
 
 

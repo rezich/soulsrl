@@ -46,6 +46,18 @@ game.current = null;
 game._keyTimeout = null;
 game._keysEnabled = true;
 game._keyRateLimit = 20;
+game._haltLoop = false;
+game.halt_loop = function (halt) {
+	if (halt) {
+		game._haltLoop = halt;
+	}
+	else {
+		var ret = false;
+		if (game._haltLoop) ret = true;
+		game._haltLoop = false;
+		return ret;
+	}
+}
 
 game.viewport_offset = {
 	x: 0,
@@ -63,6 +75,13 @@ game.roll = function (a, b) {
 	}
 	// die
 	return 1 + Math.floor(Math.random() * a);
+}
+
+game.reset = function () {
+	game.halt_loop(true);
+	$rle.clear();
+	delete game.current;
+	new game();
 }
 
 game.handleInput = function (event) {
@@ -84,7 +103,9 @@ game.handleInput = function (event) {
 		var keys = commands[command].keys;
 		if (Object.prototype.toString.call(keys) === '[object Object]') {
 			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || (!keys.shift && keys.key == event.keyCode)) {
+				if (game.halt_loop()) return;
 				update = commands[command].action();
+				if (game.halt_loop()) return;
 				ret = false;
 			}
 		}
@@ -92,22 +113,29 @@ game.handleInput = function (event) {
 			for (var key in keys) {
 				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
 					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || (!keys[key].shift && keys[key].key == event.keyCode)) {
+						if (game.halt_loop()) return;
 						update = commands[command].action();
+						if (game.halt_loop()) return;
 						ret = false;
 					}
 				}
 				else if (keys[key] == event.keyCode) {
+					if (game.halt_loop()) return;
 					update = commands[command].action();
+					if (game.halt_loop()) return;
 					ret = false;
 				}
 			}
 		}
 		else {
 			if (keys == event.keyCode) {
+				if (game.halt_loop()) return;
 				update = commands[command].action();
+				if (game.halt_loop()) return;
 				ret = false;
 			}
 		}
+		if (!ret) break;
 	}
 
 	if (update) game.current.update();
@@ -261,6 +289,27 @@ game.prototype.drawUI = function () {
 
 function messages() {
 	this.reset();
+}
+
+messages.prototype = {
+	get logs() {
+		var msg = '';
+		var q = '';
+		var m = 1;
+		for (var i in this.lines) {
+			if (this.lines[i].text == q) {
+				m++;
+			}
+			else {
+				msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
+				q = this.lines[i].text;
+				m = 1;
+			}
+		}
+		msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
+		msg = msg.substring(2);
+		return msg;
+	}
 }
 
 messages.prototype.reset = function () {

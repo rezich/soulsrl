@@ -181,6 +181,7 @@ function state_reader(data, options) {
 	this.text = data.split('\n');
 	this.scroll_position = 0;
 	this.height = 22;
+	this.after_action = null;
 
 	if (options) {
 		if (options.scroll_position) {
@@ -188,6 +189,7 @@ function state_reader(data, options) {
 			else if (options.scroll_position == 'top') this.scroll_position = 0;
 			else this.scroll_position = options.scroll_position;
 		}
+		if (options.action) this.after_action = options.action;
 	}
 }
 
@@ -196,7 +198,11 @@ state_reader.prototype = new state();
 state_reader.prototype.keys = {
 	back: {
 		keys: $rle.keys.escape,
-		action: function () { state.pop(); }
+		action: function () {
+			var act = state.current().after_action;
+			state.pop();
+			if (act) act();
+		}
 	},
 	page_up: {
 		keys: $rle.keys.page_up,
@@ -428,6 +434,28 @@ state_confirm.prototype.draw = function () {
 	$rle.flush();
 }
 
+////
+// state_more - wait for a keypress to display more messages, etc.
+////
+
+function state_more(action) {
+	this.more_action = action;
+}
+
+state_more.prototype = new state();
+state_more.prototype.keys = {
+	more: {
+		keys: $rle.keys.enter,
+		action: function () {
+			var act = state.current().more_action;
+			state.pop();
+			console.log(act);
+			if (act) act();
+			else state.current().draw();
+		}
+	}
+}
+
 
 ////
 // state_game - main game state
@@ -483,22 +511,7 @@ state_game.prototype.keys = {
 			shift: true
 		},
 		action: function () {
-			var msg = '';
-			var q = '';
-			var m = 1;
-			for (var i in game.current.messages.lines) {
-				if (game.current.messages.lines[i].text == q) {
-					m++;
-				}
-				else {
-					msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
-					q = game.current.messages.lines[i].text;
-					m = 1;
-				}
-			}
-			msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
-			msg = msg.substring(2);
-			state.add(new state_reader(msg, { scroll_position: 'bottom' }), { clear: false });
+			state.add(new state_reader(game.current.messages.logs, { scroll_position: 'bottom' }), { clear: false });
 			return false;
 		}
 	},
@@ -509,9 +522,7 @@ state_game.prototype.keys = {
 		},
 		action: function () {
 			state.add(new state_confirm('Really quit', function () {
-				$rle.clear();
-				delete game.current;
-				new game();
+				game.reset();
 			}));
 		}
 	}
@@ -552,4 +563,16 @@ state_game.prototype.draw_partial = function () {
 
 state_game.prototype.move_player = function (direction) {
 	game.current.player.move(direction);
+}
+
+state_game.prototype.kill_player = function () {
+	game.current.messages.write('Y O U  D I E D.');
+	this.draw();
+	state.add(new state_more(function () {
+		game.halt_loop(true);
+		state.add(new state_reader(game.current.messages.logs, { action: function () {
+			game.halt_loop(true);
+			game.reset();
+		} }));
+	}));
 }
