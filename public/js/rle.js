@@ -333,6 +333,7 @@ $rle.add_dir = function (pos, dir) {
 		case $rle.dir.s:  return {x: pos.x + 0, y: pos.y + 1};
 		case $rle.dir.se: return {x: pos.x + 1, y: pos.y + 1};
 	}
+	console.log('woops');
 }
 
 $(document).keydown(function (event) {

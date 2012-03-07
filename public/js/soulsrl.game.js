@@ -83,7 +83,7 @@ game.handleInput = function (event) {
 	for (var command in commands) {
 		var keys = commands[command].keys;
 		if (Object.prototype.toString.call(keys) === '[object Object]') {
-			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || keys.key == event.keyCode) {
+			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || (!keys.shift && keys.key == event.keyCode)) {
 				update = commands[command].action();
 				ret = false;
 			}
@@ -91,7 +91,7 @@ game.handleInput = function (event) {
 		else if (Object.prototype.toString.call(keys) === '[object Array]') {
 			for (var key in keys) {
 				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
-					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || keys[key].key == event.keyCode) {
+					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || (!keys[key].shift && keys[key].key == event.keyCode)) {
 						update = commands[command].action();
 						ret = false;
 					}
@@ -163,15 +163,16 @@ game.prototype.init = function (player_name) {
 	this.messages.write("Welcome to SoulsRL!");
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.init_player(player_name);
+	this.current_room.creatures.push(this.player);
 }
 
-game.prototype.init_player = function(name) {
+game.prototype.init_player = function (name) {
 	this.player = new creature({ x: 1, y: 1 }, this.current_room, creature.data.player);
 	if (_MULTIPLAYER) now.updatePlayer(this.player.position.x, this.player.position.y, game.current.current_room.name);
 	this.player.name = name;
 }
 
-game.prototype.update = function() {
+game.prototype.update = function () {
 	game._keysEnabled = false;
 	var _beginning = Date.now();
 	state.current().update();

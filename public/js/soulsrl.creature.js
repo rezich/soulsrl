@@ -58,7 +58,7 @@ creature.prototype.move = function(direction) {
 }
 
 creature.prototype.update = function () {
-	this.wander();
+	this.behavior();
 }
 
 creature.prototype.move_to = function (position) {
@@ -100,6 +100,9 @@ creature.prototype.attack = function (other) {
 		if (this == game.current.player) {
 			game.current.messages.write('You attack the ' + other.name + ' for ' + amount + ' damage!');
 		}
+		if (other == game.current.player) {
+			game.current.messages.write('The ' + this.name + ' attacks you for ' + amount + ' damate!');
+		}
 		other.HP -= amount;
 		if (other.HP < 1) {
 			if (this == game.current.player) {
@@ -117,18 +120,30 @@ creature.prototype.attack = function (other) {
 			game.current.messages.write('You miss the ' + other.name + '!');
 		}
 		if (other == game.current.player) {
-			game.current.messages.write('The ' + other.name + ' misses you!');
+			game.current.messages.write('The ' + this.name + ' misses you!');
 		}
 	}
 }
 
 creature.prototype.wander = function () {
+	console.log('----------');
 	var possibilities = [];
 	for (var d in $rle.dir) {
 		var pos = $rle.add_dir(this.position, $rle.dir[d]);
-		if (!this.room.solid_at(pos)) possibilities.push(pos); // say that ten times fast
+		console.log(pos);
+		if (!this.room.solid_at(pos)) {
+			console.log(pos);
+			if (!this.room.creature_at(pos)) {
+				possibilities.push(pos); // say that ten times fast
+			}
+		}
 	}
-	if (possibilities.length > 0) this.move_to(possibilities[Math.round(Math.random(possibilities.length))]);
+	if (possibilities.length > 0) {
+		var pos = possibilities[Math.round(Math.random(possibilities.length))];
+		var cre = game.current.current_room.creature_at(pos);
+		if (cre) this.attack(cre);
+		else this.move_to(pos);
+	}
 }
 
 creature.prototype.attack_roll = function () {
@@ -145,10 +160,13 @@ creature.prototype.kill = function () {
 }
 
 creature.behavior = {
-	none: {},
-	basic_melee: {},
-	basic_ranged: {},
-	firebomber: {}
+	none: function () {},
+	derp: function () {
+		this.wander();
+	},
+	basic_melee: function () {},
+	basic_ranged: function () {},
+	firebomber: function () {}
 }
 
 creature.data = {
@@ -165,7 +183,7 @@ creature.data = {
 		name: 'hollow',
 		character: 'h',
 		HP: 8,
-		behavior: creature.behavior.none,
+		behavior: creature.behavior.derp, // TODO: change to creature.behavior.none for actual game release; this is just for testing
 		souls: 20
 	},
 	hollow_archer: {				// early ranged enemy

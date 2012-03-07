@@ -475,7 +475,7 @@ state_game.prototype.keys = {
 	},
 	wait: {
 		keys: [90, 101],
-		action: function () { return true; }
+		action: function () { state.current().draw(); return true; }
 	},
 	show_logs: {
 		keys: {
@@ -499,6 +499,7 @@ state_game.prototype.keys = {
 			msg += '\n' + q + (m > 1 ? ' (x' + m + ')' : '');
 			msg = msg.substring(2);
 			state.add(new state_reader(msg, { scroll_position: 'bottom' }), { clear: false });
+			return false;
 		}
 	},
 	quit: {
@@ -529,6 +530,8 @@ state_game.prototype.update = function () {
 		if (game.current.current_room.creatures[c] == game.current.player) continue;
 		game.current.current_room.creatures[c].update();
 	}
+	state.current().draw(true);
+	if (_MULTIPLAYER) now.updatePlayer(game.current.player.position.x, game.current.player.position.y, game.current.current_room.name);
 }
 
 state_game.prototype.draw_partial = function () {
@@ -549,6 +552,4 @@ state_game.prototype.draw_partial = function () {
 
 state_game.prototype.move_player = function (direction) {
 	game.current.player.move(direction);
-	state.current().draw(true);
-	if (_MULTIPLAYER) now.updatePlayer(game.current.player.position.x, game.current.player.position.y, game.current.current_room.name);
 }
