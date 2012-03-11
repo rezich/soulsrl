@@ -20,7 +20,7 @@ var httpServer = http.createServer(function (req, res) {
 				}
 			}
 			else {
-				console.log('%s - %s', req.url, res.message);
+				//console.log('%s - %s', req.url, res.message);
 			}
 		});
 	});

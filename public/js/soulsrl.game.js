@@ -42,6 +42,13 @@ function game() {
 
 game.current = null;
 
+game.motd = [
+	"Welcome to SoulsRL!",
+	"This game is currently in early alpha.",
+	"Expect bugs and weirdness.",
+	"Prepare to die!"
+];
+
 game._keyTimeout = null;
 game._keysEnabled = true;
 game._keyRateLimit = 20;
@@ -167,7 +174,9 @@ game.prototype.preload = function (game_data) {
 }
 
 game.prototype.init = function (player_name) {
-	this.messages.write("Welcome to SoulsRL!");
+	for (var i = 0; i < game.motd.length; i++) {
+		this.messages.write(game.motd[i]);
+	}
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.init_player(player_name);
 	this.current_room.creatures.push(this.player);

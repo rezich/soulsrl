@@ -374,8 +374,14 @@ state_inputName.prototype.draw = function () {
 }
 
 state_inputName.prototype.type_char = function (chr) {
-	this.name = this.name + ($rle.shift ? chr.toUpperCase() : chr);
-	this.draw();
+	if (this.name.length >= 8) {
+		$rle.put(40, 15, '8 letter maximum.', { align: 'center', fg: $rle.color.system.red });
+		$rle.flush();
+	}
+	else {
+		this.name = this.name + ($rle.shift ? chr.toUpperCase() : chr);
+		this.draw();
+	}
 }
 
 state_inputName.prototype.delete_char = function () {
@@ -387,7 +393,7 @@ state_inputName.prototype.delete_char = function () {
 state_inputName.prototype.confirm = function () {
 	if (this.name) game.current.preload({ player_name: this.name });
 	else {
-		$rle.put(40, 15, 'Please try again.', { align: 'center', fg: $rle.color.system.red });
+		$rle.put(40, 15, 'Please enter a name.', { align: 'center', fg: $rle.color.system.red });
 		$rle.flush();
 	}
 }
