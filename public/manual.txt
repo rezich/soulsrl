@@ -11,13 +11,28 @@
 
 1. OVERVIEW
 --------------------------------------------------------------------------------
-Blah blah blah, souls, blah.
+SoulsRL is an attempt at mashing up roguelike gameplay and conventions with some
+of the ideas of FROM Software's Dark Souls. Specifically, instead of having
+permadeath, like most roguelikes, SoulsRL uses the Dark Souls death mechanic,
+where you find bonfires, and dying respawns you back at the last bonfire you
+visited, but all enemies respawn.
 
 
 2. BASIC MOVEMENT
 --------------------------------------------------------------------------------
-Blah blah blah, use arrow keys, numpad, or vi keys to move, blah.
+To move your character around the world, you can use the arrow keys, the numpad,
+or vi keys. Using the numpad or vi keys is more efficient, because it gives you
+access to diagonal movement.
 
+Here's how the numpad and vi keys work:
+
+                              numpad       vi keys
+
+                              7 8 9         y k u
+                               \|/           \|/
+                              4-+-6         h-+-l
+                               /|\           /|\
+                              1 2 3         b j n
 
 3. COMMAND LIST
 --------------------------------------------------------------------------------
