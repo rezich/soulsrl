@@ -4,7 +4,7 @@
 0. CONTENTS
 --------------------------------------------------------------------------------
 1. OVERVIEW
-2. BASIC MOVEMENT
+2. GAMEPLAY BASICS
 3. COMMAND LIST
 4. INTERFACE
 
@@ -18,7 +18,7 @@ where you find bonfires, and dying respawns you back at the last bonfire you
 visited, but all enemies respawn.
 
 
-2. BASIC MOVEMENT
+2. GAMEPLAY BASICS
 --------------------------------------------------------------------------------
 To move your character around the world, you can use the arrow keys, the numpad,
 or vi keys. Using the numpad or vi keys is more efficient, because it gives you
@@ -33,6 +33,30 @@ Here's how the numpad and vi keys work:
                               4-+-6         h-+-l
                                /|\           /|\
                               1 2 3         b j n
+
+SoulsRL is a turn-based game. <Right now, the turn-based-ness of it sucks and a
+good, actual, turn-based system will be implemented eventually. For now, you go,
+then every other creature goes in an arbitrary order.> <TODO: More on turn
+system as it develops.>
+
+To interact with most things, simply "move into" them. For example, when you see
+an enemy, move adjacent to them, and then "try to move into their square." This
+will cause your character to attack them.
+
+The same goes for opening doors. Opening doors usually takes a full turn, and
+you obviously have to open a door before you move through it.
+
+As things happen in the game, messages describing them will appear in your
+message log. Messages disappear as soon as you press most any key, so if you
+want to go back and read the log of all messages that've come up in the game,
+press Shift+M.
+
+Sometimes, in a single round of turns, or between times when you are allowed to
+take an action (i.e. if you're stunned), more messages will come up than can fit
+in the three-line message output at the top of the screen. When this happens,
+the last line of the last message will say "[MORE]" at the end, and you'll have
+to press the Spacebar to proceed.
+
 
 3. COMMAND LIST
 --------------------------------------------------------------------------------

@@ -43,7 +43,7 @@ terrain.fromChar = function (chr) {
 		case '+': return terrain.data.door;
 		case '~': return terrain.data.water;
 		case '=': return terrain.data.bridge;
-		case '$': return terrain.data.secret_door;
+		case '$': return terrain.data.illusory_wall;
 	}
 	return null;
 }
@@ -138,6 +138,25 @@ terrain.data = {
 				ent.fg = terrain.data.door.fg;
 				ent.bg = terrain.data.door.bg;
 			});
+		}
+	},
+	illusory_wall: {
+		character: '#',
+		fg: { r: 16, g: 16, b: 16 },
+		bg: { r: 80, g: 80, b: 80 },
+		solid: true,
+		blocks_light: true,
+		interact: function (activator) {
+			if (!this.solid) return true;
+			if (activator == game.current.player) {
+				game.current.messages.write('You press against the wall, and discover it to be an illusion!');
+			}
+			this.solid = false;
+			this.blocks_light = false;
+			this.fg = terrain.data.floor.fg;
+			this.bg = terrain.data.floor.bg;
+			this.character = terrain.data.floor.character;
+			return false;
 		}
 	}
 }

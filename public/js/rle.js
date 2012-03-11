@@ -336,6 +336,17 @@ $rle.add_dir = function (pos, dir) {
 	console.log('woops');
 }
 
+$rle.blend = function (c1, c2, amt) {
+	if (!amt) amt = 0.5;
+	// TODO: Handle alternate color formats
+
+	return { r: Math.floor($rle.lerp(c1.r, c2.r, amt)), g: Math.floor($rle.lerp(c1.g, c2.g, amt)), b: Math.floor($rle.lerp(c1.b, c2.b, amt)) }
+}
+
+$rle.lerp = function (a, b, t) {
+	return a + t * (b - a);
+}
+
 $(document).keydown(function (event) {
 	if (event.keyCode == 16) $rle.shift = true;
 });
