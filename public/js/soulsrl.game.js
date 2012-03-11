@@ -244,30 +244,36 @@ game.prototype.drawUI = function () {
 	// UI line 1
 	var name = this.player.name;
 	$rle.put(0, 23, name, { fg: $rle.color.system.brightCyan });
+
 	$rle.put(name.length + 1, 23, "HP:", { fg: $rle.color.system.gray });
 	var hp = this.player.HP + '/' + this.player.maxHP;
-	$rle.put(name.length + 4, 23, hp, { fg: $rle.color.system.red });
-	$rle.put(name.length + 5 + hp.length, 23, "STM:", { fg: $rle.color.system.gray });
+	$rle.put(12, 23, hp, { fg: $rle.color.system.red });
+
+	$rle.put(20, 23, "STM:", { fg: $rle.color.system.gray });
 	var stm = "100%";
-	$rle.put(name.length + 9 + hp.length, 23, stm, { fg: $rle.color.system.cyan });
+	$rle.put(24, 23, stm, { fg: $rle.color.system.cyan });
+
+	$rle.put(29, 23, 'HUM:', { fg: $rle.color.system.gray });
+	var humanity = this.player.humanity.toString();
+	$rle.put(33, 23, humanity, { fg: $rle.color.system.cyan });
+
+	$rle.put(36, 23, 'ATK:', { fg: $rle.color.system.gray });
+	var dice = game.current.player.attack_dice;
+	var attack_dice = (dice.multiplier > 1 ? dice.multiplier.toString() : '') + 'd' + dice.die + (dice.bonus < 0 ? dice.bonus.toString() : '') + (dice.bonus > 0 ? '+' + dice.bonus.toString() : '');
+	$rle.put(40, 23, attack_dice, { fg: $rle.color.system.cyan });
+
 
 	// UI line 2
 	var room_name = game.current.current_room.name;
 	$rle.put(0, 24, room_name, { fg: $rle.color.system.cyan });
-	$rle.put(1 + room_name.length, 24, "LVL:", { fg: $rle.color.system.gray });
-	var lvl = this.player.level.toString();
-	$rle.put(5 + room_name.length, 24, lvl, { fg: $rle.color.system.cyan });
-	$rle.put(6 + room_name.length + lvl.length, 24, "SOULS:", { fg: $rle.color.system.gray });
-	var souls = this.player.souls.toString();
-	$rle.put(12 + room_name.length + lvl.length, 24, souls, { fg: $rle.color.system.cyan });
-	$rle.put(13 + room_name.length + lvl.length + souls.length, 24, 'HUM:', { fg: $rle.color.system.gray });
-	var humanity = this.player.humanity.toString();
-	$rle.put(17 + room_name.length + lvl.length + souls.length, 24, humanity, { fg: $rle.color.system.cyan });
 
-	$rle.put(40, 23, 'ATK:', { fg: $rle.color.system.gray });
-	var dice = game.current.player.attack_dice;
-	var attack_dice = (dice.multiplier > 1 ? dice.multiplier.toString() : '') + 'd' + dice.die + (dice.bonus < 0 ? dice.bonus.toString() : '') + (dice.bonus > 0 ? '+' + dice.bonus.toString() : '');
-	$rle.put(44, 23, attack_dice, { fg: $rle.color.system.cyan });
+	$rle.put(9, 24, "LV:", { fg: $rle.color.system.gray });
+	var lvl = this.player.level.toString();
+	$rle.put(12, 24, lvl, { fg: $rle.color.system.cyan });
+
+	$rle.put(18, 24, "SOULS:", { fg: $rle.color.system.gray });
+	var souls = this.player.souls.toString();
+	$rle.put(24, 24, souls, { fg: $rle.color.system.cyan });
 }
 
 
