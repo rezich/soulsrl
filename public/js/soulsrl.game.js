@@ -78,6 +78,7 @@ game.reset = function () {
 }
 
 game.handleInput = function (event) {
+	window.scroll(0, 0);
 	if (!game.current) {
 		alert('no game!');
 		return;
@@ -126,8 +127,15 @@ game.handleInput = function (event) {
 		return false;
 	}
 
-	// Just so you don't accidentally go back
-	if (event.keyCode == $rle.keys.backspace) return false;
+	// Just so you don't accidentally go back or scroll the page
+	switch (event.keyCode) {
+		case $rle.keys.backspace:
+		case $rle.keys.arrow_e[0]:
+		case $rle.keys.arrow_n[0]:
+		case $rle.keys.arrow_w[0]:
+		case $rle.keys.arrow_s[0]:
+			return false;
+	}
 	return true;
 }
 
