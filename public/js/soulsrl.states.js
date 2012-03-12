@@ -446,6 +446,7 @@ state_confirm.prototype.draw = function () {
 
 function state_more(action) {
 	this.more_action = action;
+	this.queued_actions = [];
 }
 
 state_more.prototype = new state();
@@ -454,11 +455,19 @@ state_more.prototype.keys = {
 	more: {
 		keys: [$rle.keys.space, $rle.keys.enter],
 		action: function () {
-			var act = state.current().more_action;
-			console.log(state.list);
+			if (state.current().more_action) game.current.queued_actions.push(state.current().more_action);
 			state.pop();
-			if (act) act();
-			else state.current().draw();
+			if (game.current.queued_actions.length > 0) {
+				if (game.current.messages.lastLine >= game.current.messages.lines.length - 1) {
+					for (var i = 0; i < game.current.queued_actions.length; i++) {
+						game.current.queued_actions[i]();
+					}
+					game.current.queued_actions.length = 0;
+				}
+			}
+			else {
+				state.current().draw();
+			}
 		}
 	}
 }
@@ -590,13 +599,23 @@ state_game.prototype.move_player = function (direction) {
 
 state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
-	this.draw();
-	state.add(new state_more(function () {
-		state.current().respawn_player();
-	}));
+	if (game.current.messages.lines.length - game.current.messages.lastLine > 4) {
+		game.current.queued_actions.push(function () { // BWOOOOOOOOOOM
+			state.add(new state_more(function () { // BWOOOOOOOOOOM
+				state.current().respawn_player(); // BWOOOOOOOOOOM
+			}));
+		});
+	}
+	else {
+		state.current().draw();
+		state.add(new state_more(function () { // BWOOOOOOOOOOM
+			state.current().respawn_player(); // BWOOOOOOOOOOM
+		}));
+	}
 }
 
 state_game.prototype.respawn_player = function () {
+	console.log('respawning player');
 	game.current.player.HP = game.current.player.maxHP;
 	game.current.current_room = game.current.respawn_room;
 	game.current.respawn_room.creatures.push(game.current.player);

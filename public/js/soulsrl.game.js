@@ -16,6 +16,7 @@ function game() {
 	game.current = this;
 
 	this.messages = new messages();
+	this.queued_actions = [];
 	this.player = null;
 	this.current_room = null;
 	this.respawn_room = null;
@@ -335,7 +336,7 @@ messages.prototype.write = function (text, options) {
 	this.lines.push({ text: text });
 }
 
-messages.prototype.draw = function (clear_messages) {
+messages.prototype.draw = function () {
 	var diff = this.lines.length - 1 - this.lastLine;
 	if (diff == 0) {
 		this.clear();
