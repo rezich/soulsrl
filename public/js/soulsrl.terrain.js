@@ -44,6 +44,7 @@ terrain.fromChar = function (chr) {
 		case '~': return terrain.data.water;
 		case '=': return terrain.data.bridge;
 		case '$': return terrain.data.illusory_wall;
+		case '!': return terrain.data.bonfire;
 	}
 	return null;
 }
@@ -157,6 +158,29 @@ terrain.data = {
 			this.bg = terrain.data.floor.bg;
 			this.character = terrain.data.floor.character;
 			return false;
+		}
+	},
+	bonfire: {
+		character: '!',
+		fg: { r: 128, g: 64, b: 0 },
+		bg: { r: 8, g: 8, b: 8 },
+		solid: true,
+		blocks_light: false,
+		ignited: false, // have to use 'ignited' since 'lit' is already used
+		interact: function (activator) {
+			if (activator != game.current.player) return false;
+			if (this.ignited) {
+				game.current.messages.write('You rest awhile at the bonfire.');
+				game.current.player.HP = game.current.player.maxHP;
+				game.current.respawn_room = game.current.current_room;
+				game.current.respawn_position = { x: game.current.player.position.x, y: game.current.player.position.y };
+			}
+			else {
+				game.current.messages.write('You light the bonfire.');
+				this.fg = { r: 192, g: 80, b: 0 };
+				this.bg = { r: 64, g: 64, b: 0 };
+				this.ignited = true;
+			}
 		}
 	}
 }

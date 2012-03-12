@@ -18,6 +18,8 @@ function game() {
 	this.messages = new messages();
 	this.player = null;
 	this.current_room = null;
+	this.respawn_room = null;
+	this.respawn_position = null;
 
 	state.reset();
 
@@ -188,6 +190,8 @@ game.prototype.init = function (player_name) {
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.init_player(player_name);
 	this.current_room.creatures.push(this.player);
+	this.respawn_room = this.current_room;
+	this.respawn_position = { x: this.player.position.x, y: this.player.position.y };
 }
 
 game.prototype.init_player = function (name) {

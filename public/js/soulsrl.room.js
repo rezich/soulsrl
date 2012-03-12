@@ -5,6 +5,8 @@
 function room(area, floor) {
 	this.terrain = [];
 	this.creatures = [];
+	this.items = [];
+	this.decals = [];
 	this.players = [];
 	this.area = area;
 	this.floor = floor;
@@ -40,6 +42,14 @@ room.prototype.add_terrain = function (position, kind) {
 
 room.prototype.add_creature = function (position, data) {
 	this.creatures.push(new creature({ x: position.x, y: position.y }, this, data));
+}
+
+room.prototype.add_item = function (position, data) {
+	this.items.push(new item({ x: position.x, y: position.y }, this, data));
+}
+
+room.prototype.add_decal = function (position, data) {
+	this.decal.push(new item({ x: position.x, y: position.y }, this, data));
 }
 
 room.prototype.solid_at = function (position, all) {
