@@ -5,8 +5,9 @@
 --------------------------------------------------------------------------------
 1. OVERVIEW
 2. GAMEPLAY BASICS
-3. COMMAND LIST
-4. INTERFACE
+3. DEATH AND ESTUS
+4. COMMAND LIST
+5. INTERFACE
 
 
 1. OVERVIEW
@@ -58,7 +59,46 @@ the last line of the last message will say "[MORE]" at the end, and you'll have
 to press the Spacebar to proceed.
 
 
-3. COMMAND LIST
+3. DEATH AND ESTUS
+--------------------------------------------------------------------------------
+In most roguelikes, when you die, that's it, game over, no second chances. In
+SoulsRL, things work a little differently.
+
+First of all, you have an item called the Estus Flask with you at all times.
+Quaffing it (q) restores health, but it only has a limited number of uses (five
+to start with) before running out. (This is shown on the interface as "EST.")
+
+Throughout the game world, you'll find bonfires, represented by an exclamation
+point ("!"). Light unlit bonfires (dark orange) by activating them (moving into
+them). Lit bonfires (bright orange on dark yellow) can be rested at.
+
+Resting at a bonfire will restore your HP to maximum and refill your Estus Flask
+entirely, but will also respawn every enemy in the game (with the exception of
+bosses and a few of the more unique, tougher enemies).
+
+<NOTE: ENEMY RESPAWNING IS NOT IMPLEMENTED YET.>
+
+When you die, you'll respawn at the last bonfire you visited with full HP and
+full Estus, but, just as though you rested at the bonfire, all enemies will be
+respawned as well. You also lose all of your souls and humanity (but retain all
+other items).
+
+However, a bloodstain will appear where you died, containing the souls and
+humanity you were carrying when you were killed. Stepping on your bloodstain
+will restore your lost souls and humanity.
+
+When you die, though, all previous bloodstains are lost. Therefore, if you were
+to die on the way to retrieve your bloodstain, the souls and humanity in that
+bloodstain will be lost for good.
+
+<NOTE: BLOODSTAINS ARE NOT IMPLEMENTED YET>
+
+Thus, the game becomes less of a "try and get to the bottom floor of the dungeon
+and retrieve the MacGuffin" and more of a "try to push ahead to the next
+bonfire, while obtaining enough souls to level up."
+
+
+4. COMMAND LIST
 --------------------------------------------------------------------------------
 This is the list of all commands:
 
@@ -91,7 +131,7 @@ TAB
   n  VI KEY
   o  
   p  
-  q  
+  q  quaff Estus Flask
   r  
   s  
   t  

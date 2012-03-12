@@ -346,7 +346,7 @@ creature.data = {
 	player: {
 		character: '@',
 		HP: 10,
-		estus: 10,
+		estus: 5,
 		estus_amount: 5,
 		level: 1,
 		XP: 0,

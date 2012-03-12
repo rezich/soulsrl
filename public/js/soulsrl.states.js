@@ -599,6 +599,9 @@ state_game.prototype.move_player = function (direction) {
 
 state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
+	// TODO: Bloodstain
+	game.current.player.souls = 0;
+	game.current.player.humanity = 0;
 	if (game.current.messages.lines.length - game.current.messages.lastLine > 4) {
 		game.current.queued_actions.push(function () { // BWOOOOOOOOOOM
 			state.add(new state_more(function () { // BWOOOOOOOOOOM
@@ -618,6 +621,7 @@ state_game.prototype.respawn_player = function () {
 	console.log('respawning player');
 	game.current.player.HP = game.current.player.maxHP;
 	game.current.current_room = game.current.respawn_room;
+	game.current.player.room = game.current.current_room;
 	game.current.respawn_room.creatures.push(game.current.player);
 	game.current.player.position.x = game.current.respawn_position.x;
 	game.current.player.position.y = game.current.respawn_position.y;
