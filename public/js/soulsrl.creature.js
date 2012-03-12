@@ -33,13 +33,15 @@ function creature(pos, room, data) {
 	
 	this.hitpoints = this.maxHP;
 
+	if (this.estus) this.max_estus = this.estus;
+
 	Object.defineProperties(this, {
 		"HP": {
 			"get": function () {
 				return this.hitpoints;
 			},
 			"set": function (val) {
-				this.hitpoints = val;
+				this.hitpoints = Math.min(val, this.maxHP);
 				if (this.hitpoints < 1) this.kill();
 			}
 		}
@@ -344,6 +346,8 @@ creature.data = {
 	player: {
 		character: '@',
 		HP: 10,
+		estus: 10,
+		estus_amount: 5,
 		level: 1,
 		XP: 0,
 		humanity: 0,

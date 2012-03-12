@@ -455,6 +455,7 @@ state_more.prototype.keys = {
 		keys: [$rle.keys.space, $rle.keys.enter],
 		action: function () {
 			var act = state.current().more_action;
+			console.log(state.list);
 			state.pop();
 			if (act) act();
 			else state.current().draw();
@@ -510,6 +511,23 @@ state_game.prototype.keys = {
 	wait: {
 		keys: [$rle.keys.z, 101],
 		action: function () { game.current.update(); }
+	},
+	quaff_estus: {
+		keys: $rle.keys.q,
+		action: function () {
+			if (!game.current.player.max_estus) return;
+			if (game.current.player.estus > 0) {
+				game.current.player.estus--;
+				var amount = Math.min(game.current.player.estus_amount, game.current.player.maxHP - game.current.player.HP);
+				game.current.player.HP += game.current.player.estus_amount;
+				game.current.messages.write("You take a swig of your Estus flask" + (amount ? ", and recover " + amount.toString() + " HP!" : "."));
+				game.current.update();
+			}
+			else {
+				game.current.messages.write("You take a swig of your Estus flask... but it's empty!");
+				game.current.update();
+			}
+		}
 	},
 	show_logs: {
 		keys: {

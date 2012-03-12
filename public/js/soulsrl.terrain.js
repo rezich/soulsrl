@@ -172,7 +172,8 @@ terrain.data = {
 			if (this.ignited) {
 				game.current.messages.write('You rest awhile at the bonfire.');
 				game.current.player.HP = game.current.player.maxHP;
-				game.current.respawn_room = game.current.current_room;
+				game.current.player.estus = game.current.player.max_estus;
+				game.current.respawn_room = game.current.current_room;				
 				game.current.respawn_position = { x: game.current.player.position.x, y: game.current.player.position.y };
 			}
 			else {

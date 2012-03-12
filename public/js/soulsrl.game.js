@@ -136,6 +136,7 @@ game.handleInput = function (event) {
 		case $rle.keys.arrow_n[0]:
 		case $rle.keys.arrow_w[0]:
 		case $rle.keys.arrow_s[0]:
+		case $rle.keys.space:
 			return false;
 	}
 	return true;
@@ -262,17 +263,17 @@ game.prototype.drawUI = function () {
 	$rle.put(12, 23, hp, { fg: $rle.color.system.red });
 
 	$rle.put(20, 23, "STM:", { fg: $rle.color.system.gray });
-	var stm = "100%";
+	var stm = "100/100";
 	$rle.put(24, 23, stm, { fg: $rle.color.system.cyan });
 
-	$rle.put(29, 23, 'HUM:', { fg: $rle.color.system.gray });
+	$rle.put(32, 23, 'HUM:', { fg: $rle.color.system.gray });
 	var humanity = this.player.humanity.toString();
-	$rle.put(33, 23, humanity, { fg: $rle.color.system.cyan });
+	$rle.put(36, 23, humanity, { fg: $rle.color.system.cyan });
 
-	$rle.put(36, 23, 'ATK:', { fg: $rle.color.system.gray });
+	$rle.put(42, 23, 'ATK:', { fg: $rle.color.system.gray });
 	var dice = game.current.player.attack_dice;
 	var attack_dice = (dice.multiplier > 1 ? dice.multiplier.toString() : '') + 'd' + dice.die + (dice.bonus < 0 ? dice.bonus.toString() : '') + (dice.bonus > 0 ? '+' + dice.bonus.toString() : '');
-	$rle.put(40, 23, attack_dice, { fg: $rle.color.system.cyan });
+	$rle.put(46, 23, attack_dice, { fg: $rle.color.system.cyan });
 
 
 	// UI line 2
@@ -286,6 +287,12 @@ game.prototype.drawUI = function () {
 	$rle.put(18, 24, "SOULS:", { fg: $rle.color.system.gray });
 	var souls = this.player.souls.toString();
 	$rle.put(24, 24, souls, { fg: $rle.color.system.cyan });
+
+	if (this.player.max_estus) {
+		$rle.put(32, 24, "EST:", { fg: $rle.color.system.gray });
+		var estus = this.player.estus.toString() + '/' + this.player.max_estus.toString();
+		$rle.put(36, 24, estus, { fg: $rle.color.system.cyan });
+	}
 }
 
 
