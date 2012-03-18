@@ -6,8 +6,11 @@
 1. OVERVIEW
 2. GAMEPLAY BASICS
 3. DEATH AND ESTUS
-4. COMMAND LIST
-5. INTERFACE
+4. SOULS AND HUMANITY
+5. HUMAN VS. HOLLOW
+6. LEVELS AND ATTRIBUTES
+7. COMMAND LIST
+8. INTERFACE
 
 
 1. OVERVIEW
@@ -15,7 +18,7 @@
 SoulsRL is an attempt at mashing up roguelike gameplay and conventions with some
 of the ideas of FROM Software's Dark Souls. Specifically, instead of having
 permadeath, like most roguelikes, SoulsRL uses the Dark Souls death mechanic,
-where you find bonfires, and dying respawns you back at the last bonfire you
+where you find Bonfires, and dying respawns you back at the last Bonfire you
 visited, but all enemies respawn.
 
 
@@ -68,37 +71,67 @@ First of all, you have an item called the Estus Flask with you at all times.
 Quaffing it (q) restores health, but it only has a limited number of uses (five
 to start with) before running out. (This is shown on the interface as "EST.")
 
-Throughout the game world, you'll find bonfires, represented by an exclamation
-point ("!"). Light unlit bonfires (dark orange) by activating them (moving into
-them). Lit bonfires (bright orange on dark yellow) can be rested at.
+Throughout the game world, you'll find Bonfires, represented by an exclamation
+point ("!"). Light unlit Bonfires (dark orange) by activating them (moving into
+them). Lit Bonfires (bright orange on dark yellow) can be rested at.
 
-Resting at a bonfire will restore your HP to maximum and refill your Estus Flask
+Resting at a Bonfire will restore your HP to maximum and refill your Estus Flask
 entirely, but will also respawn every enemy in the game (with the exception of
 bosses and a few of the more unique, tougher enemies).
 
 <NOTE: ENEMY RESPAWNING IS NOT IMPLEMENTED YET.>
 
-When you die, you'll respawn at the last bonfire you visited with full HP and
-full Estus, but, just as though you rested at the bonfire, all enemies will be
+When you die, you'll respawn at the last Bonfire you visited with full HP and
+full Estus, but, just as though you rested at the Bonfire, all enemies will be
 respawned as well. You also lose all of your souls and humanity (but retain all
 other items).
 
-However, a bloodstain will appear where you died, containing the souls and
-humanity you were carrying when you were killed. Stepping on your bloodstain
-will restore your lost souls and humanity.
+However, a Bloodstain will appear where you died, containing the Souls and
+Humanity you were carrying when you were killed. Stepping on your Bloodstain
+will restore your lost Souls and Humanity.
 
-When you die, though, all previous bloodstains are lost. Therefore, if you were
-to die on the way to retrieve your bloodstain, the souls and humanity in that
-bloodstain will be lost for good.
+When you die, though, all previous Bloodstains are lost. Therefore, if you were
+to die on the way to retrieve your Bloodstain, the Souls and Humanity in that
+Bloodstain will be lost for good.
 
 <NOTE: BLOODSTAINS ARE NOT IMPLEMENTED YET>
 
 Thus, the game becomes less of a "try and get to the bottom floor of the dungeon
 and retrieve the MacGuffin" and more of a "try to push ahead to the next
-bonfire, while obtaining enough souls to level up."
+Bonfire, while obtaining enough Souls to level up."
 
 
-4. COMMAND LIST
+4. SOULS AND HUMANITY
+--------------------------------------------------------------------------------
+Souls act as both experience points and currency in SoulsRL. You obtain Souls
+mainly by killing enemies, although there are other ways, too. Souls can be
+spent at Bonfires to level up (see Chapter 5), and also be exchanged with
+certain NPCs for goods and services.
+
+Humanity is found far less frequently than Souls. The current amount of Humanity
+you are currently carrying is listed as "HUM" in the HUD. Humanity can be spent
+at Bonfires to allow you to become Human again. You can also spend Humanity at a
+Bonfire to "kindle" it, increasing the number of Estus Flask uses that are
+restored from resting there.
+
+There are other uses for Humanity as well, but you'll have to find them for
+yourself.
+
+As established in Chapter 3, all Souls and Humanity you're carrying are dropped
+on death and left in a Bloodstain.
+
+
+5. HUMAN VS. HOLLOW
+--------------------------------------------------------------------------------
+When you start a new character in SoulsRL, he or she is a Hollow, an undead.
+
+
+6. LEVELS AND ATTRIBUTES
+--------------------------------------------------------------------------------
+
+
+
+7. COMMAND LIST
 --------------------------------------------------------------------------------
 This is the list of all commands:
 
@@ -170,3 +203,7 @@ TAB
   <  go up stairs
   >  go down stairs
   ?  show manual
+
+
+8. INTERFACE
+--------------------------------------------------------------------------------

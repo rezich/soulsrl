@@ -129,7 +129,7 @@ state_mainMenu.entries = [
 	{
 		text: "Continue",
 		disabled: true,
-		action: function () {  }
+		action: function () { state.add(new state_settings()); }
 	},
 	{
 		text: "Settings",
@@ -360,6 +360,10 @@ state_inputName.prototype.keys = {
 	backspace: {
 		keys: $rle.keys.backspace,
 		action: function () { state.current().delete_char(); }
+	},
+	cancel: {
+		keys: $rle.keys.escape,
+		action: function () { state.replace(new state_mainMenu()); }
 	}
 }
 
@@ -396,6 +400,22 @@ state_inputName.prototype.confirm = function () {
 		$rle.put(40, 15, 'Please enter a name.', { align: 'center', fg: $rle.color.system.red });
 		$rle.flush();
 	}
+}
+
+
+////
+// state_settings - settings screen
+////
+
+function state_settings() { }
+
+state_settings.prototype = new state();
+
+state_settings.prototype.draw = function () {
+	$rle.clear();
+	$rle.put(40, 23, 'enter: confirm', { align: 'center', fg: $rle.color.system.charcoal });
+	$rle.put(40, 24, 'escape: return', { align: 'center', fg: $rle.color.system.charcoal });	
+	$rle.flush();
 }
 
 
@@ -439,6 +459,7 @@ state_confirm.prototype.draw = function () {
 	$rle.put(0, 1, this.message + ' (Y/n)?');
 	$rle.flush();
 }
+
 
 ////
 // state_more - wait for a keypress to display more messages, etc.
@@ -618,7 +639,6 @@ state_game.prototype.kill_player = function () {
 }
 
 state_game.prototype.respawn_player = function () {
-	console.log('respawning player');
 	game.current.player.HP = game.current.player.maxHP;
 	game.current.current_room = game.current.respawn_room;
 	game.current.player.room = game.current.current_room;
