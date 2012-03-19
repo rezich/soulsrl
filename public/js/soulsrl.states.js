@@ -409,6 +409,7 @@ state_inputName.prototype.type_char = function (chr) {
 	}
 	else {
 		this.name = this.name + ($rle.shift ? chr.toUpperCase() : chr);
+		if (this.name == "LordV") $rle.font.face = '"Comic Sans MS"';
 		this.draw();
 	}
 }
