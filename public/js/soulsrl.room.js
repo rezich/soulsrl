@@ -11,6 +11,7 @@ function room(area, floor) {
 	this.area = area;
 	this.floor = floor;
 	this.visibility = 10;
+	game.current.rooms.push(this);
 }
 
 room.prototype = {

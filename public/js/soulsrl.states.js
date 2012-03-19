@@ -738,6 +738,13 @@ state_game.prototype.move_player = function (direction) {
 state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
 	// TODO: Bloodstain
+	for (var r in game.current.rooms) {
+		console.log(r);
+		for (var i = 0; i < game.current.rooms[r].items.length; i++) {
+			console.log(game.current.rooms[r].items[i]);
+			if (game.current.rooms[r].items[i].bloodstain) game.current.rooms[r].items.splice(i, 1);
+		}
+	}
 	var bloodstain = game.current.player_move_history[0].room.add_item({ x: game.current.player_move_history[0].x, y: game.current.player_move_history[0].y }, item.data.player_bloodstain);
 	bloodstain.souls = game.current.player.souls;
 	bloodstain.humanity = game.current.player.humanity;

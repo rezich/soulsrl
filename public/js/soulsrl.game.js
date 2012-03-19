@@ -22,6 +22,8 @@ function game() {
 	this.respawn_room = null;
 	this.respawn_position = null;
 
+	this.rooms = [];
+
 	this.player_move_history = [];
 
 	this.settings = {

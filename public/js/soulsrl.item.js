@@ -44,6 +44,7 @@ item.data = {
 		character: '%',
 		fg: { r: 255, g: 0, b: 0 },
 		bg: { r: 128, g: 0, b: 0 },
+		bloodstain: true, // so we can duck-type find all bloodstains and remove them before lying down the new one
 		interact: function (activator) {
 			if (activator != game.current.player) return;
 			activator.souls += this.souls;
