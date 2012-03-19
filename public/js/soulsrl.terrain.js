@@ -101,7 +101,21 @@ terrain.data = {
 		character: ':',
 		fg: { r: 32, g: 32, b: 32 },
 		solid: true,
-		interact: function (activator) { return terrain.solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.'); }
+		interact: function (activator) {
+			if (activator == game.current.player) {
+				if (game.current.settings.noob_mode) {
+					return terrain.solid_message(this, activator, 'The chasm appears to go on forever. Descending it would be a bad idea.');
+				}
+				else {
+					activator.position.x = this.position.x;
+					activator.position.y = this.position.y;
+					state.current().draw();
+					game.current.player.HP = 0;
+					game.current.messages.write('You plunge into the depths of the chasm.');
+					state.current().kill_player();
+				}
+			}
+		}
 	},
 	door: {
 		character: '+',

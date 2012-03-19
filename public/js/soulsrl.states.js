@@ -250,106 +250,132 @@ state_inputName.prototype = new state();
 state_inputName.prototype.keys = {
 	a: {
 		keys: $rle.keys.a,
+		shift_optional: true,
 		action: function () { state.current().type_char('a'); }
 	},
 	b: {
 		keys: $rle.keys.b,
+		shift_optional: true,
 		action: function () { state.current().type_char('b'); }
 	},
 	c: {
 		keys: $rle.keys.c,
+		shift_optional: true,
 		action: function () { state.current().type_char('c'); }
 	},
 	d: {
 		keys: $rle.keys.d,
+		shift_optional: true,
 		action: function () { state.current().type_char('d'); }
 	},
 	e: {
 		keys: $rle.keys.e,
+		shift_optional: true,
 		action: function () { state.current().type_char('e'); }
 	},
 	f: {
 		keys: $rle.keys.f,
+		shift_optional: true,
 		action: function () { state.current().type_char('f'); }
 	},
 	g: {
 		keys: $rle.keys.g,
+		shift_optional: true,
 		action: function () { state.current().type_char('g'); }
 	},
 	h: {
 		keys: $rle.keys.h,
+		shift_optional: true,
 		action: function () { state.current().type_char('h'); }
 	},
 	i: {
 		keys: $rle.keys.i,
+		shift_optional: true,
 		action: function () { state.current().type_char('i'); }
 	},
 	j: {
 		keys: $rle.keys.j,
+		shift_optional: true,
 		action: function () { state.current().type_char('j'); }
 	},
 	k: {
 		keys: $rle.keys.k,
+		shift_optional: true,
 		action: function () { state.current().type_char('k'); }
 	},
 	l: {
 		keys: $rle.keys.l,
+		shift_optional: true,
 		action: function () { state.current().type_char('l'); }
 	},
 	m: {
 		keys: $rle.keys.m,
+		shift_optional: true,
 		action: function () { state.current().type_char('m'); }
 	},
 	n: {
 		keys: $rle.keys.n,
+		shift_optional: true,
 		action: function () { state.current().type_char('n'); }
 	},
 	o: {
 		keys: $rle.keys.o,
+		shift_optional: true,
 		action: function () { state.current().type_char('o'); }
 	},
 	p: {
 		keys: $rle.keys.p,
+		shift_optional: true,
 		action: function () { state.current().type_char('p'); }
 	},
 	q: {
 		keys: $rle.keys.q,
+		shift_optional: true,
 		action: function () { state.current().type_char('q'); }
 	},
 	r: {
 		keys: $rle.keys.r,
+		shift_optional: true,
 		action: function () { state.current().type_char('r'); }
 	},
 	s: {
 		keys: $rle.keys.s,
+		shift_optional: true,
 		action: function () { state.current().type_char('s'); }
 	},
 	t: {
 		keys: $rle.keys.t,
+		shift_optional: true,
 		action: function () { state.current().type_char('t'); }
 	},
 	u: {
 		keys: $rle.keys.u,
+		shift_optional: true,
 		action: function () { state.current().type_char('u'); }
 	},
 	v: {
 		keys: $rle.keys.v,
+		shift_optional: true,
 		action: function () { state.current().type_char('v'); }
 	},
 	w: {
 		keys: $rle.keys.w,
+		shift_optional: true,
 		action: function () { state.current().type_char('w'); }
 	},
 	x: {
 		keys: $rle.keys.x,
+		shift_optional: true,
 		action: function () { state.current().type_char('x'); }
 	},
 	y: {
 		keys: $rle.keys.y,
+		shift_optional: true,
 		action: function () { state.current().type_char('y'); }
 	},
 	z: {
 		keys: $rle.keys.z,
+		shift_optional: true,
 		action: function () { state.current().type_char('z'); }
 	},
 	confirm: {

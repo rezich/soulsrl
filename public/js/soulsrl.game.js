@@ -93,24 +93,24 @@ game.handleInput = function (event) {
 	for (var command in commands) {
 		var keys = commands[command].keys;
 		if (Object.prototype.toString.call(keys) === '[object Object]') {
-			if ((keys.shift && keys.key == event.keyCode && $rle.shift) || (!keys.shift && keys.key == event.keyCode && !$rle.shift)) {
+			if (((keys.shift && $rle.shift) || (!keys.shift && !$rle.shift) || (commands[command].shift_optional)) && keys.key == event.keyCode) {
 				callback = commands[command].action;
 			}
 		}
 		else if (Object.prototype.toString.call(keys) === '[object Array]') {
 			for (var key in keys) {
 				if (Object.prototype.toString.call(keys[key]) === '[object Object]') {
-					if ((keys[key].shift && keys[key].key == event.keyCode && $rle.shift) || (!keys[key].shift && keys[key].key == event.keyCode && !$rle.shift)) {
+					if (((keys[key].shift && $rle.shift) || (!keys[key].shift && !$rle.shift) || (commands[command].shift_optional) && keys[key].key == event.keyCode)) {
 						callback = commands[command].action;
 					}
 				}
-				else if (keys[key] == event.keyCode && !$rle.shift) {
+				else if (keys[key] == event.keyCode && (!$rle.shift || (commands[command].shift_optional))) {
 					callback = commands[command].action;
 				}
 			}
 		}
 		else {
-			if (keys == event.keyCode && !$rle.shift) {
+			if (keys == event.keyCode && (!$rle.shift || (commands[command].shift_optional))) {
 				callback = commands[command].action;
 			}
 		}
