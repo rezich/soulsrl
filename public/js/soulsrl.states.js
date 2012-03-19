@@ -464,6 +464,16 @@ state_settings.prototype.keys = {
 		keys: $rle.keys.escape,
 		action: function () { state.pop(); }
 	},
+	lololol: {
+		keys: {
+			key: 20,
+			shift: true
+		},
+		action: function () {
+			$rle.font.face = '"Comic Sans MS"';
+			state.current().draw();
+		}
+	}
 }
 
 state_settings.prototype.draw = function () {
