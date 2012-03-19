@@ -27,8 +27,11 @@ function game() {
 	this.player_move_history = [];
 
 	this.settings = {
-		noob_mode: false
+		noob_mode: false,
+		font: 'sans-serif'
 	}
+
+	$rle.font.face = this.settings.font;
 
 	state.reset();
 

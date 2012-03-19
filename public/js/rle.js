@@ -14,7 +14,11 @@ $rle.tileH = 16;
 $rle.screenW = 80;
 $rle.screenH = 25;
 
-$rle.font = 'bold 10pt sans-serif';
+$rle.font = {
+	weight: 'bold',
+	size: '10pt',
+	face: 'sans-serif'
+}
 
 $rle.buffer = [];
 
@@ -270,7 +274,7 @@ $rle._put_char = function (chr) {
 
 	$rle.ctx.fillStyle = bg;
 	$rle.ctx.fillRect(chr.x * $rle.tileW, chr.y * $rle.tileH, $rle.tileW, $rle.tileH);
-	$rle.ctx.font = $rle.font;
+	$rle.ctx.font = $rle.font.weight + ' ' + $rle.font.size + ' ' + $rle.font.face;
 	$rle.ctx.textBaseline = 'middle';
 	$rle.ctx.textAlign = 'center';
 	$rle.ctx.fillStyle = fg;

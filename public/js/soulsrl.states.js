@@ -495,10 +495,9 @@ state_settings.prototype.draw = function () {
 		}
 	}
 
-	if (state_settings.settings[this.cursor].description) $rle.put(40, 20, state_settings.settings[this.cursor].description, { align: 'center', fg: $rle.color.system.gray });
+	if (state_settings.settings[this.cursor].description) $rle.put(40, 21, state_settings.settings[this.cursor].description, { align: 'center', fg: $rle.color.system.gray });
 
-	$rle.put(40, 22, 'arrows, numpad, vi keys: choose, adjust settings', { align: 'center', fg: $rle.color.system.charcoal });
-	$rle.put(40, 23, 'enter: confirm', { align: 'center', fg: $rle.color.system.charcoal });
+	$rle.put(40, 23, 'arrows, numpad, vi keys: choose, adjust settings', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 24, 'escape: return', { align: 'center', fg: $rle.color.system.charcoal });	
 	$rle.flush();
 }
@@ -524,8 +523,9 @@ state_settings.prototype.move_cursor_horizontally = function (amount) {
 		current_option += amount;
 		if (current_option < 0) current_option += state_settings.settings[this.cursor].options.length;
 		if (current_option > state_settings.settings[this.cursor].options.length - 1) current_option -= state_settings.settings[this.cursor].options.length;
-		game.current.settings[state_settings.settings[this.cursor].variable] = state_settings.settings[this.cursor].options[current_option].value;
 	} while (state_settings.settings[this.cursor].options[current_option].disabled)
+	game.current.settings[state_settings.settings[this.cursor].variable] = state_settings.settings[this.cursor].options[current_option].value;
+	if (state_settings.settings[this.cursor].options[current_option].action) state_settings.settings[this.cursor].options[current_option].action();
 	this.draw();
 }
 
@@ -542,6 +542,34 @@ state_settings.settings = [
 			{
 				text: 'Disabled',
 				value: false
+			}
+		]
+	},
+	{
+		text: 'Font',
+		description: "Change the font, if you're crazy like that",
+		variable: 'font',
+		options: [
+			{
+				text: 'Serif',
+				value: 'serif',
+				action: function () {
+					$rle.font.face = 'serif';
+				}
+			},
+			{
+				text: 'Sans-Serif',
+				value: 'sans-serif',
+				action: function () {
+					$rle.font.face = 'sans-serif';
+				}
+			},
+			{
+				text: 'Monospace',
+				value: 'monospace',
+				action: function () {
+					$rle.font.face = 'monospace';
+				}
 			}
 		]
 	}
