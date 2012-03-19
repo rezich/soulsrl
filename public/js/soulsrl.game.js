@@ -23,9 +23,7 @@ function game() {
 	this.respawn_position = null;
 
 	this.settings = {
-		test1: 0,
-		test2: 1,
-		test3: 0
+		noob_mode: false
 	}
 
 	state.reset();
@@ -250,10 +248,10 @@ game.prototype.drawUI = function () {
 	var humanity = this.player.humanity.toString();
 	$rle.put(36, 23, humanity, { fg: $rle.color.system.cyan });
 
-	$rle.put(42, 23, 'ATK:', { fg: $rle.color.system.gray });
+	$rle.put(39, 23, 'ATK:', { fg: $rle.color.system.gray });
 	var dice = game.current.player.attack_dice;
 	var attack_dice = (dice.multiplier > 1 ? dice.multiplier.toString() : '') + 'd' + dice.die + (dice.bonus < 0 ? dice.bonus.toString() : '') + (dice.bonus > 0 ? '+' + dice.bonus.toString() : '');
-	$rle.put(46, 23, attack_dice, { fg: $rle.color.system.cyan });
+	$rle.put(43, 23, attack_dice, { fg: $rle.color.system.cyan });
 
 
 	// UI line 2
@@ -268,9 +266,9 @@ game.prototype.drawUI = function () {
 	var souls = this.player.souls.toString();
 	$rle.put(24, 24, souls, { fg: $rle.color.system.cyan });
 
-	if (this.player.max_estus) {
+	if (this.player.has_estus) {
 		$rle.put(32, 24, "EST:", { fg: $rle.color.system.gray });
-		var estus = this.player.estus.toString() + '/' + this.player.max_estus.toString();
+		var estus = this.player.estus.toString();
 		$rle.put(36, 24, estus, { fg: $rle.color.system.cyan });
 	}
 }

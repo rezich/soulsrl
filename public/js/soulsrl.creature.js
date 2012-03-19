@@ -33,8 +33,6 @@ function creature(pos, room, data) {
 	
 	this.hitpoints = this.maxHP;
 
-	if (this.estus) this.max_estus = this.estus;
-
 	Object.defineProperties(this, {
 		"HP": {
 			"get": function () {
@@ -348,6 +346,7 @@ creature.data = {
 		HP: 10,
 		estus: 5,
 		estus_amount: 5,
+		has_estus: true, // TODO: change to false once Estus Flask is a fake-item you get in the game
 		level: 1,
 		XP: 0,
 		humanity: 0,

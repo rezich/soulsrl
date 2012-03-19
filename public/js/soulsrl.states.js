@@ -446,7 +446,7 @@ state_settings.prototype.draw = function () {
 
 	for (var i = 0; i < state_settings.settings.length; i++) {
 		var sfg = $rle.blend((this.cursor == i ? $rle.color.system.white : $rle.color.system.gray), $rle.color.system.black, (state_settings.settings[i].disabled ? 0.75 : 0));
-		$rle.put(40, 3 + i, state_settings.settings[i].text, { align: 'right', fg: sfg });
+		$rle.put(39, 3 + i, state_settings.settings[i].text, { align: 'right', fg: sfg });
 		var optlength = 0;
 		for (var j = 0; j < state_settings.settings[i].options.length; j++) {
 			var ofg = $rle.blend((this.cursor == i ?
@@ -464,12 +464,14 @@ state_settings.prototype.draw = function () {
 				$rle.color.system.black
 			), $rle.color.system.black, (state_settings.settings[i].disabled || state_settings.settings[i].options[j].disabled ? 0.75 : 0));
 
-			$rle.put(42 + optlength, 3 + i, state_settings.settings[i].options[j].text, { fg: ofg, bg: obg });
+			$rle.put(41 + optlength, 3 + i, state_settings.settings[i].options[j].text, { fg: ofg, bg: obg });
 			optlength += state_settings.settings[i].options[j].text.length + 1;
 		}
 	}
 
-	$rle.put(38, 22, 'arrows, numpad, vi keys: choose, adjust settings', { align: 'center', fg: $rle.color.system.charcoal });
+	if (state_settings.settings[this.cursor].description) $rle.put(40, 20, state_settings.settings[this.cursor].description, { align: 'center', fg: $rle.color.system.gray });
+
+	$rle.put(40, 22, 'arrows, numpad, vi keys: choose, adjust settings', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 23, 'enter: confirm', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 24, 'escape: return', { align: 'center', fg: $rle.color.system.charcoal });	
 	$rle.flush();
@@ -503,57 +505,20 @@ state_settings.prototype.move_cursor_horizontally = function (amount) {
 
 state_settings.settings = [
 	{
-		text: 'Two-option test',
-		variable: 'test1',
+		text: 'Noob Mode',
+		description: 'Prevents the player from making certain stupid decisions',
+		variable: 'noob_mode',
 		options: [
 			{
-				text: 'Zero',
-				value: 0
+				text: 'Enabled',
+				value: true
 			},
 			{
-				text: 'One',
-				value: 1
+				text: 'Disabled',
+				value: false
 			}
 		]
-	},
-	{
-		text: 'Disabled setting test',
-		variable: 'test3',
-		disabled: true,
-		options: [
-			{
-				text: 'Zero',
-				value: 0
-			},
-			{
-				text: 'One',
-				value: 1
-			}
-		]
-	},
-	{
-		text: 'Four-option test w/ disabled 3rd option',
-		variable: 'test2',
-		options: [
-			{
-				text: 'Zero',
-				value: 0
-			},
-			{
-				text: 'One',
-				value: 1
-			},
-			{
-				text: 'Two',
-				value: 2,
-				disabled: true
-			},
-			{
-				text: 'Three',
-				value: 3
-			}
-		]
-	},
+	}
 ]
 
 
@@ -683,17 +648,29 @@ state_game.prototype.keys = {
 	quaff_estus: {
 		keys: $rle.keys.q,
 		action: function () {
-			if (!game.current.player.max_estus) return;
+			if (!game.current.player.has_estus) return;
 			if (game.current.player.estus > 0) {
-				game.current.player.estus--;
-				var amount = Math.min(game.current.player.estus_amount, game.current.player.maxHP - game.current.player.HP);
-				game.current.player.HP += game.current.player.estus_amount;
-				game.current.messages.write("You take a swig of your Estus flask" + (amount ? ", and recover " + amount.toString() + " HP!" : "."));
-				game.current.update();
+				if (game.current.settings.noob_mode && game.current.player.HP == game.current.player.maxHP) {
+					game.current.messages.write("Drinking from your Estus Flask would be pointless; you're already fully healthy!");
+					state.current().draw();
+				}
+				else {
+					game.current.player.estus--;
+					var amount = Math.min(game.current.player.estus_amount, game.current.player.maxHP - game.current.player.HP);
+					game.current.player.HP += game.current.player.estus_amount;
+					game.current.messages.write("You take a swig of your Estus Flask" + (amount ? ", and recover " + amount.toString() + " HP!" : "."));
+					game.current.update();
+				}
 			}
 			else {
-				game.current.messages.write("You take a swig of your Estus flask... but it's empty!");
-				game.current.update();
+				if (game.current.settings.noob_mode) {
+					game.current.messages.write("Your Estus Flask is empty!");
+					state.current().draw();
+				}
+				else {
+					game.current.messages.write("You take a swig of your Estus Flask... but it's empty!");
+					game.current.update();
+				}
 			}
 		}
 	},
