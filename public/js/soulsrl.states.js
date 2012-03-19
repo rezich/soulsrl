@@ -765,6 +765,6 @@ state_game.prototype.respawn_player = function () {
 	game.current.respawn_room.creatures.push(game.current.player);
 	game.current.player.position.x = game.current.respawn_position.x;
 	game.current.player.position.y = game.current.respawn_position.y;
-	for (var i = 0; i < game._bloodstainPast; i++) this.player_move_history.push({ x: this.player.position.x, y: this.player.position.y, room: this.current_room });
+	for (var i = 0; i < game._bloodstainPast; i++) game.current.player_move_history.push({ x: game.current.player.position.x, y: game.current.player.position.y, room: game.current.current_room });
 	this.draw();
 }
