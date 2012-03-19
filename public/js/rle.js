@@ -16,7 +16,7 @@ $rle.screenH = 25;
 
 $rle.font = {
 	weight: 'bold',
-	size: '10pt',
+	size: '16px', // was 10pt
 	face: 'sans-serif'
 }
 

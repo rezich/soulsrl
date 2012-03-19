@@ -28,10 +28,15 @@ function game() {
 
 	this.settings = {
 		noob_mode: false,
-		font: 'sans-serif'
+		font_face: 'sans-serif',
+		font_weight: 'bold',
+		font_size: 0,
+		tile_size: 16
 	}
 
-	$rle.font.face = this.settings.font;
+	$rle.font.face = this.settings.font_face;
+	$rle.font.weight = this.settings.font_weight;
+	$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
 
 	state.reset();
 

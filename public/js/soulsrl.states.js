@@ -546,9 +546,9 @@ state_settings.settings = [
 		]
 	},
 	{
-		text: 'Font',
-		description: "Change the font, if you're crazy like that",
-		variable: 'font',
+		text: 'Font Face',
+		description: "Change the font used to render the game",
+		variable: 'font_face',
 		options: [
 			{
 				text: 'Serif',
@@ -572,7 +572,122 @@ state_settings.settings = [
 				}
 			}
 		]
-	}
+	},
+	{
+		text: 'Font Weight',
+		description: 'Set whether or not the font should be bold',
+		variable: 'font_weight',
+		options: [
+			{
+				text: 'Normal',
+				value: 'normal',
+				action: function () {
+					$rle.font.weight = 'normal';
+				}
+			},
+			{
+				text: 'Bold',
+				value: 'bold',
+				action: function () {
+					$rle.font.weight = 'bold';
+				}
+			}
+		]
+	},
+	{
+		text: 'Font Size',
+		description: 'Fine-tune the font size relative to the tile size',
+		variable: 'font_size',
+		options: [
+			{
+				text: '-4',
+				value: -4,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '-3',
+				value: -3,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '-2',
+				value: -2,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '-1',
+				value: -1,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '0',
+				value: 0,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '+1',
+				value: 1,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '+2',
+				value: 2,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '+3',
+				value: 3,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			},
+			{
+				text: '+4',
+				value: 4,
+				action: function () {
+					$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+				}
+			}
+		]
+	},
+	{
+		text: 'Tile Size',
+		description: 'Adjust the size of the tiles',
+		variable: 'tile_size',
+		disabled: true,
+		options: [
+			{
+				text: '8x8',
+				value: 8
+			},
+			{
+				text: '12x12',
+				value: 12
+			},
+			{
+				text: '16x16',
+				value: 16
+			},
+			{
+				text: '24x24',
+				value: 24
+			}
+		]
+	},
 ]
 
 
