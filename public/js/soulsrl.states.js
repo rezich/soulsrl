@@ -705,6 +705,8 @@ state_game.prototype.draw = function () {
 }
 
 state_game.prototype.update = function () {
+	game.current.player_move_history.shift();
+	game.current.player_move_history.push({ x: game.current.player.position.x, y: game.current.player.position.y, room: game.current.current_room });
 	for (var c in game.current.current_room.creatures) {
 		if (game.current.current_room.creatures[c] == game.current.player) continue;
 		game.current.current_room.creatures[c].update();
@@ -736,6 +738,9 @@ state_game.prototype.move_player = function (direction) {
 state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
 	// TODO: Bloodstain
+	var bloodstain = game.current.player_move_history[0].room.add_item({ x: game.current.player_move_history[0].x, y: game.current.player_move_history[0].y }, item.data.player_bloodstain);
+	bloodstain.souls = game.current.player.souls;
+	bloodstain.humanity = game.current.player.humanity;
 	game.current.player.souls = 0;
 	game.current.player.humanity = 0;
 	if (game.current.messages.lines.length - game.current.messages.lastLine > 4) {
@@ -760,5 +765,6 @@ state_game.prototype.respawn_player = function () {
 	game.current.respawn_room.creatures.push(game.current.player);
 	game.current.player.position.x = game.current.respawn_position.x;
 	game.current.player.position.y = game.current.respawn_position.y;
+	for (var i = 0; i < game._bloodstainPast; i++) this.player_move_history.push({ x: this.player.position.x, y: this.player.position.y, room: this.current_room });
 	this.draw();
 }

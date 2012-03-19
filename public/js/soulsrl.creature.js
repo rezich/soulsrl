@@ -77,6 +77,11 @@ creature.prototype.move_to = function (position) {
 			this.attack(cre);
 		}
 		else {
+			// check for items
+			var ite = this.room.item_at(position);
+			if (ite) {
+				ite.interact_with(this);
+			}
 			// see if there's traps or anything on the terrain
 			if (ter.interact_with(this)) {
 				this.position = position;

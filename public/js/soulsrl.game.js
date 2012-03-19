@@ -22,6 +22,8 @@ function game() {
 	this.respawn_room = null;
 	this.respawn_position = null;
 
+	this.player_move_history = [];
+
 	this.settings = {
 		noob_mode: false
 	}
@@ -43,7 +45,8 @@ game.motd = [
 
 game._keyTimeout = null;
 game._keysEnabled = true;
-game._keyRateLimit = 20;
+game._keyRateLimit = 10;
+game._bloodstainPast = 5;
 
 game.viewport_offset = {
 	x: 0,
@@ -178,6 +181,7 @@ game.prototype.init = function (player_name) {
 	}
 	this.current_room = this.generateDungeon(room.area.prison, 3);
 	this.init_player(player_name);
+	for (var i = 0; i < game._bloodstainPast; i++) this.player_move_history.push({ x: this.player.position.x, y: this.player.position.y, room: this.current_room });
 	this.current_room.creatures.push(this.player);
 	this.respawn_room = this.current_room;
 	this.respawn_position = { x: this.player.position.x, y: this.player.position.y };

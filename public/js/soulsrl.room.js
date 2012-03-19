@@ -15,7 +15,7 @@ function room(area, floor) {
 
 room.prototype = {
 	get entities() {
-		return this.terrain.concat(this.players).concat(this.creatures);
+		return this.terrain.concat(this.players).concat(this.items).concat(this.creatures);
 	},
 	get name() {
 		return this.area + (this.floor ? '-' + this.floor : '');
@@ -38,18 +38,22 @@ room.prototype.add_terrain = function (position, kind) {
 		if (this.terrain[t].position.x == position.x && this.terrain[t].position.y == position.y) this.terrain.splice(t, 1);
 	}
 	this.terrain.push(new terrain({ x: position.x, y: position.y }, this, kind));
+	return this.terrain[this.terrain.length - 1];
 }
 
 room.prototype.add_creature = function (position, data) {
 	this.creatures.push(new creature({ x: position.x, y: position.y }, this, data));
+	return this.creatures[this.creatures.length - 1];
 }
 
 room.prototype.add_item = function (position, data) {
 	this.items.push(new item({ x: position.x, y: position.y }, this, data));
+	return this.items[this.items.length - 1];
 }
 
 room.prototype.add_decal = function (position, data) {
 	this.decal.push(new item({ x: position.x, y: position.y }, this, data));
+	return this.decals[this.decals.length - 1];
 }
 
 room.prototype.solid_at = function (position, all) {
@@ -90,6 +94,13 @@ room.prototype.terrain_at = function (position) {
 room.prototype.creature_at = function (position) {
 	for (var t in this.creatures) {
 		if (this.creatures[t].position.x == position.x && this.creatures[t].position.y == position.y) return this.creatures[t];
+	}
+	return null;
+}
+
+room.prototype.item_at = function (position) {
+	for (var i in this.items) {
+		if (this.items[i].position.x == position.x && this.items[i].position.y == position.y) return this.items[i];
 	}
 	return null;
 }
