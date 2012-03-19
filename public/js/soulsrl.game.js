@@ -24,7 +24,8 @@ function game() {
 
 	this.settings = {
 		test1: 0,
-		test2: 1
+		test2: 1,
+		test3: 0
 	}
 
 	state.reset();

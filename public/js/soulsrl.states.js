@@ -445,10 +445,26 @@ state_settings.prototype.draw = function () {
 	$rle.put(40, 1, 'Settings', { align: 'center', fg: $rle.color.system.cyan });
 
 	for (var i = 0; i < state_settings.settings.length; i++) {
-		$rle.put(40, 3 + i, state_settings.settings[i].text, { align: 'right', fg: (this.cursor == i ? $rle.color.system.white : $rle.color.system.gray) });
+		var sfg = $rle.blend((this.cursor == i ? $rle.color.system.white : $rle.color.system.gray), $rle.color.system.black, (state_settings.settings[i].disabled ? 0.75 : 0));
+		$rle.put(40, 3 + i, state_settings.settings[i].text, { align: 'right', fg: sfg });
 		var optlength = 0;
 		for (var j = 0; j < state_settings.settings[i].options.length; j++) {
-			$rle.put(42 + optlength, 3 + i, state_settings.settings[i].options[j].text, { fg: (this.cursor == i ? $rle.color.system.white : $rle.color.system.gray), bg: (game.current.settings[state_settings.settings[i].variable] == state_settings.settings[i].options[j].value ? (this.cursor == i ? $rle.color.system.cyan : $rle.color.system.charcoal) : $rle.color.system.black) });
+			var ofg = $rle.blend((this.cursor == i ?
+				(game.current.settings[state_settings.settings[i].variable] == state_settings.settings[i].options[j].value ?
+					$rle.color.system.white :
+					$rle.color.system.white
+				) :
+				$rle.color.system.gray
+			), $rle.color.system.black, (state_settings.settings[i].disabled || state_settings.settings[i].options[j].disabled ? 0.75 : 0));
+			var obg = $rle.blend((game.current.settings[state_settings.settings[i].variable] == state_settings.settings[i].options[j].value ?
+				(this.cursor == i ?
+					$rle.blend($rle.color.system.cyan, $rle.color.system.black, 0.25) :
+					$rle.color.system.charcoal
+				) :
+				$rle.color.system.black
+			), $rle.color.system.black, (state_settings.settings[i].disabled || state_settings.settings[i].options[j].disabled ? 0.75 : 0));
+
+			$rle.put(42 + optlength, 3 + i, state_settings.settings[i].options[j].text, { fg: ofg, bg: obg });
 			optlength += state_settings.settings[i].options[j].text.length + 1;
 		}
 	}
@@ -476,7 +492,6 @@ state_settings.prototype.move_cursor_horizontally = function (amount) {
 			break;
 		}
 	}
-	if (current_option == null) alert("something went horribly wrong!");
 	do {
 		current_option += amount;
 		if (current_option < 0) current_option += state_settings.settings[this.cursor].options.length;
@@ -502,7 +517,22 @@ state_settings.settings = [
 		]
 	},
 	{
-		text: 'Three-option test',
+		text: 'Disabled setting test',
+		variable: 'test3',
+		disabled: true,
+		options: [
+			{
+				text: 'Zero',
+				value: 0
+			},
+			{
+				text: 'One',
+				value: 1
+			}
+		]
+	},
+	{
+		text: 'Four-option test w/ disabled 3rd option',
 		variable: 'test2',
 		options: [
 			{
@@ -515,10 +545,15 @@ state_settings.settings = [
 			},
 			{
 				text: 'Two',
-				value: 2
+				value: 2,
+				disabled: true
+			},
+			{
+				text: 'Three',
+				value: 3
 			}
 		]
-	}
+	},
 ]
 
 
