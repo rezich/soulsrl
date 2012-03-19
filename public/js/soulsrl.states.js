@@ -129,12 +129,11 @@ state_mainMenu.entries = [
 	{
 		text: "Continue",
 		disabled: true,
-		action: function () { state.add(new state_settings()); }
+		action: function () {  }
 	},
 	{
 		text: "Settings",
-		disabled: true,
-		action: function () {  }
+		action: function () { state.add(new state_settings()); }
 	},
 	{
 		text: "Manual",
@@ -151,7 +150,7 @@ state_mainMenu.entries = [
 			});
 		}
 	}
-];
+]
 
 
 ////
@@ -407,16 +406,120 @@ state_inputName.prototype.confirm = function () {
 // state_settings - settings screen
 ////
 
-function state_settings() { }
+function state_settings() {
+	this.cursor = 0;
+
+}
 
 state_settings.prototype = new state();
 
+state_settings.prototype.keys = {
+	up: {
+		keys: $rle.keys.arrow_n,
+		action: function () { state.current().move_cursor_vertically(-1); /* TODO: Find a better way to do this? */ }
+	},
+	down: {
+		keys: $rle.keys.arrow_s,
+		action: function () { state.current().move_cursor_vertically(1); /* TODO: Find a better way to do this? */ }
+	},
+	left: {
+		keys: $rle.keys.arrow_w,
+		action: function () { state.current().move_cursor_horizontally(-1); /* TODO: Find a better way to do this? */ }
+	},
+	right: {
+		keys: $rle.keys.arrow_e,
+		action: function () { state.current().move_cursor_horizontally(1); /* TODO: Find a better way to do this? */ }
+	},
+	confirm: {
+		keys: $rle.keys.enter,
+		action: function () {  }
+	},
+	cancel: {
+		keys: $rle.keys.escape,
+		action: function () { state.pop(); }
+	},
+}
+
 state_settings.prototype.draw = function () {
 	$rle.clear();
+	$rle.put(40, 1, 'Settings', { align: 'center', fg: $rle.color.system.cyan });
+
+	for (var i = 0; i < state_settings.settings.length; i++) {
+		$rle.put(40, 3 + i, state_settings.settings[i].text, { align: 'right', fg: (this.cursor == i ? $rle.color.system.white : $rle.color.system.gray) });
+		var optlength = 0;
+		for (var j = 0; j < state_settings.settings[i].options.length; j++) {
+			$rle.put(42 + optlength, 3 + i, state_settings.settings[i].options[j].text, { fg: (this.cursor == i ? $rle.color.system.white : $rle.color.system.gray), bg: (game.current.settings[state_settings.settings[i].variable] == state_settings.settings[i].options[j].value ? (this.cursor == i ? $rle.color.system.cyan : $rle.color.system.charcoal) : $rle.color.system.black) });
+			optlength += state_settings.settings[i].options[j].text.length + 1;
+		}
+	}
+
+	$rle.put(38, 22, 'arrows, numpad, vi keys: choose, adjust settings', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 23, 'enter: confirm', { align: 'center', fg: $rle.color.system.charcoal });
 	$rle.put(40, 24, 'escape: return', { align: 'center', fg: $rle.color.system.charcoal });	
 	$rle.flush();
 }
+
+state_settings.prototype.move_cursor_vertically = function (amount) {
+	do {
+		this.cursor += amount;
+		if (this.cursor < 0) this.cursor += state_settings.settings.length;
+		if (this.cursor > state_settings.settings.length - 1) this.cursor -= state_settings.settings.length;
+		this.draw();
+	} while (state_settings.settings[this.cursor].disabled);
+}
+
+state_settings.prototype.move_cursor_horizontally = function (amount) {
+	var current_option = null;
+	for (var i = 0; i < state_settings.settings[this.cursor].options.length; i++) {
+		if (game.current.settings[state_settings.settings[this.cursor].variable] == state_settings.settings[this.cursor].options[i].value) {
+			current_option = i;
+			break;
+		}
+	}
+	if (current_option == null) alert("something went horribly wrong!");
+	do {
+		current_option += amount;
+		if (current_option < 0) current_option += state_settings.settings[this.cursor].options.length;
+		if (current_option > state_settings.settings[this.cursor].options.length - 1) current_option -= state_settings.settings[this.cursor].options.length;
+		game.current.settings[state_settings.settings[this.cursor].variable] = state_settings.settings[this.cursor].options[current_option].value;
+	} while (state_settings.settings[this.cursor].options[current_option].disabled)
+	this.draw();
+}
+
+state_settings.settings = [
+	{
+		text: 'Two-option test',
+		variable: 'test1',
+		options: [
+			{
+				text: 'Zero',
+				value: 0
+			},
+			{
+				text: 'One',
+				value: 1
+			}
+		]
+	},
+	{
+		text: 'Three-option test',
+		variable: 'test2',
+		options: [
+			{
+				text: 'Zero',
+				value: 0
+			},
+			{
+				text: 'One',
+				value: 1
+			},
+			{
+				text: 'Two',
+				value: 2
+			}
+		]
+	}
+]
 
 
 ////

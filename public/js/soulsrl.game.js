@@ -22,25 +22,15 @@ function game() {
 	this.respawn_room = null;
 	this.respawn_position = null;
 
+	this.settings = {
+		test1: 0,
+		test2: 1
+	}
+
 	state.reset();
 
 	state.add(new state_mainMenu());
 	if (_MULTIPLAYER) state.add(new state_loading());
-
-	//this.commands = game.cmds_game;
-	/*this.messages.write("Welcome to SoulsRL!");
-	this.current_room = this.generateDungeon();
-
-	// begin temp code
-	this.player = new creature();
-	this.player.position = { x: 8, y: 8};
-	this.player.character = '@';
-	for (var t in this.current_room.terrain) {
-		this.current_room.terrain[t].draw();
-	}
-	this.player.draw();
-	this.redraw();*/
-	// end temp code
 }
 
 game.current = null;
@@ -122,8 +112,6 @@ game.handleInput = function (event) {
 		}
 		if (callback) break;
 	}
-
-	//if (update) game.current.update();
 
 	if (callback) {
 		callback();
@@ -239,16 +227,6 @@ game.prototype.generateDungeon = function (area, floor) {
 			}
 		}
 	}
-
-	/*for (var i = 0; i < 20; i++) {
-		for (var j = 0; j < 80; j++) {
-			r.add_terrain({x: j, y: i}, terrain.kind.floor);
-		}
-	}
-
-	for (var i = 0; i < 10; i++) {
-		r.add_terrain({x: 14, y: 4 + i}, terrain.kind.wall);
-	}*/
 
 	return r;
 }
