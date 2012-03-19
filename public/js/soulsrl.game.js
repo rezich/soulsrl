@@ -30,7 +30,7 @@ function game() {
 		noob_mode: false,
 		font_face: 'sans-serif',
 		font_weight: 'bold',
-		font_size: 0,
+		font_size: -3,
 		tile_size: 16
 	}
 
@@ -285,6 +285,19 @@ game.prototype.drawUI = function () {
 		var estus = this.player.estus.toString();
 		$rle.put(36, 24, estus, { fg: $rle.color.system.cyan });
 	}
+}
+
+game.prototype.read_manual = function () {
+	state.add(new state_loading(), { clear: true });
+	$.ajax({
+		url: 'manual.txt',
+		dataType: 'text',
+		cache: false,
+		success: function (data) {
+			state.pop();
+			state.add(new state_reader(data), { clear: true });
+		}
+	});
 }
 
 

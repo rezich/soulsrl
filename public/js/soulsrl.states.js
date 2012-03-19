@@ -138,16 +138,7 @@ state_mainMenu.entries = [
 	{
 		text: "Manual",
 		action: function () {
-			state.add(new state_loading(), { clear: true });
-			$.ajax({
-				url: 'manual.txt',
-				dataType: 'text',
-				cache: false,
-				success: function (data) {
-					state.pop();
-					state.add(new state_reader(data), { clear: true });
-				}
-			});
+			game.current.read_manual();
 		}
 	}
 ]
@@ -226,7 +217,7 @@ state_reader.prototype.draw = function () {
 	if (this.text) {
 		for (var i = 0; i < this.height; i++) {
 			if (this.scroll_position + i > this.text.length) break;
-			$rle.put(0, i, this.text[this.scroll_position + i]);
+			$rle.put(0, i, this.text[this.scroll_position + i], { fg: $rle.color.system.gray });
 		}
 	}
 
@@ -679,23 +670,35 @@ state_settings.settings = [
 		text: 'Tile Size',
 		description: 'Adjust the size of the tiles',
 		variable: 'tile_size',
-		disabled: true,
+		//disabled: true,
 		options: [
 			{
 				text: '8x8',
-				value: 8
+				value: 8,
+				action: function () {
+					$rle.resize(8, 8);
+				}
 			},
 			{
 				text: '12x12',
-				value: 12
+				value: 12,
+				action: function () {
+					$rle.resize(12, 12);
+				}
 			},
 			{
 				text: '16x16',
-				value: 16
+				value: 16,
+				action: function () {
+					$rle.resize(16, 16);
+				}
 			},
 			{
 				text: '24x24',
-				value: 24
+				value: 24,
+				action: function () {
+					$rle.resize(24, 24);
+				}
 			}
 		]
 	},
@@ -873,6 +876,12 @@ state_game.prototype.keys = {
 				game.reset();
 			}));
 		}
+	},
+	help: {
+		keys: $rle.keys.question_mark,
+		action: function () {
+			game.current.read_manual();
+		}
 	}
 }
 
@@ -917,11 +926,8 @@ state_game.prototype.move_player = function (direction) {
 
 state_game.prototype.kill_player = function () {
 	game.current.messages.write('Y O U  D I E D.');
-	// TODO: Bloodstain
 	for (var r in game.current.rooms) {
-		console.log(r);
 		for (var i = 0; i < game.current.rooms[r].items.length; i++) {
-			console.log(game.current.rooms[r].items[i]);
 			if (game.current.rooms[r].items[i].bloodstain) game.current.rooms[r].items.splice(i, 1);
 		}
 	}

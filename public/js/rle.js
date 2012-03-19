@@ -8,6 +8,7 @@ function $rle() {
 
 $rle.can = null;
 $rle.ctx = null;
+$rle.id = null;
 
 $rle.tileW = 16;
 $rle.tileH = 16;
@@ -82,7 +83,9 @@ $rle.keys = {
 	enter: 13,
 	space: 32,
 	page_up: 33,
-	page_down: 34
+	page_down: 34,
+	forward_slash: 191,
+	question_mark: { key: 191, shift: true }
 }
 
 $rle.dir = {
@@ -193,6 +196,7 @@ $rle.box = {
 $rle.setup = function (id) {
 	$rle.can = document.getElementById(id);
 	$rle.ctx = $rle.can.getContext('2d');
+	$rle.id = id;
 }
 
 $rle.put = function(x, y, text, options) {
@@ -349,6 +353,17 @@ $rle.blend = function (c1, c2, amt) {
 
 $rle.lerp = function (a, b, t) {
 	return a + t * (b - a);
+}
+
+$rle.resize = function(w, h) {
+	$rle.tileW = w;
+	$rle.tileH = h;
+	$rle.font.size = ($rle.tileW + game.current.settings.font_size).toString() + 'px';
+	var scr = document.getElementById($rle.id);
+	scr.width = $rle.screenW * $rle.tileW;
+	scr.height = $rle.screenH * $rle.tileH;
+	$('#' + $rle.id).css('height', scr.height.toString() + 'px');
+	$('#container').css('width', scr.width.toString() + 'px'); // TODO: make more generic
 }
 
 $(document).keydown(function (event) {
